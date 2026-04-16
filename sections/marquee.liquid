@@ -1,0 +1,157 @@
+<style>
+  .separator-icon-image {
+    width: 50px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+{% capture heart %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="9" viewBox="0 0 8 9" fill="none"><circle cx="4" cy="4.30005" r="4" fill="white"></circle></svg>
+{% endcapture %}    
+<div class="color-{{ section.settings.color_scheme }} marquee-bar messages {% if section.settings.pause_on_hover %}pause-on-hover{% endif %}">
+  <div class="marquee__inner" style="--marquee-duration: {{ section.settings.speed | default: 20 }}s; --marquee-direction: {{ section.settings.direction | default: 'left' }};">
+    {%- for block in section.blocks -%}
+      <div class="message">{{ block.settings.text }}</div>
+      <div class="message">
+        {% if block.settings.separator_icon != blank %}
+          <div class="separator-icon-image"><img src="{{ block.settings.separator_icon | image_url:width:50 }}" loading="lazy" width="20"></div>
+        {% else %}
+          {{ heart }}
+        {% endif %}
+      </div>
+    {%- endfor -%}
+    {%- for block in section.blocks -%}
+      <div class="message">{{ block.settings.text }}</div>
+      <div class="message">
+        {% if block.settings.separator_icon != blank %}
+          <div class="separator-icon-image"><img src="{{ block.settings.separator_icon | image_url:width:50 }}" loading="lazy" width="20"></div>
+        {% else %}
+          {{ heart }}
+        {% endif %}
+      </div>
+    {%- endfor -%}
+    {%- for block in section.blocks -%}
+      <div class="message">{{ block.settings.text }}</div>
+      <div class="message">
+        {% if block.settings.separator_icon != blank %}
+          <div class="separator-icon-image"><img src="{{ block.settings.separator_icon | image_url:width:50 }}" loading="lazy" width="20"></div>
+        {% else %}
+          {{ heart }}
+        {% endif %}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+.marquee-bar.messages {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;    
+  color: #fff;
+  padding: 8px 0;
+}
+#shopify-section-{{ section.id }} .marquee-bar.messages {
+  font-size: {{ section.settings.font_size }}px;
+}
+.marquee__inner {
+  display: inline-flex;
+  align-items: center;
+  animation: marquee var(--marquee-duration, 20s) linear infinite;
+  animation-direction: var(--marquee-direction, normal);
+}
+
+.pause-on-hover .marquee__inner:hover {
+  animation-play-state: paused;
+}
+
+.marquee-bar .message {
+  padding: 2px 15px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+</style>
+ 
+{% schema %}
+{
+  "name": "Marquee",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 30
+    },
+    {
+        "type": "select",
+        "id": "direction",
+        "options": [
+            {
+            "value": "left",
+            "label": "Right to Left"
+            },
+            {
+            "value": "right",
+            "label": "Left to Right"
+            }
+        ],
+        "default": "right",
+        "label": "Direction"
+        },
+        {
+        "type": "checkbox",
+        "id": "pause_on_hover",
+        "label": "Pause on hover"
+        },    
+        {
+        "type": "text",
+        "id": "speed",
+        "label": "Speed",
+        "default": "3"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "name": "text",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Text"
+                },
+                {
+                  "type": "image_picker",
+                  "id": "separator_icon",
+                  "label": "Separator Icon"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+        "name": "Marquee"
+        }
+    ]
+}
+{% endschema %}

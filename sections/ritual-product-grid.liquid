@@ -1,0 +1,213 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  .ritual-section-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .ritual-title-{{ section_id }} {
+    font-family: serif;
+    font-size: {{ section.settings.title_size }}px;
+    color: #1a1a1a;
+    margin-bottom: 40px;
+    padding: 0 20px;
+  }
+
+  /* Horizontal Grid Logic */
+  .ritual-grid-{{ section_id }} {
+    display: flex;
+    justify-content: {% if section.settings.center_cards %}center{% else %}flex-start{% endif %};
+    gap: 20px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px 20px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ritual-grid-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  /* Card Styling */
+  .ritual-card-{{ section_id }} {
+    background-color: #ffffff;
+    border-radius: 40px;
+    padding: 30px;
+    flex: 0 0 {{ section.settings.card_width }}px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  }
+
+  .ritual-image-{{ section_id }} {
+    width: 100%;
+    aspect-ratio: 1.5 / 1;
+    background-color: #f0f0f0;
+    border-radius: 25px;
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+
+  .ritual-image-{{ section_id }} img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .ritual-meta-{{ section_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .ritual-label-{{ section_id }} {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b5b5b5;
+    font-weight: 700;
+  }
+
+  .ritual-price-{{ section_id }} {
+    font-size: 14px;
+    font-weight: 700;
+    color: #003049;
+  }
+
+  .ritual-name-{{ section_id }} {
+    font-family: serif;
+    font-size: 22px;
+    color: #1a1a1a;
+    margin: 0 0 10px 0;
+  }
+
+  .ritual-desc-{{ section_id }} {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #666;
+    margin: 0 0 25px 0;
+    min-height: 40px;
+  }
+
+  /* Navy Blue Button */
+  .ritual-btn-{{ section_id }} {
+    background-color: #003b5c;
+    color: #ffffff;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 15px;
+    border-radius: 12px;
+    transition: opacity 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ritual-btn-{{ section_id }}:hover {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 767px) {
+    .ritual-grid-{{ section_id }} {
+      justify-content: flex-start;
+      padding-left: 20px;
+    }
+    .ritual-card-{{ section_id }} {
+      flex: 0 0 300px; /* Card size on mobile */
+      padding: 20px;
+    }
+    .ritual-title-{{ section_id }} { font-size: 26px; }
+  }
+{%- endstyle -%}
+
+<section class="ritual-section-{{ section_id }}">
+  {% if section.settings.title != blank %}
+    <h2 class="ritual-title-{{ section_id }}">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  <div class="ritual-grid-{{ section_id }}">
+    {% for block in section.blocks %}
+      {%- assign product = all_products[block.settings.product] -%}
+      <div class="ritual-card-{{ section_id }}" {{ block.shopify_attributes }}>
+        
+        <div class="ritual-image-{{ section_id }}">
+          {% if block.settings.image != blank %}
+            <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title }}" loading="lazy">
+          {% elsif product.featured_image != blank %}
+             <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title }}">
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag }}
+          {% endif %}
+        </div>
+
+        <div class="ritual-meta-{{ section_id }}">
+          <span class="ritual-label-{{ section_id }}">{{ block.settings.label }}</span>
+          <span class="ritual-price-{{ section_id }}">
+            {% if product != blank %}{{ product.price | money }}{% else %}$42.00{% endif %}
+          </span>
+        </div>
+
+        <h3 class="ritual-name-{{ section_id }}">{{ block.settings.title | default: product.title }}</h3>
+        <p class="ritual-desc-{{ section_id }}">{{ block.settings.description | default: product.description | truncatewords: 20 }}</p>
+
+        <form method="post" action="/cart/add">
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          <button type="submit" class="ritual-btn-{{ section_id }}" style="width: 100%;">
+            {{ section.settings.btn_text }}
+          </button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ritual Product Grid",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "The Stress-Release Rituals" },
+    { "type": "range", "id": "title_size", "label": "Title Font Size", "min": 20, "max": 60, "step": 2, "default": 32 },
+    { "type": "text", "id": "btn_text", "label": "Button Text", "default": "ADD TO RITUAL" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "card_width", "label": "Card Width (Desktop)", "min": 300, "max": 600, "step": 10, "default": 450 },
+    { "type": "checkbox", "id": "center_cards", "label": "Center Cards on Desktop", "default": true },
+    { "type": "range", "id": "max_width", "label": "Max Section Width", "min": 800, "max": 1600, "step": 20, "default": 1200 },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#faf9f6" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 2, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 2, "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Select Product" },
+        { "type": "image_picker", "id": "image", "label": "Custom Image (Optional)" },
+        { "type": "text", "id": "label", "label": "Small Label", "default": "DAILY SUPPORT" },
+        { "type": "text", "id": "title", "label": "Override Title" },
+        { "type": "textarea", "id": "description", "label": "Description" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ritual Product Grid",
+      "blocks": [
+        { "type": "product", "settings": { "label": "DAILY SUPPORT", "title": "Anti-Stress Serum" } },
+        { "type": "product", "settings": { "label": "WEEKLY RITUAL", "title": "Spoil Yourself Soak" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

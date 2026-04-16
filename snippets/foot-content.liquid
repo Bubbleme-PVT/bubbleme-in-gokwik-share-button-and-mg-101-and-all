@@ -1,0 +1,232 @@
+<script>
+	xbll = 1;
+	(function() {
+		var img = new Image();
+		img.onload = function() {
+			xhwp = !!(img.height > 0 && img.width > 0);
+		};
+		img.onerror = function() {
+			xhwp = false;
+		};
+	})();
+	
+	function xeoej() {
+		const lgsz = document.getElementById("xbgl");
+		lgsz.remove();
+		xbll = 0;
+		lli(0);
+		if(window.snlb == false) {
+			jQuery(".m").click();
+			window.snlb = false;
+		}
+	}
+	
+	function xsil() {
+		var top = this.scrollY;
+		lli(top);
+		llis(top);
+	}
+	
+	function xeosj() {
+		var lvs = document.getElementsByTagName("vlz");
+		ctvt(lvs);
+		xsil();
+	}
+	window.addEventListener("scroll", function(event) {
+		xsil();
+	}, {
+		passive: true
+	});
+	var xim = (window.matchMedia("(max-width: 767px)").matches ? 1 : 0);
+	var wwh = screen.availWidth;
+	var brm = {};
+	brm.top = 1;
+	setInterval(function() {
+		llis(top);
+	}, 8000);
+	setInterval(function() {
+		lli(0);
+	}, 500);
+	document.addEventListener("click", function() {
+		lli(0);
+	});
+	
+	function gdu(img1, width, height) {
+		var mcns = document.createElement("canvas");
+		var ctx = mcns.getContext("2d");
+		var img = new Image();
+		mcns.width = parseInt(width);
+		mcns.height = parseInt(height);
+		ctx.drawImage(img, 0, 0);
+		img1.src = mcns.toDataURL("image/png");
+	}
+
+	function llig(pcs, brs, whh, wwh) {
+		for (var i = 0; i < pcs.length; i++) {
+			if (pcs[i].getAttribute("data-li") == "st") {
+				var elem = pcs[i],
+					ert = pcs[i].getBoundingClientRect();
+				if (ert.top != 0 && (ert.top - (whh - brs.top)) < xllbp) {
+					ccsst = window.getComputedStyle(pcs[i]);
+					if (ccsst.getPropertyValue("opacity") == 0) {
+						continue;
+					}
+					if (elem.tagName == "IFZ") {
+						var elem = document.createElement("iframe");
+						var index;
+						for (index = pcs[i].attributes.length - 1; index >= 0; --index) {
+							elem.attributes.setNamedItem(pcs[i].attributes[index].cloneNode());
+						}
+						pcs[i].parentNode.replaceChild(elem, pcs[i]);
+					}
+					var src = elem.getAttribute("d-src") ? elem.getAttribute("d-src") : elem.src;
+					if (xim && elem.getAttribute("ds-src")) {
+						src = elem.getAttribute("ds-src");
+					}
+					var srcset = elem.getAttribute("dt") ? elem.getAttribute("dt") : "";
+					if (!srcset) {
+						elem.onload = function() {
+							this.setAttribute("data-done", "Loaded");
+							if (typeof(usuaiil) == "function") {
+								usuaiil(this);
+							}
+						}
+						elem.onerror = function() {
+							if (this.getAttribute("ds-src") && xim && this.getAttribute("d-src")) {
+								this.src = this.getAttribute("d-src");
+							}
+						}
+					}
+					elem.src = src;
+					if (srcset != null & srcset != "") {
+						elem.srcset = srcset;
+					}
+					delete elem.dataset.li;
+				}
+			}
+		}
+	}
+	
+	function xldbi(pcs) {
+		for (var i = 0; i < pcs.length; i++) {
+			if (pcs[i].getAttribute("data-li") == "st") {
+				var bsrc = pcs[i].src;
+				if (typeof(bsrc) != "undefined" && bsrc.indexOf("data:") == -1) {
+					if (pcs[i].getAttribute("width") != null && pcs[i].getAttribute("height") != null) {
+						var width = parseInt(pcs[i].getAttribute("width"));
+						var height = parseInt(pcs[i].getAttribute("height"));
+						gdu(pcs[i], width, height);
+					}
+				}
+			}
+		}
+	}
+	
+	function ctvt(pcs) {
+		const t = pcs.length > 0 ? pcs[0] : "";
+		if (t) {
+			delete pcs[0];
+			var nemt = document.createElement("video");
+			var index;
+			for (index = t.attributes.length - 1; index >= 0; --index) {
+				nemt.attributes.setNamedItem(t.attributes[index].cloneNode());
+			}
+			nemt.innerHTML = t.innerHTML;
+			t.parentNode.replaceChild(nemt, t);
+			if (typeof(nemt.getAttribute("dp")) == "string") {
+				nemt.setAttribute("poster", nemt.getAttribute("dp"));
+			}
+			ctvt(pcs);
+		}
+	}
+	
+	function llvo(pcs, brs, top, whh, wwh) {
+		for (var i = 0; i < pcs.length; i++) {
+			var elem = pcs[i],
+				ert = pcs[i].getBoundingClientRect();
+			if (ert.top != 0 && (ert.top - (whh - brs.top)) < xllbp) {
+				if (typeof(pcs[i].getElementsByTagName("source")[0]) == "undefined") {
+					llvos(pcs[i], top, whh, wwh, ert, brs);
+				} else {
+					var sources = pcs[i].getElementsByTagName("source");
+					for (var j = 0; j < sources.length; j++) {
+						var source = sources[j];
+						llvos(source, top, whh, wwh, ert, brs);
+					}
+				}
+			}
+		}
+	}
+	
+	function llvos(source, top, whh, wwh, ert, brs) {
+		if (typeof source != "undefined" && source.getAttribute("data-li") == "st") {
+			if (ert.top != 0 && (ert.top - (whh - brs.top)) < xllbp) {
+				var src = source.getAttribute("d-src") ? source.getAttribute("d-src") : source.src;
+				var srcset = source.getAttribute("dt") ? source.getAttribute("dt") : "";
+				if (source.srcset != null & source.srcset != "") {
+					source.srcset = srcset;
+				}
+				if (typeof(source.getElementsByTagName("source")[0]) == "undefined") {
+					if (source.tagName == "SOURCE") {
+						source.parentNode.src = src;
+						source.parentNode.load();
+						if (source.parentNode.getAttribute("autoplay") !== null) {
+							source.parentNode.play();
+						}
+					} else {
+						source.src = src;
+						source.load();
+						if (source.getAttribute("autoplay") !== null) {
+							source.play();
+						}
+					}
+				} else {
+					source.parentNode.src = src;
+				}
+				delete source.dataset.li;
+				source.setAttribute("data-done", "Loaded");
+			}
+		}
+	}
+	
+	function lligbgs(imgbgs, brs, whh, wwh) {
+		for (var i = 0; i < imgbgs.length; i++) {
+			var elem = imgbgs[i],
+				ert = imgbgs[i].getBoundingClientRect(),
+				offset = ert.top - brs.top;
+			if ((ert.top - (whh - brs.top)) < xllbp) {
+				elem.classList.add("xbg");
+			}
+		}
+	}
+	
+	function lli(top) {
+		var pcs = document.querySelectorAll("img[data-li=st]");
+		var imgbgs = document.querySelectorAll("div:not(.xst), section:not(.xst), ifz:not(.xst)");
+		var sources = document.getElementsByTagName("video");
+		var sao = document.getElementsByTagName("audio");
+		var brs = document.body.getBoundingClientRect();
+		var whh = window.innerHeight;
+		var wwh = screen.availWidth;
+		if (typeof(ldig) != "undefined") {
+			xldbi(pcs);
+			delete ldig;
+		}
+		if (xbll && ((brs.top < 50 && brm.top == 1) || Math.abs(brm.top) - Math.abs(brs.top) < -50 || Math.abs(brm.top) - Math.abs(brs.top) > 50)) {
+			brm = brs;
+			lligbgs(imgbgs, brs, whh, wwh);
+		}
+		llig(pcs, brs, whh, wwh);
+		llvo(sources, brs, top, whh, wwh);
+		llvo(sao, brs, top, whh, wwh);
+	}
+	lli(0);
+	
+	function llis(top) {
+		var brs = document.body.getBoundingClientRect();
+		var whh = window.innerHeight;
+		var wwh = screen.availWidth;
+		var iframes = document.querySelectorAll("ifz[data-li=st]");
+		llig(iframes, brs, whh, wwh);
+	}
+</script>

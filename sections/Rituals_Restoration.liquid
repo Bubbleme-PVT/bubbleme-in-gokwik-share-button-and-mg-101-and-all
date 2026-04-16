@@ -1,0 +1,232 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  #ritual-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    overflow: hidden; /* Prevents horizontal scroll on the whole page */
+  }
+
+  .ritual-header-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto 15px;
+    padding: 0 20px;
+    text-align: {{ section.settings.heading_align }};
+  }
+
+  .ritual-header-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, {{ section.settings.heading_size }}px);
+    font-weight: 800;
+    margin: 0;
+    color: var(--heading-dark-{{ section_id }});
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* Subheading Styling */
+  .ritual-subheading-{{ section_id }} {
+    font-size: 18px;
+    color: var(--secondary-text-{{ section_id }});
+    margin-top: 15px;
+    max-width: 650px;
+    line-height: 1.6;
+    margin-left: {% if section.settings.heading_align == 'center' %}auto{% else %}0{% endif %};
+    margin-right: {% if section.settings.heading_align == 'center' %}auto{% else %}0{% endif %};
+  }
+
+  .ritual-scroll-container-{{ section_id }} {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: {{ section.settings.grid_gap }}px;
+    /* ADDED: Side padding (4%) to keep cards from sticking to the edges */
+    padding: 20px 4% 60px; 
+    margin-top: -10px;
+    scrollbar-width: none; 
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ritual-scroll-container-{{ section_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ritual-card-{{ section_id }} {
+    flex: 0 0 calc(25% - 20px); 
+    min-width: 300px;
+    background: {{ section.settings.card_bg_color }};
+    border-radius: {{ section.settings.card_roundness }}px;
+    padding: 40px;
+    scroll-snap-align: start;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-light-{{ section_id }});
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.3s ease, box-shadow 0.4s ease;
+  }
+
+  .ritual-card-{{ section_id }}:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary-blue-{{ section_id }});
+    box-shadow: 0 20px 40px rgba(33, 81, 116, 0.12);
+  }
+
+  .ritual-card-image {
+    width: {{ section.settings.img_size }}px;
+    height: {{ section.settings.img_size }}px;
+    border-radius: {{ section.settings.img_roundness }}%;
+    overflow: hidden;
+    margin-bottom: 5px;
+    background: var(--bg-soft-{{ section_id }});
+    flex-shrink: 0;
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  .ritual-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ritual-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    color: var(--heading-dark-{{ section_id }});
+    letter-spacing: -0.01em;
+  }
+
+  .ritual-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .ritual-step-text {
+    font-size: 15px;
+    color: var(--secondary-text-{{ section_id }});
+    line-height: 1.6;
+    margin: 0;
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .ritual-step-text::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-blue-{{ section_id }});
+    border-radius: 50%;
+  }
+
+  @media (max-width: 1100px) {
+    .ritual-card-{{ section_id }} { flex: 0 0 calc(45% - 10px); }
+  }
+
+  @media (max-width: 767px) {
+    .ritual-header-{{ section_id }} h2 { font-size: 28px; }
+    .ritual-card-{{ section_id }} {
+      flex: 0 0 85%; 
+      padding: 30px;
+      min-width: 260px;
+    }
+    .ritual-scroll-container-{{ section_id }} {
+      padding-top: 15px;
+      padding-left: 20px; /* Specific mobile offset */
+    }
+  }
+{%- endstyle -%}
+
+<section id="ritual-{{ section_id }}">
+  <div class="ritual-header-{{ section_id }}">
+    <h2>{{ section.settings.heading }}</h2>
+    {% if section.settings.subheading != blank %}
+      <p class="ritual-subheading-{{ section_id }}">{{ section.settings.subheading }}</p>
+    {% endif %}
+  </div>
+
+  <div class="ritual-scroll-container-{{ section_id }}">
+    {% for block in section.blocks %}
+      <div class="ritual-card-{{ section_id }}" {{ block.shopify_attributes }}>
+        
+        <div class="ritual-card-image">
+          {% if block.settings.image != blank %}
+            {{ block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy' }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+
+        <h3 class="ritual-card-title">{{ block.settings.title }}</h3>
+
+        <div class="ritual-steps">
+          {% if block.settings.step_1 != blank %}
+            <p class="ritual-step-text">{{ block.settings.step_1 }}</p>
+          {% endif %}
+
+          {% if block.settings.step_2 != blank %}
+            <p class="ritual-step-text">{{ block.settings.step_2 }}</p>
+          {% endif %}
+
+          {% if block.settings.step_3 != blank %}
+            <p class="ritual-step-text">{{ block.settings.step_3 }}</p>
+          {% endif %}
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rituals Restoration 2.0",
+  "settings": [
+    { "type": "header", "content": "Section Layout" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Container Max Width", "min": 800, "max": 1400, "step": 50, "default": 1200 },
+    { "type": "header", "content": "Heading Style" },
+    { "type": "text", "id": "heading", "label": "Heading Text", "default": "Rituals for Restoration" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading Text", "default": "Daily practices to help you recharge and find balance." },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 24, "max": 60, "step": 2, "default": 42 },
+    { "type": "select", "id": "heading_align", "label": "Heading Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" },
+    { "type": "header", "content": "Card Styling" },
+    { "type": "color", "id": "card_bg_color", "label": "Card Background", "default": "#ffffff" },
+    { "type": "range", "id": "card_roundness", "label": "Card Corner Radius", "min": 0, "max": 60, "step": 4, "default": 32 },
+    { "type": "range", "id": "grid_gap", "label": "Gap Between Cards", "min": 10, "max": 50, "step": 5, "default": 25 },
+    { "type": "header", "content": "Card Image Settings" },
+    { "type": "range", "id": "img_size", "label": "Image Size (px)", "min": 60, "max": 150, "step": 5, "default": 90 },
+    { "type": "range", "id": "img_roundness", "label": "Image Roundness (%)", "min": 0, "max": 50, "step": 5, "default": 50 },
+    { "type": "header", "content": "Section Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "ritual",
+      "name": "Ritual Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Ritual Image" },
+        { "type": "text", "id": "title", "label": "Ritual Title", "default": "Sleep Ritual" },
+        { "type": "textarea", "id": "step_1", "label": "Point 1", "default": "Digital detox 60 mins before bed." },
+        { "type": "textarea", "id": "step_2", "label": "Point 2", "default": "4-7-8 rhythmic breathing." },
+        { "type": "textarea", "id": "step_3", "label": "Point 3", "default": "Bubble Me Sleep Mg spray." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Rituals Restoration 2.0" }]
+}
+{% endschema %}

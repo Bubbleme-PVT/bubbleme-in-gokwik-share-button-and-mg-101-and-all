@@ -1,0 +1,299 @@
+{% schema %}
+{
+  "name": "Partner Inquiry Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Title",
+      "default": "Partner With Us"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Please fill the details below. Our team will contact you shortly."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Partner Inquiry Form"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="page-width" id="my-popup">
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div class="close-button" onclick='document.getElementById("modal").style.display = "none";'>
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="icon icon-close" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
+      </svg>      
+    </div>
+  {% if section.settings.heading != blank %}
+    <h2 class="title">
+      {{ section.settings.heading }}
+    </h2>
+  {% endif %}
+
+  {% if section.settings.subheading != blank %}
+    <p>
+      {{ section.settings.subheading }}
+    </p>
+  {% endif %}
+
+  {% form 'contact', id: 'PartnerInquiryForm', class: 'contact-form' %}
+
+    {% if form.posted_successfully? %}
+      <style>
+        form#PartnerInquiryForm:has(.form-status.form__message) .form-status.form__message + div {
+            display: none;
+        }
+        form#PartnerInquiryForm:has(.form-status.form__message) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .modal-content:has(.form-status.form__message) h2, .modal-content:has(.form-status.form__message) > p {
+            display: none;
+        }
+        .modal-content:has(.form-status.form__message) {
+            height: 100%;
+        }
+        p.form-status.form__message {
+            font-size: 20px;
+        }        
+      </style>
+      <p class="form-status form__message" role="status">
+        Thank you! Your details have been submitted successfully.
+      </p>
+    {% endif %}
+
+    <div class="grid grid--2-col">
+
+      <!-- Full Name -->
+      <div class="field">
+        <input class="field__input" type="text"
+          name="contact[Full Name]"
+          placeholder="e.g. Dr. Rahul Sharma"
+          required>
+        <label class="field__label">Full Name <span>*</span></label>
+      </div>
+
+      <!-- Clinic Name -->
+      <div class="field">
+        <input class="field__input" type="text"
+          name="contact[Clinic / Studio / Practice Name]"
+          placeholder="e.g. HealWell Physiotherapy Clinic"
+          required>
+        <label class="field__label">
+          Clinic / Studio / Practice Name <span>*</span>
+        </label>
+      </div>
+
+      <!-- Specialty -->
+      <div class="field">
+        <select class="field__input"
+          name="contact[Specialty]"
+          id="SpecialtySelect"
+          required>
+          <option value="">Select your specialty</option>
+          <option>Orthopedic</option>
+          <option>Physiotherapist</option>
+          <option>Yoga</option>
+          <option>Dietician</option>
+          <option>General Physician</option>
+          <option>Psychologist</option>
+          <option value="Other">Other</option>
+        </select>
+        <label class="field__label">Specialty <span>*</span></label>
+      </div>
+
+      <!-- Other Specialty -->
+      <div class="field hidden" id="OtherSpecialtyField">
+        <input class="field__input" type="text"
+          name="contact[Other Specialty]"
+          placeholder="e.g. Sports Rehab Specialist">
+        <label class="field__label">Please specify specialty</label>
+      </div>
+
+      <!-- City -->
+      <div class="field">
+        <input class="field__input" type="text"
+          name="contact[City]"
+          placeholder="e.g. Mumbai"
+          required>
+        <label class="field__label">City <span>*</span></label>
+      </div>
+
+      <!-- Pin Code -->
+      <div class="field">
+        <input class="field__input" type="text"
+          name="contact[Pin Code]"
+          placeholder="e.g. 400001"
+          required>
+        <label class="field__label">Pin Code <span>*</span></label>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="field">
+        <input class="field__input" type="tel"
+          name="contact[WhatsApp Number]"
+          placeholder="e.g. 9876543210"
+          required>
+        <label class="field__label">WhatsApp Number <span>*</span></label>
+      </div>
+
+      <!-- Email -->
+      <div class="field">
+        <input class="field__input" type="email"
+          name="contact[email]"
+          placeholder="e.g. doctor@email.com"
+          required>
+        <label class="field__label">Email Address <span>*</span></label>
+      </div>
+
+      <!-- Footfall -->
+      <div class="field grid-column-span-2">
+        <input class="field__input" type="text"
+          name="contact[Average Patient Footfall]"
+          placeholder="e.g. 20–30 patients per day">
+        <label class="field__label">Average Patient Footfall</label>
+      </div>
+
+      <!-- Area of Interest -->
+      <div class="grid-column-span-2">
+        <p><strong>Area of Interest *</strong></p>
+
+        <div class="interest-inline">
+          <label>
+            <input type="radio"
+              name="contact[Area of Interest]"
+              value="Recommendation"
+              required>
+            Recommendation
+          </label>
+
+          <label>
+            <input type="radio"
+              name="contact[Area of Interest]"
+              value="Reselling">
+            Reselling
+          </label>
+
+          <label>
+            <input type="radio"
+              name="contact[Area of Interest]"
+              value="Both">
+            Both
+          </label>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="grid-column-span-2 submit-center">
+        <button type="submit" class="button button--primary">
+          Submit Details
+        </button>
+      </div>
+
+    </div>
+
+  {% endform %}
+  </div>
+</div>
+</section>
+
+<style>
+.modal {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center; align-items: center;
+  z-index: 5
+}
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 100%;
+    position: relative;
+    max-height: 100vh;
+    overflow: scroll;
+}
+svg.icon.icon-close {
+    height: 3.2rem;
+    width: 3.2rem;
+    margin-top: 0.1rem;
+}
+.close-button {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+.hidden {
+  display: none;
+}
+
+/* Force 2 column layout */
+.grid.grid--2-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* Full width rows */
+.grid-column-span-2 {
+  grid-column: 1 / -1;
+}
+
+/* Area of interest inline */
+.interest-inline {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* Center submit button */
+.submit-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .grid.grid--2-col {
+    grid-template-columns: 1fr;
+  }
+
+  .interest-inline {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+</style>
+<script>
+const modal = document.getElementById("modal");
+if(window.location.href.includes('#partnerform') || window.location.href.includes('#PartnerInquiryForm') ){
+  modal.style.display = "flex";
+}
+document.querySelectorAll('a[href="#partnerform"]').forEach(function (el) {
+  el.addEventListener('click', function (e) {
+    modal.style.display = "flex";
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const specialty = document.getElementById('SpecialtySelect');
+  const otherField = document.getElementById('OtherSpecialtyField');
+
+  if (specialty && otherField) {
+    specialty.addEventListener('change', function () {
+      otherField.classList.toggle('hidden', this.value !== 'Other');
+    });
+  }
+});
+</script>

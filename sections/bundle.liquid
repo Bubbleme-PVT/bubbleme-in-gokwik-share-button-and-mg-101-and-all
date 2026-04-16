@@ -1,0 +1,435 @@
+{{ 'mnm-bundle.css' | asset_url | stylesheet_tag }}
+<style>
+  /* Mobile and Small Screens (up to 989px) */
+  @media screen and (max-width: 989px) {
+    .mnm-layout {
+      display: flex !important;
+      flex-direction: column-reverse !important; /* This moves the sidebar to the bottom */
+      gap: 10px; /* Decreased gap between grid and sidebar */
+    }
+
+    .mnm-sidebar {
+      width: 100% !important;
+      display: block !important; /* Fixes visibility */
+      margin-top: 20px; /* Decreased top margin */
+      padding-bottom: 30px !important; /* Significantly decreased bottom gap to the bar */
+      border-top: 1px solid #e8e8e8;
+      padding-top: 20px;
+    }
+
+    /* Ensure checkout button is visible and styled on mobile */
+    .mnm-cta {
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      width: 100% !important;
+      min-height: 50px;
+      visibility: visible !important;
+      opacity: 1 !important;
+      margin-bottom: 0 !important; /* Ensure no margin pushes the bottom bar away */
+    }
+
+    /* Fix for the sticky bar to ensure it doesn't hide the checkout button */
+    .mnm-sticky-bar {
+      z-index: 999;
+    }
+  }
+
+  /* Desktop (990px and up) - Keeps your original layout */
+  @media screen and (min-width: 990px) {
+    .mnm-layout {
+      display: grid !important;
+      grid-template-columns: 1fr 350px !important; /* Adjust sidebar width here */
+      gap: 40px;
+    }
+    
+    .mnm-sidebar {
+      position: sticky;
+      top: 20px;
+    }
+  }
+
+  /* Gray out disabled button so it's visible but clearly not clickable */
+  .mnm-cta:disabled, 
+  .mnm-cta[disabled] {
+    background-color: #d1d1d1 !important;
+    color: #ffffff !important;
+    cursor: not-allowed !important;
+    border: none !important;
+  }
+</style>
+{{ 'mnm-bundle.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign b1_name        = page.metafields.custom.bundle_1_name.value
+  assign b2_name        = page.metafields.custom.bundle_2_name.value
+  assign b1_vars        = page.metafields.custom.bundle_1.value
+  assign b2_vars        = page.metafields.custom.bundle_2.value
+  assign b1_limit       = page.metafields.custom.limit_for_1.value | plus: 0
+  assign b2_limit       = page.metafields.custom.limit_for_2.value | plus: 0
+  assign b1_price_cents = page.metafields.custom.bundle_price_1.value
+  assign b2_price_cents = page.metafields.custom.bundle_price_2.value
+  unless b1_name and b1_name != ''
+    assign b1_name = 'Bundle 1'
+  endunless
+  unless b2_name and b2_name != ''
+    assign b2_name = 'Bundle 2'
+  endunless
+  if b1_limit == 0
+    assign b1_limit = 1
+  endif
+  if b2_limit == 0
+    assign b2_limit = 1
+  endif
+-%}
+
+<div class="mnm-section section-spacing color-scheme" id="mnm-section-{{ section.id }}">
+  <div class="page-width-desktop
+        
+         page-width">
+    <div class="mnm-layout"
+          data-section-id="{{ section.id }}"
+     data-b1-limit="{{ b1_limit }}"
+     data-b2-limit="{{ b2_limit }}"
+     data-has-b2="{% if b2_vars and b2_vars.size > 0 %}true{% else %}false{% endif %}">
+
+      <!-- ══════════════════════════════════
+           LEFT — Product Grid
+           ══════════════════════════════════ -->
+      <div class="mnm-products">
+        <h2 class="mnm-flavors-title">Choose Your Soak</h2>
+
+        {%- for grid_num in (1..2) -%}
+          {%- if grid_num == 1 -%}
+            {%- assign active_vars = b1_vars -%}
+            {%- assign active_name = b1_name -%}
+          {%- else -%}
+            {%- assign active_vars = b2_vars -%}
+            {%- assign active_name = b2_name -%}
+          {%- endif -%}
+
+          <div class="mnm-list"
+               id="mnm-grid-{{ grid_num }}"
+               data-grid="{{ grid_num }}"
+               {%- if grid_num == 2 %} hidden{%- endif -%}>
+
+            {%- if active_vars and active_vars.size > 0 -%}
+              {%- for variant in active_vars -%}
+                {%- liquid
+                  assign product = variant.product
+
+                  if variant.image
+                    assign card_img     = variant.image | image_url: width: 600
+                    assign card_img_2x  = variant.image | image_url: width: 1200
+                  elsif product.featured_image
+                    assign card_img     = product.featured_image | image_url: width: 600
+                    assign card_img_2x  = product.featured_image | image_url: width: 1200
+                  else
+                    assign card_img    = ''
+                    assign card_img_2x = ''
+                  endif
+
+                  assign has_sale = false
+                  assign sale_pct = ''
+                  if variant.compare_at_price > variant.price
+                    assign has_sale  = true
+                    assign pct_off   = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price
+                    assign sale_pct  = pct_off | append: '% off'
+                  endif
+
+                  assign price_str     = variant.price | money
+                  assign compare_str   = variant.compare_at_price | money
+                -%}
+
+                <div class="mnm-card-wrap mnm-card"
+                     data-variant-id="{{ variant.id }}"
+                     data-product-title="{{ product.title | escape }}"
+                     data-variant-title="{{ variant.title | escape }}"
+                     data-price="{{ variant.price }}"
+                     data-price-money="{{ price_str | escape }}"
+                     data-compare-at="{{ variant.compare_at_price }}"
+                     data-compare-at-money="{{ compare_str | escape }}"
+                     data-has-sale="{{ has_sale }}"
+                     data-sale-pct="{{ sale_pct | escape }}"
+                     data-img="{{ card_img }}"
+                     data-img-2x="{{ card_img_2x }}"
+                     data-image="{{ card_img }}"
+                     data-grid="{{ grid_num }}">
+
+                  {%- render 'bundle-card-product',
+                    card_product: product,
+                    media_aspect_ratio: 'square',
+                    show_secondary_image: false,
+                    show_vendor: false,
+                    show_rating: true,
+                    show_quick_add: false,
+                    lazy_load: true,
+                    section_id: section.id,
+                    extend_height: false
+                  -%}
+
+                </div><!-- /.mnm-card-wrap -->
+
+              {%- endfor -%}
+            {%- else -%}
+              <p class="mnm-empty">No products set up for <em>{{ active_name }}</em>.</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div><!-- /.mnm-products -->
+
+
+      <!-- ══════════════════════════════════
+           RIGHT — Sidebar
+           ══════════════════════════════════ -->
+      <aside class="mnm-sidebar" aria-label="Bundle builder">
+
+        <h2 class="mnm-sidebar__title">Build Your Bundle</h2>
+
+        <!-- Step 1: Size -->
+        <div class="mnm-step">
+          <div class="h-stack gap-2 mnm-step__hd">
+            <span class="mnm-step__num" aria-hidden="true">1</span>
+            <h3>Select Size</h3>
+          </div>
+          <div class="mnm-type-btns" role="radiogroup" aria-label="Select bundle type">
+            <button type="button"
+                    class="mnm-type-btn mnm-type-btn--active"
+                    data-bundle="1"
+                    data-limit="{{ b1_limit }}"
+                    role="radio"
+                    aria-checked="true">
+              {{ b1_name }}
+              <span class="mnm-type-btn__sub">{{ b1_limit }} items</span>
+            </button>
+            {%- if b2_vars and b2_vars.size > 0 -%}
+  <button type="button"
+          class="mnm-type-btn"
+          data-bundle="2"
+          data-limit="{{ b2_limit }}"
+          role="radio"
+          aria-checked="false">
+    {{ b2_name }}
+    <span class="mnm-type-btn__sub">{{ b2_limit }} items</span>
+  </button>
+{%- endif -%}
+          </div>
+        </div>
+
+        <!-- Step 2: Selection slots -->
+        <div class="mnm-step mnm-step--flavors">
+          <div class="h-stack gap-2 mnm-step__hd">
+            <span class="mnm-step__num" aria-hidden="true">2</span>
+            <h3 class="h-stack gap-1">
+              Your Selection
+              <span class="mnm-count"
+                    id="mnm-count"
+                    aria-live="polite"
+                    aria-atomic="true">0 / {{ b1_limit }}</span>
+            </h3>
+          </div>
+          <div class="mnm-slots"
+               id="mnm-slots"
+               aria-label="Selected products"
+               aria-live="polite"></div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="mnm-progress-wrap">
+          <div class="mnm-progress"
+               role="progressbar"
+               aria-valuemin="0"
+               aria-valuemax="100"
+               aria-valuenow="0"
+               id="mnm-progress">
+            <div class="mnm-progress__fill" id="mnm-progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mnm-summary">
+          <div class="mnm-summary__row">
+            <span class="text-subdued">Total Items</span>
+            <span class="bold"
+                  id="mnm-total-items"
+                  aria-live="polite"
+                  aria-atomic="true">0</span>
+          </div>
+          {%- if b1_price_cents and b1_price_cents != 0 -%}
+          <div class="mnm-summary__price-row" id="mnm-price-row">
+            <span class="label">Bundle Price</span>
+            <span class="price" id="mnm-bundle-price">{{ b1_price_cents | money }}</span>
+          </div>
+          {%- endif -%}
+        </div>
+
+        <!-- CTA -->
+        <button type="button"
+                class="mnm-cta"
+                id="mnm-cta"
+                disabled
+                aria-disabled="true"
+                data-state="idle">
+          <span id="mnm-cta-text">Add {{ b1_limit }} items to complete</span>
+        </button>
+
+        <!-- Message -->
+        <div class="mnm-msg" id="mnm-msg" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      </aside><!-- /.mnm-sidebar -->
+
+    </div><!-- /.mnm-layout -->
+  </div><!-- /.container -->
+</div><!-- /.mnm-section -->
+
+
+<!-- ══════════════════════════════════
+     STICKY BAR
+     ══════════════════════════════════ -->
+<div class="mnm-sticky-bar"
+     id="mnm-sticky-bar"
+     aria-hidden="true"
+     data-section="{{ section.id }}">
+
+  <!-- Expandable slot panel -->
+  <div class="mnm-sticky-bar__panel" id="mnm-bar-panel" hidden>
+    <div class="container">
+      <div class="mnm-slots mnm-bar-slots"
+           id="mnm-bar-slots"
+           aria-label="Selected products"></div>
+    </div>
+  </div>
+
+  <!-- Main bar row -->
+  <div class="mnm-sticky-bar__body">
+    <div class="container">
+      <div class="mnm-sticky-bar__meta">
+        <span class="bold text-sm" id="mnm-bar-count">0 / {{ b1_limit }}</span>
+        <button type="button"
+                class="mnm-bar-toggle"
+                id="mnm-bar-toggle"
+                aria-expanded="false"
+                aria-controls="mnm-bar-panel">
+          View Details
+          <svg class="mnm-bar-toggle__icon" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true">
+            <path d="M1 7L6 2L11 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mnm-progress mnm-sticky-bar__progress"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="0"
+           id="mnm-bar-progress">
+        <div class="mnm-progress__fill" id="mnm-bar-progress-fill"></div>
+      </div>
+
+      <button type="button"
+              class="mnm-bar-cta"
+              id="mnm-bar-cta"
+              disabled
+              aria-disabled="true"
+              data-state="idle">
+        <span id="mnm-bar-cta-text">Add {{ b1_limit }} items to complete</span>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /.mnm-sticky-bar -->
+
+
+<!-- Scripts -->
+<script src="{{ 'mnm-bundle.js' | asset_url }}" defer></script>
+
+<script>
+  window.MNM_CONFIG = {
+    moneyFormat:      {{ shop.money_format | json }},
+    bundleNames:      { 1: {{ b1_name | json }},              2: {{ b2_name | json }} },
+    bundlePriceCents: { 1: {{ b1_price_cents | default: 0 }}, 2: {{ b2_price_cents | default: 0 }} },
+    sectionId:        {{ section.id | json }}
+  };
+
+  /* ── Visual patch — swap variant image, price, badge, subtitle ── */
+  function mnmPatchCards() {
+
+    /* Block link navigation inside cards */
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('.mnm-card-wrap a');
+      if (link) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
+    document.querySelectorAll('.mnm-card-wrap').forEach(function (wrap) {
+      var varImg       = wrap.dataset.img;
+      var varImg2x     = wrap.dataset.img2x;
+      var hasSale      = wrap.dataset.hasSale === 'true';
+      var salePct      = wrap.dataset.salePct;
+      var priceMoney   = wrap.dataset.priceMoney;
+      var compareMoney = wrap.dataset.compareAtMoney;
+      var varTitle     = wrap.dataset.variantTitle;
+
+      /* 1 — Swap image */
+      if (varImg) {
+        wrap.querySelectorAll('.card__media img, .media img').forEach(function (img) {
+          img.src    = varImg;
+          img.srcset = varImg2x ? varImg + ' 1x, ' + varImg2x + ' 2x' : varImg;
+          img.removeAttribute('dt');
+          img.removeAttribute('d-src');
+        });
+      }
+
+      /* 2 — Sale badge */
+      wrap.querySelectorAll('.card__badge, .badge--sale, .card__content--badge').forEach(function (b) { b.remove(); });
+      if (hasSale && salePct) {
+        var badge = document.createElement('span');
+        badge.className   = 'mnm-card__sale-badge';
+        badge.textContent = salePct;
+        var inner = wrap.querySelector('.card__inner');
+        if (inner) { inner.style.position = 'relative'; inner.prepend(badge); }
+      }
+
+      /* 3 — Price override */
+      if (priceMoney) {
+        var saleEl    = wrap.querySelector('.price-item--sale, .price-item--last');
+        var regularEl = wrap.querySelector('.price-item--regular');
+        if (hasSale) {
+          if (saleEl)    { saleEl.textContent = priceMoney; saleEl.style.cssText = ''; }
+          if (regularEl) { regularEl.textContent = compareMoney; }
+          var priceWrap = wrap.querySelector('.price');
+          if (priceWrap) priceWrap.classList.add('price--on-sale');
+        } else {
+          if (saleEl)    { saleEl.textContent = priceMoney; }
+          if (regularEl) { regularEl.textContent = ''; }
+        }
+      }
+
+      /* 4 — Variant subtitle */
+      if (varTitle && varTitle !== 'Default Title') {
+        var headingEl = wrap.querySelector('.card__heading');
+        if (headingEl && !wrap.querySelector('.mnm-variant-subtitle')) {
+          var sub = document.createElement('p');
+          sub.className   = 'mnm-variant-subtitle';
+          sub.textContent = varTitle;
+          headingEl.insertAdjacentElement('afterend', sub);
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mnmPatchCards);
+  } else {
+    mnmPatchCards();
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Mix & Match Bundle",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "Mix & Match Bundle" }]
+}
+{% endschema %}
+

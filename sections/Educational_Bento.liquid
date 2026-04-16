@@ -1,0 +1,300 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  #edu-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    /* Connected to the new, error-free schema IDs */
+    padding-top: {{ section.settings.custom_padding_top }}px;
+    padding-bottom: {{ section.settings.custom_padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    color: var(--secondary-text-{{ section_id }});
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .edu-container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .edu-header-{{ section_id }} {
+    margin-bottom: 20px;
+    text-align: {{ section.settings.heading_align }};
+  }
+
+  .edu-header-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, {{ section.settings.heading_size }}px);
+    font-weight: 800;
+    margin: 0 0 15px;
+    color: var(--heading-dark-{{ section_id }});
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .edu-header-{{ section_id }} p {
+    color: var(--secondary-text-{{ section_id }});
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0 auto;
+    {% if section.settings.heading_align == 'center' %}max-width: 650px;{% endif %}
+  }
+
+  .edu-grid-{{ section_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    grid-auto-rows: minmax(180px, auto);
+    padding-bottom: 20px;
+  }
+
+  .edu-card-{{ section_id }} {
+    background: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_roundness }}px;
+    padding: 35px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    text-decoration: none;
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  .edu-card-{{ section_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(33, 81, 116, 0.1);
+    border-color: var(--primary-blue-{{ section_id }});
+  }
+
+  .edu-card-big-{{ section_id }} {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  @media (min-width: 768px) {
+    {% if section.settings.hide_small_desktop %}
+      .edu-card-small-{{ section_id }} { display: none !important; }
+      .edu-grid-{{ section_id }} { grid-template-columns: 1fr; }
+      .edu-card-big-{{ section_id }} { grid-column: 1; justify-self: center; max-width: 800px; }
+    {% endif %}
+  }
+
+  {% if section.settings.show_watermark %}
+  .edu-card-big-{{ section_id }}::after {
+    content: "";
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 120px;
+    height: 120px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23215174' opacity='0.04'%3E%3Cpath d='M13 10V3L4 14H11V21L20 10H13Z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+  {% endif %}
+
+  .edu-custom-icon-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    margin-bottom: 20px;
+    object-fit: contain;
+  }
+
+  .edu-card-big-{{ section_id }} h3 { 
+    font-size: clamp(24px, 3vw, 32px); 
+    font-weight: 800; 
+    margin: 0 0 20px; 
+    color: var(--heading-dark-{{ section_id }}); 
+    letter-spacing: -0.01em;
+  }
+  
+  .edu-card-big-{{ section_id }} p { 
+    font-size: 15px; 
+    color: var(--secondary-text-{{ section_id }}); 
+    line-height: 1.6; 
+    max-width: 90%; 
+  }
+
+  .edu-card-small-{{ section_id }} h3 { 
+    font-size: 20px; 
+    font-weight: 800; 
+    margin: 0 0 8px; 
+    color: var(--heading-dark-{{ section_id }}); 
+    letter-spacing: -0.01em;
+  }
+  
+  .edu-card-small-{{ section_id }} p { 
+    font-size: 14px; 
+    color: var(--secondary-text-{{ section_id }}); 
+    margin: 0; 
+    line-height: 1.5; 
+  }
+
+  .download-icon-top-{{ section_id }} {
+    position: absolute; top: 25px; right: 25px;
+    font-weight: 800; font-size: 16px;
+    color: var(--primary-blue-{{ section_id }});
+    background: var(--bg-soft-{{ section_id }});
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+  }
+  
+  .edu-card-small-{{ section_id }}:hover .download-icon-top-{{ section_id }} {
+    transform: translateY(3px);
+  }
+
+  .edu-btn-{{ section_id }} {
+    background: var(--primary-blue-{{ section_id }});
+    color: #ffffff;
+    padding: 16px 36px;
+    border-radius: 100px;
+    font-weight: 800;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .edu-btn-{{ section_id }}:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 1024px) {
+    .edu-grid-{{ section_id }} { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 767px) {
+    .edu-header-{{ section_id }} h2 { font-size: 28px; }
+    .edu-header-{{ section_id }} p { font-size: 16px; }
+
+    .edu-grid-{{ section_id }} { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    {% if section.settings.hide_small_mobile %}
+      .edu-card-small-{{ section_id }} { display: none !important; }
+      .edu-grid-{{ section_id }} { grid-template-columns: 1fr !important; }
+    {% endif %}
+    
+    .edu-card-big-{{ section_id }} { grid-column: 1 / -1; grid-row: auto; padding: 30px 25px; }
+    .edu-card-small-{{ section_id }} { padding: 25px 20px; min-height: 200px; border-radius: 24px; }
+    .edu-card-small-{{ section_id }} h3 { font-size: 18px; }
+    .edu-card-small-{{ section_id }} p { font-size: 13px; }
+    .edu-custom-icon-{{ section_id }} { width: 32px; height: 32px; margin-bottom: 15px; }
+    .download-icon-top-{{ section_id }} { top: 15px; right: 15px; width: 28px; height: 28px; font-size: 14px; }
+  }
+{%- endstyle -%}
+
+<section id="edu-{{ section_id }}">
+  <div class="edu-container-{{ section_id }}">
+    <div class="edu-header-{{ section_id }}">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.subheading }}</p>
+    </div>
+
+    <div class="edu-grid-{{ section_id }}">
+      {% for block in section.blocks %}
+        {% if block.type == 'big_card' %}
+          <div class="edu-card-{{ section_id }} edu-card-big-{{ section_id }}" {{ block.shopify_attributes }}>
+            <div class="edu-top-{{ section_id }}">
+              {% if block.settings.custom_icon != blank %}
+                <img src="{{ block.settings.custom_icon | image_url: width: 100 }}" class="edu-custom-icon-{{ section_id }}" alt="{{ block.settings.title }}" loading="lazy">
+              {% else %}<div style="font-size: 32px; margin-bottom: 20px;">📘</div>{% endif %}
+            </div>
+            <div class="edu-content-{{ section_id }}">
+              <h3>{{ block.settings.title }}</h3>
+              <p>{{ block.settings.text }}</p>
+              <a href="{{ block.settings.link }}" class="edu-btn-{{ section_id }}">
+                {{ block.settings.btn_label }} <span>↓</span>
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ block.settings.link }}" class="edu-card-{{ section_id }} edu-card-small-{{ section_id }}" {{ block.shopify_attributes }}>
+            <div class="download-icon-top-{{ section_id }}">↓</div>
+            <div class="edu-top-small-{{ section_id }}">
+              {% if block.settings.custom_icon != blank %}
+                <img src="{{ block.settings.custom_icon | image_url: width: 100 }}" class="edu-custom-icon-{{ section_id }}" alt="{{ block.settings.title }}" loading="lazy">
+              {% else %}<div style="font-size: 24px; margin-bottom: 15px;">📄</div>{% endif %}
+            </div>
+            <div class="edu-content-small-{{ section_id }}">
+              <h3>{{ block.settings.title }}</h3>
+              <p>{{ block.settings.text }}</p>
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Educational Bento Pro",
+  "settings": [
+    { "type": "header", "content": "Visibility" },
+    { "type": "checkbox", "id": "hide_small_desktop", "label": "Hide Small Cards on Desktop", "default": false },
+    { "type": "checkbox", "id": "hide_small_mobile", "label": "Hide Small Cards on Mobile", "default": false },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#f9f8f4" },
+    { "type": "color", "id": "card_bg", "label": "Card Background", "default": "#ffffff" },
+    { "type": "header", "content": "Typography" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Educational Downloads" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Expert resources for your ritual." },
+    { "type": "range", "id": "heading_size", "label": "Heading Font Size", "min": 24, "max": 64, "step": 1, "default": 42 },
+    { "type": "select", "id": "heading_align", "label": "Heading Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "left" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1400, "step": 10, "default": 1200 },
+    { "type": "header", "content": "Card Styling" },
+    { "type": "range", "id": "card_roundness", "label": "Card Roundness", "min": 0, "max": 60, "step": 1, "default": 32 },
+    { "type": "range", "id": "grid_gap", "label": "Gap Between Cards", "min": 0, "max": 60, "step": 1, "default": 20 },
+    { "type": "range", "id": "icon_size", "label": "Icon/Image Size", "min": 10, "max": 100, "step": 1, "default": 32 },
+    { "type": "checkbox", "id": "show_watermark", "label": "Show Lightning Watermark", "default": true },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "custom_padding_top", "label": "Top Space", "min": 0, "max": 100, "step": 1, "default": 80 },
+    { "type": "range", "id": "custom_padding_bottom", "label": "Bottom Space", "min": 0, "max": 100, "step": 1, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "big_card",
+      "name": "Featured Card (Big)",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "custom_icon", "label": "Custom Icon/SVG" },
+        { "type": "text", "id": "title", "label": "Title", "default": "The MG 101 Basics" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "The foundational guide to why magnesium matters." },
+        { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Download Full Guide" },
+        { "type": "url", "id": "link", "label": "Download Link" }
+      ]
+    },
+    {
+      "type": "small_card",
+      "name": "Download Card (Small)",
+      "settings": [
+        { "type": "image_picker", "id": "custom_icon", "label": "Custom Icon/SVG" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Sleep Optimization" },
+        { "type": "text", "id": "text", "label": "Subtitle", "default": "Protocols for nocturnal restoration." },
+        { "type": "url", "id": "link", "label": "Download Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Educational Bento Pro" }]
+}
+{% endschema %}

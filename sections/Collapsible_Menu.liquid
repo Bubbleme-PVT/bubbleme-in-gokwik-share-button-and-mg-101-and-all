@@ -1,0 +1,226 @@
+{%- liquid
+  assign sec_id = section.id | replace: '-', '' | downcase
+-%}
+
+{%- style -%}
+  .coll-menu-{{ sec_id }} {
+    --bg: {{ section.settings.bg_color }};
+    --card-bg: {{ section.settings.card_bg }};
+    --accent: {{ section.settings.accent_color }};
+    --text: {{ section.settings.text_color }};
+    --border: {{ section.settings.border_color }};
+    --radius: {{ section.settings.border_radius }}px;
+    background-color: var(--bg);
+    padding: {{ section.settings.pt }}px 20px {{ section.settings.pb }}px;
+    color: var(--text);
+  }
+
+  .coll-menu-wrap-{{ sec_id }} {
+    max-width: {{ section.settings.max_w }}px;
+    margin: 0 auto;
+  }
+
+  /* Help Card Style */
+  .coll-help-card-{{ sec_id }} {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,{{ section.settings.shadow_opacity }});
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+  }
+  .coll-help-card-{{ sec_id }} h2 { margin: 0 0 25px; font-weight: 800; color: var(--accent); font-size: 28px; }
+  .coll-help-info { 
+    display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 20px; 
+    font-weight: 600; font-size: 15px;
+  }
+  .coll-help-item { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; transition: opacity 0.2s; }
+  .coll-help-item:hover { opacity: 0.7; }
+  .coll-help-item svg { width: 20px; height: 20px; fill: var(--accent); }
+  .coll-help-hours { opacity: 0.6; font-size: 14px; }
+
+  /* Grouped Accordion Card */
+  .coll-card-{{ sec_id }} {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,{{ section.settings.shadow_opacity }});
+    border: 1px solid var(--border);
+  }
+
+  .coll-card-title-{{ sec_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 15px 0;
+    color: var(--text);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Individual Rows inside Card */
+  .coll-row-{{ sec_id }} { border-top: 1px solid var(--border); }
+  .coll-row-{{ sec_id }}:first-of-type { border-top: none; }
+
+  .coll-trigger-{{ sec_id }} {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0; background: none; border: none; cursor: pointer; text-align: left;
+    color: var(--text); font-weight: 700; font-size: 17px;
+  }
+
+  .coll-icon-{{ sec_id }} {
+    width: 24px; height: 24px; position: relative; transition: transform 0.3s ease; flex-shrink: 0;
+  }
+  
+  .coll-icon-{{ sec_id }}::before {
+    content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px;
+    border-right: 2.5px solid var(--accent); border-bottom: 2.5px solid var(--accent);
+    transform: translate(-50%, -70%) rotate(45deg); transition: transform 0.3s ease;
+  }
+
+  .is-open .coll-icon-{{ sec_id }} { transform: rotate(180deg); }
+
+  .coll-panel-{{ sec_id }} { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
+  .coll-content-{{ sec_id }} { padding: 0 0 20px 0; line-height: 1.6; opacity: 0.85; font-size: 15px; }
+
+  @media (max-width: 768px) {
+    .coll-help-info { flex-direction: column; gap: 15px; align-items: center; }
+    .coll-card-{{ sec_id }} { padding: 20px; }
+  }
+{%- endstyle -%}
+
+<section class="coll-menu-{{ sec_id }}">
+  <div class="coll-menu-wrap-{{ sec_id }}">
+
+    {%- if section.settings.show_help_card -%}
+      <div class="coll-help-card-{{ sec_id }}">
+        <h2>{{ section.settings.help_title }}</h2>
+        <div class="coll-help-info">
+          {% if section.settings.email != blank %}
+            <a href="mailto:{{ section.settings.email }}" class="coll-help-item">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              {{ section.settings.email }}
+            </a>
+          {% endif %}
+          {% if section.settings.phone != blank %}
+            <a href="tel:{{ section.settings.phone }}" class="coll-help-item">
+              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+              {{ section.settings.phone }}
+            </a>
+          {% endif %}
+        </div>
+        <div class="coll-help-hours">{{ section.settings.hours }}</div>
+      </div>
+    {%- endif -%}
+
+    <div class="coll-list-{{ sec_id }}">
+      {% for block in section.blocks %}
+        <div class="coll-card-{{ sec_id }}" {{ block.shopify_attributes }}>
+          {% if block.settings.category_title != blank %}
+            <h3 class="coll-card-title-{{ sec_id }}">{{ block.settings.category_title }}</h3>
+          {% endif %}
+          <div class="coll-rows-group">
+            {% for i in (1..5) %}
+              {% capture q_id %}q{{ i }}{% endcapture %}
+              {% capture a_id %}a{{ i }}{% endcapture %}
+              {% if block.settings[q_id] != blank %}
+                <div class="coll-row-{{ sec_id }}">
+                  <button class="coll-trigger-{{ sec_id }}" data-trigger aria-expanded="false">
+                    <span>{{ block.settings[q_id] }}</span>
+                    <div class="coll-icon-{{ sec_id }}"></div>
+                  </button>
+                  <div class="coll-panel-{{ sec_id }}">
+                    <div class="coll-content-{{ sec_id }}">{{ block.settings[a_id] }}</div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const initColl = () => {
+      document.querySelectorAll('.coll-trigger-{{ sec_id }}').forEach(btn => {
+        btn.onclick = () => {
+          const row = btn.parentElement;
+          const panel = btn.nextElementSibling;
+          const isOpen = row.classList.contains('is-open');
+          if (!isOpen && {{ section.settings.one_open }}) {
+            btn.closest('.coll-rows-group').querySelectorAll('.coll-row-{{ sec_id }}.is-open').forEach(el => {
+              el.classList.remove('is-open');
+              el.querySelector('.coll-panel-{{ sec_id }}').style.maxHeight = null;
+            });
+          }
+          row.classList.toggle('is-open');
+          panel.style.maxHeight = row.classList.contains('is-open') ? panel.scrollHeight + "px" : null;
+        };
+      });
+    };
+    initColl();
+    document.addEventListener('shopify:section:load', initColl);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collapsible Menu",
+  "settings": [
+    { "type": "header", "content": "Help Card" },
+    { "type": "checkbox", "id": "show_help_card", "label": "Show Help Card", "default": true },
+    { "type": "text", "id": "help_title", "label": "Help Title", "default": "policies" },
+    { "type": "text", "id": "email", "label": "Email", "default": "info@bubbleme.in" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "+91 8288807455" },
+    { "type": "text", "id": "hours", "label": "Hours Text", "default": "Monday - Saturday (9:30 AM - 6:30 PM)" },
+    { "type": "header", "content": "Style Settings" },
+    { "type": "range", "id": "max_w", "label": "Max Width", "min": 600, "max": 1200, "step": 10, "default": 860 },
+    { "type": "range", "id": "border_radius", "label": "Corner Roundness", "min": 0, "max": 50, "step": 1, "default": 24 },
+    { "type": "select", "id": "shadow_opacity", "label": "Shadow Strength", "options": [
+        { "value": "0.02", "label": "Ultra Light" },
+        { "value": "0.05", "label": "Light" },
+        { "value": "0.1", "label": "Medium" }
+      ], "default": "0.05" },
+    { "type": "checkbox", "id": "one_open", "label": "Only one open at a time (per card)", "default": true },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg", "label": "Card Background", "default": "#f9fcff" },
+    { "type": "color", "id": "border_color", "label": "Border/Divider Color", "default": "#e1eef9" },
+    { "type": "color", "id": "accent_color", "label": "Accent (Icons/Help Title)", "default": "#004a7c" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#002a48" },
+    { "type": "header", "content": "Section Spacing" },
+    { "type": "range", "id": "pt", "label": "Padding Top", "default": 60, "min": 0, "max": 100, "step": 1 },
+    { "type": "range", "id": "pb", "label": "Padding Bottom", "default": 60, "min": 0, "max": 100, "step": 1 }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Menu Group",
+      "settings": [
+        { "type": "text", "id": "category_title", "label": "Group Title", "default": "Orders & Shipping" },
+        { "type": "header", "content": "Item 1" },
+        { "type": "text", "id": "q1", "label": "Question 1", "default": "How to track my order?" },
+        { "type": "richtext", "id": "a1", "label": "Answer 1", "default": "<p>Content for question 1.</p>" },
+        { "type": "header", "content": "Item 2" },
+        { "type": "text", "id": "q2", "label": "Question 2" },
+        { "type": "richtext", "id": "a2", "label": "Answer 2" },
+        { "type": "header", "content": "Item 3" },
+        { "type": "text", "id": "q3", "label": "Question 3" },
+        { "type": "richtext", "id": "a3", "label": "Answer 3" },
+        { "type": "header", "content": "Item 4" },
+        { "type": "text", "id": "q4", "label": "Question 4" },
+        { "type": "richtext", "id": "a4", "label": "Answer 4" },
+        { "type": "header", "content": "Item 5" },
+        { "type": "text", "id": "q5", "label": "Question 5" },
+        { "type": "richtext", "id": "a5", "label": "Answer 5" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Collapsible Menu" }]
+}
+{% endschema %}

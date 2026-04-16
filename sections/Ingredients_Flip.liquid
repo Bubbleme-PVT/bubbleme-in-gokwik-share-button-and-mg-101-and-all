@@ -1,0 +1,505 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section_id }}: {{ section.settings.btn_bg | default: '#215174' }};
+    --btn-text-{{ section_id }}: {{ section.settings.btn_text_color | default: '#ffffff' }};
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+    
+    --tag-bg-{{ section_id }}: {{ section.settings.tag_bg_color | default: '#f1f1e6' }};
+    --tag-text-{{ section_id }}: {{ section.settings.tag_text_color | default: '#4B5563' }};
+    --link-color-{{ section_id }}: {{ section.settings.link_text_color | default: '#215174' }};
+  }
+
+  .ing-section-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    position: relative;
+    font-family: "Inter", "Montserrat", sans-serif;
+  }
+
+  .ing-header-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto 30px;
+    padding: 0 20px;
+    text-align: {{ section.settings.heading_align }};
+  }
+
+  /* Main Title */
+  .ing-title-{{ section_id }} {
+    color: var(--heading-dark-{{ section_id }});
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* Subheading */
+  .ing-subheading-{{ section_id }} {
+    font-size: 18px;
+    color: var(--secondary-text-{{ section_id }});
+    margin-top: 12px;
+    max-width: 600px;
+    line-height: 1.6;
+    margin-left: {% if section.settings.heading_align == 'center' %}auto{% else %}0{% endif %};
+    margin-right: {% if section.settings.heading_align == 'center' %}auto{% else %}0{% endif %};
+  }
+
+  /* Filters */
+  .ing-filters-{{ section_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto 40px;
+    max-width: {{ section.settings.max_width }}px;
+    padding: 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ing-filters-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .filter-btn-{{ section_id }} {
+    padding: 10px 24px;
+    border-radius: 50px;
+    border: 1px solid var(--border-light-{{ section_id }});
+    background: #fff;
+    color: var(--secondary-text-{{ section_id }});
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .filter-btn-{{ section_id }}.active {
+    background: var(--primary-blue-{{ section_id }});
+    color: var(--btn-text-{{ section_id }});
+    border-color: var(--primary-blue-{{ section_id }});
+  }
+
+  /* Grid Layout */
+  .ing-grid-wrapper-{{ section_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px 20px;
+    scroll-margin-top: 100px; 
+  }
+
+  .ing-card-wrapper-{{ section_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1; 
+    position: relative;
+    transition: opacity 0.3s ease;
+  }
+
+  .ing-card-{{ section_id }} {
+    position: relative;
+    width: 100%; height: 100%;
+    perspective: 2000px;
+  }
+
+  .ing-card-inner-{{ section_id }} {
+    position: relative;
+    width: 100%; height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .ing-card-inner-{{ section_id }}.is-flipped { transform: rotateY(180deg); }
+
+  .ing-card-front, .ing-card-back {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: {{ section.settings.roundness }}px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+    cursor: pointer;
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  .ing-card-front { z-index: 2; background: #fff; display: flex; flex-direction: column; justify-content: flex-end; }
+  .ing-card-back { transform: rotateY(180deg); padding: 25px; background: var(--bg-soft-{{ section_id }}); display: flex; flex-direction: column; }
+
+  .ing-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+  .ing-bg-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ing-content-overlay {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    padding: 25px;
+    min-height: {{ section.settings.overlay_height_desktop }}%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .ing-content-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    {% if section.settings.enable_glass %}
+      backdrop-filter: blur({{ section.settings.glass_blur }}px);
+      -webkit-backdrop-filter: blur({{ section.settings.glass_blur }}px);
+    {% endif %}
+    {%- assign glass_opacity = section.settings.opacity | divided_by: 100.0 -%}
+    {%- assign glass_color = section.settings.card_bg | color_modify: 'alpha', glass_opacity -%}
+    {% if section.settings.enable_gradient %}
+      background: linear-gradient({{ section.settings.glass_direction }}, {{ glass_color }} 0%, {{ glass_color | color_modify: 'alpha', 0.4 }} 70%, transparent 100%);
+    {% else %}
+      background: {{ glass_color }};
+    {% endif %}
+  }
+
+  .ing-tags-wrap { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  
+  .ing-tag { 
+    background: var(--tag-bg-{{ section_id }}); 
+    color: var(--tag-text-{{ section_id }}); 
+    font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 50px; 
+    text-transform: uppercase; letter-spacing: 0.12em; white-space: nowrap; 
+  }
+  
+  .ing-card-title { 
+    color: var(--heading-dark-{{ section_id }}); 
+    font-size: 22px; 
+    font-weight: 800; 
+    margin: 0 0 8px; 
+    line-height: 1.1; 
+    letter-spacing: -0.01em;
+  }
+
+  .ing-card-text { 
+    font-size: 15px; 
+    line-height: 1.5; 
+    color: var(--secondary-text-{{ section_id }}); 
+    margin-bottom: 12px; 
+  }
+
+  .ritual-label { 
+    text-transform: uppercase; 
+    font-size: 10px; 
+    font-weight: 800; 
+    color: #94A3B8; 
+    margin-bottom: 4px; 
+    display: block; 
+    border-top: 1px solid rgba(0,0,0,0.05); 
+    padding-top: 12px; 
+    letter-spacing: 0.12em;
+  }
+  
+  .ritual-name-link { text-decoration: none; display: inline-block; position: relative; z-index: 15; }
+  
+  .ritual-name { 
+    font-size: {{ section.settings.link_font_size }}px; 
+    font-weight: 800; 
+    color: var(--link-color-{{ section_id }}); 
+    text-decoration: underline; text-underline-offset: 4px; 
+  }
+  
+  .ing-plus-btn { position: absolute; bottom: 20px; right: 15px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; z-index: 10; font-size: 18px; color: var(--link-color-{{ section_id }}); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+
+  .ing-footer-wrap { display: flex; justify-content: center; margin-top: 20px; width: 100%; padding: 0 20px; }
+
+/* Show More Button Updated to match "View Detail" style */
+  .show-more-btn-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px; /* Adjusted for better proportion */
+    background-color: #ffffff; /* White background as per image */
+    color: #215174;            /* Dark blue text */
+    border: 1px solid #215174; /* Thin blue border */
+    border-radius: 50px;       /* Pill shape */
+    font-size: 14px; 
+    font-weight: 600;          /* Clean, medium-bold weight */
+    text-transform: capitalize; /* "View Detail" style */
+    text-decoration: none; 
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 180px;
+    margin: 0 auto;
+  }
+
+  .show-more-btn-{{ section_id }}:hover { 
+    background-color: #215174;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(33, 81, 116, 0.15);
+  }
+
+  /* --- RESPONSIVE BREAKPOINTS --- */
+
+  @media (max-width: 1024px) {
+    .ing-grid-wrapper-{{ section_id }} { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 767px) {
+    .ing-section-{{ section_id }} {
+      padding-top: calc({{ section.settings.padding_top }}px * 0.6);
+      padding-bottom: calc({{ section.settings.padding_bottom }}px * 0.6);
+    }
+    
+    .ing-title-{{ section_id }} { font-size: 28px; }
+    .ing-subheading-{{ section_id }} { font-size: 16px; }
+
+    .ing-filters-{{ section_id }} { 
+      justify-content: flex-start;
+      margin-bottom: 20px; 
+      padding-bottom: 10px; 
+    }
+
+    .ing-grid-wrapper-{{ section_id }} { 
+      grid-template-columns: 1fr; 
+      gap: 20px;
+    }
+
+    .ing-card-wrapper-{{ section_id }} { 
+      width: 100%;
+      max-width: 320px; 
+      margin: 0 auto;   
+      aspect-ratio: 1 / 1; 
+    }
+
+    .ing-content-overlay { min-height: {{ section.settings.overlay_height_mobile }}%; padding: 16px; }
+    .ing-card-back { padding: 16px; }
+    .ing-card-title { font-size: 20px; }
+    .ing-card-text, .ritual-name { font-size: 14px; }
+    .ing-plus-btn { bottom: 15px; right: 15px; width: 32px; height: 32px; font-size: 16px; }
+
+    .show-more-btn-{{ section_id }} { 
+      width: 10%; 
+      max-width: 320px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="ing-section-{{ section_id }}">
+  <div class="ing-header-{{ section_id }}">
+    {% if section.settings.heading != blank %}
+      <h2 class="ing-title-{{ section_id }}">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="ing-subheading-{{ section_id }}">{{ section.settings.subheading }}</p>
+    {% endif %}
+  </div>
+
+  <div class="ing-filters-{{ section_id }}">
+    <button class="filter-btn-{{ section_id }} active" data-filter="all">All</button>
+    {%- assign categories = "" -%}
+    {%- for block in section.blocks -%}
+      {%- assign cat = block.settings.category | strip -%}
+      {%- if cat != blank -%}
+        {%- assign handle = cat | handleize -%}
+        {%- unless categories contains handle -%}
+          <button class="filter-btn-{{ section_id }}" data-filter="{{ handle }}">{{ cat }}</button>
+          {%- capture categories -%}{{ categories }}{{ handle }},{%- endcapture -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+  
+  <div class="ing-grid-wrapper-{{ section_id }}" id="IngGrid-{{ section_id }}">
+    {% for block in section.blocks %}
+      <div class="ing-card-wrapper-{{ section_id }} js-card-item" 
+           data-category="{{ block.settings.category | handleize }}" {{ block.shopify_attributes }}>
+        <div class="ing-card-{{ section_id }}">
+          <div class="ing-card-inner-{{ section_id }}" id="Inner-{{ block.id }}">
+            
+            <div class="ing-card-front">
+              <div class="ing-bg-img" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">
+                {% if block.settings.image != blank %}
+                  <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title }}" loading="lazy">
+                {% endif %}
+              </div>
+              <div class="ing-content-overlay">
+                <div onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')" style="cursor:pointer;">
+                  <h3 class="ing-card-title">{{ block.settings.title }}</h3>
+                  <p class="ing-card-text">{{ block.settings.short_desc }}</p>
+                  <div class="ing-tags-wrap">
+                    {% if block.settings.tag_1 != blank %}<span class="ing-tag">{{ block.settings.tag_1 }}</span>{% endif %}
+                    {% if block.settings.tag_2 != blank %}<span class="ing-tag">{{ block.settings.tag_2 }}</span>{% endif %}
+                    {% if block.settings.tag_3 != blank %}<span class="ing-tag">{{ block.settings.tag_3 }}</span>{% endif %}
+                    {% if block.settings.tag_4 != blank %}<span class="ing-tag">{{ block.settings.tag_4 }}</span>{% endif %}
+                  </div>
+                  {% if block.settings.ritual_label != blank %}
+                    <div class="ritual-label">{{ block.settings.ritual_label }}</div>
+                  {% endif %}
+                </div>
+
+                {% if block.settings.product_link != blank %}
+                  <a href="{{ block.settings.product_link }}" class="ritual-name-link">
+                    <div class="ritual-name">{{ block.settings.ritual_name }}</div>
+                  </a>
+                {% else %}
+                   <div class="ritual-name">{{ block.settings.ritual_name }}</div>
+                {% endif %}
+                <div class="ing-plus-btn" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">+</div>
+              </div>
+            </div>
+
+            <div class="ing-card-back" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">
+              <h3 class="ing-card-title" style="margin-bottom: 10px;">{{ block.settings.title }}</h3>
+              <div class="ing-card-text" style="overflow-y: auto; flex-grow: 1;">{{ block.settings.full_desc }}</div>
+              <div class="ing-plus-btn" style="background: #fff;">×</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="ing-footer-wrap">
+    <button id="ShowMore-{{ section_id }}" class="show-more-btn-{{ section_id }}" style="display:none;">
+      <span class="btn-text">Show More</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const grid = document.getElementById('IngGrid-{{ section_id }}');
+    const showMoreBtn = document.getElementById('ShowMore-{{ section_id }}');
+    const btnText = showMoreBtn.querySelector('.btn-text');
+    const filters = document.querySelectorAll('.filter-btn-{{ section_id }}');
+    let isExpanded = false;
+
+    function updateVisibility() {
+      const allWrappers = Array.from(document.querySelectorAll('.ing-card-wrapper-{{ section_id }}'));
+      const activeFilter = document.querySelector('.filter-btn-{{ section_id }}.active').getAttribute('data-filter');
+      
+      const filteredItems = allWrappers.filter(item => {
+        return activeFilter === 'all' || item.getAttribute('data-category') === activeFilter;
+      });
+
+      // Hide all initially
+      allWrappers.forEach(item => {
+        item.style.display = 'none';
+        item.style.opacity = '0';
+      });
+
+      const isMobile = window.innerWidth < 768;
+      const limit = isMobile ? 4 : 8; 
+
+      filteredItems.forEach((item, index) => {
+        if (isExpanded || index < limit) {
+          item.style.display = 'block'; 
+          setTimeout(() => item.style.opacity = '1', 50); 
+        }
+      });
+
+      // Show button only if items exceed limit
+      if (filteredItems.length > limit) {
+        showMoreBtn.style.display = 'inline-flex';
+        btnText.textContent = isExpanded ? 'Show Less' : 'Show More';
+      } else {
+        showMoreBtn.style.display = 'none';
+      }
+    }
+
+    showMoreBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      if (!isExpanded) {
+        grid.scrollIntoView({ behavior: 'smooth' });
+      }
+      updateVisibility();
+    });
+
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        isExpanded = false; 
+        updateVisibility();
+      });
+    });
+
+    window.addEventListener('resize', updateVisibility);
+    updateVisibility();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Ingredients Pro Flip",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What's Inside Matters" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Discover the science-backed ingredients." },
+    { "type": "select", "id": "heading_align", "label": "Heading Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" },
+    
+    { "type": "header", "content": "GLASS MASTER SETTINGS" },
+    { "type": "checkbox", "id": "enable_glass", "label": "Enable Frost Blur", "default": true },
+    { "type": "range", "id": "glass_blur", "label": "Blur Intensity", "min": 0, "max": 50, "step": 1, "default": 13 },
+    { "type": "color", "id": "card_bg", "label": "Glass Overlay Color", "default": "#ffffff" },
+    { "type": "range", "id": "opacity", "label": "Glass Opacity (%)", "min": 0, "max": 100, "step": 1, "default": 70 },
+    { "type": "range", "id": "overlay_height_desktop", "label": "Glass Height (Desktop %)", "min": 10, "max": 100, "step": 5, "default": 60 },
+    { "type": "range", "id": "overlay_height_mobile", "label": "Glass Height (Mobile %)", "min": 10, "max": 100, "step": 5, "default": 50 },
+    
+    { "type": "header", "content": "Gradient Logic" },
+    { "type": "checkbox", "id": "enable_gradient", "label": "Enable Gradient Fade", "default": true },
+    { "type": "select", "id": "glass_direction", "label": "Gradient Direction", "options": [
+        {"value": "to top", "label": "Bottom to Top"},
+        {"value": "to bottom", "label": "Top to Bottom"}
+      ], "default": "to top" },
+      
+    { "type": "header", "content": "Footer Button Styling" },
+    { "type": "color", "id": "btn_bg", "label": "Button Background", "default": "#ffffff" },
+    { "type": "color", "id": "btn_text_color", "label": "Button Text Color", "default": "#215174" },
+    { "type": "color", "id": "btn_border_color", "label": "Button Border Color", "default": "#215174" },
+    { "type": "range", "id": "btn_border_width", "label": "Button Border Width", "min": 0, "max": 5, "step": 1, "default": 1 },
+    { "type": "range", "id": "btn_v_pad", "label": "V-Padding", "min": 10, "max": 30, "step": 1, "default": 12 },
+    { "type": "range", "id": "btn_h_pad", "label": "H-Padding", "min": 20, "max": 80, "step": 1, "default": 32 },
+    
+    { "type": "header", "content": "Tag & Link Styling" },
+    { "type": "color", "id": "tag_bg_color", "label": "Tag BG Color", "default": "#f1f1e6" },
+    { "type": "color", "id": "tag_text_color", "label": "Tag Text Color", "default": "#4B5563" },
+    { "type": "color", "id": "link_text_color", "label": "Product Name Color", "default": "#215174" },
+    { "type": "range", "id": "link_font_size", "label": "Product Name Size", "min": 10, "max": 24, "step": 1, "default": 14 },
+    
+    { "type": "header", "content": "Global Styles" },
+    { "type": "color", "id": "bg_color", "label": "Section BG", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 50, "default": 1200 },
+    { "type": "range", "id": "roundness", "label": "Card Roundness", "min": 0, "max": 60, "step": 4, "default": 32 },
+    { "type": "range", "id": "padding_top", "label": "Top Pad", "min": 0, "max": 100, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Pad", "min": 0, "max": 100, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient",
+      "settings": [
+        { "type": "text", "id": "category", "label": "Category (Tab Name)", "default": "Sleep support" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Name", "default": "Magnesium" },
+        { "type": "textarea", "id": "short_desc", "label": "Short Desc", "default": "Supports synapse density." },
+        { "type": "text", "id": "tag_1", "label": "Tag 1", "default": "Brain Health" },
+        { "type": "text", "id": "tag_2", "label": "Tag 2", "default": "Focus" },
+        { "type": "text", "id": "tag_3", "label": "Tag 3" },
+        { "type": "text", "id": "tag_4", "label": "Tag 4" },
+        { "type": "text", "id": "ritual_label", "label": "Footer Label", "default": "BUBBLE ME RITUAL" },
+        { "type": "text", "id": "ritual_name", "label": "Product Name", "default": "Mind Clarity Drops" },
+        { "type": "url", "id": "product_link", "label": "Product Link" },
+        { "type": "richtext", "id": "full_desc", "label": "Back Description", "default": "<p>Detailed info here.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Ingredients Pro Flip" }]
+}
+{% endschema %}

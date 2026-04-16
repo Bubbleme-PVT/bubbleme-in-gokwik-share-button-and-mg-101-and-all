@@ -1,0 +1,181 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "spacing": 0,
+        "color_scheme": "",
+        "line_separator": ""
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "page_width": "narrow",
+        "content_max_width": "xl",
+        "custom_page_header": false,
+        "title": "Section heading",
+        "italic_convert": "",
+        "heading_size": "h1",
+        "show_view_all_link": true,
+        "view_all_link": "",
+        "view_all_text": "",
+        "view_all_text_size": "t3",
+        "color_scheme": "",
+        "heading_tag": "h1"
+      }
+    },
+    "slideshow_VtnKtf": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_adHbGt": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/iStock-1321500268.webp",
+            "image_overlay_opacity": 0,
+            "image_link": "",
+            "horizontal_offset": 0,
+            "vertical_offset": 0,
+            "desktop_content_position": "md:justify-center md:items-center",
+            "mobile_content_position": "justify-center items-center",
+            "content_max_width": "s",
+            "desktop_content_alignment": "center",
+            "mobile_content_alignment": "center",
+            "show_text_box": "always",
+            "caption": "",
+            "caption_text_style": "caption-with-letter-spacing",
+            "caption_text_size": "t6",
+            "heading": "",
+            "heading_italic_convert": "",
+            "heading_size": "h3",
+            "heading_size_custom": 2.4,
+            "heading_line_height_custom": 1.2,
+            "heading_tag": "h2",
+            "text": "",
+            "text_size": "t3",
+            "button_text_size": "t3",
+            "button_label_1": "",
+            "button_link_1": "/",
+            "button_style_1": "primary",
+            "button_style_1_show_arrow": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_2": "secondary",
+            "button_style_2_show_arrow": false,
+            "color_scheme": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_adHbGt"
+      ],
+      "settings": {
+        "slide_animation": "wipe",
+        "slider_visual": "counter",
+        "pagination_position": "center",
+        "autoplay": "autoplay_with_pause",
+        "change_slides_speed": 6,
+        "image_ratio": "landscape_wide",
+        "desktop_section_height": 500,
+        "mobile_section_height": 400,
+        "full_width": "on",
+        "show_text_below": false,
+        "color_scheme": "",
+        "line_separator": "",
+        "top_padding": "pt-s",
+        "bottom_padding": "pb-s",
+        "hide_when_empty": false,
+        "accessibility_info": "Slideshow about our brand"
+      }
+    },
+    "rich_text_qTA9aT": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_FmmeDE": {
+          "type": "heading",
+          "settings": {
+            "heading": "join us in our journey towards a greener future, <em>one beautiful box at a time</em>",
+            "heading_italic_convert": "light",
+            "heading_size": "h3",
+            "heading_size_custom": 2.4,
+            "heading_line_height_custom": 1.2,
+            "heading_tag": "h1"
+          }
+        },
+        "text_j4PQcD": {
+          "type": "text",
+          "settings": {
+            "text": "<p>After you've enjoyed your Bubble Me goodies, give our boxes a new life. Whether it's organising your jewellery, storing keepsakes, or tidying up your workspace, our sturdy, stylish boxes are perfect for re-use. Together, let's make the most of every piece and reduce waste by embracing the power of recycling and reusing 🌿♻️</p>",
+            "text_size": "t6"
+          }
+        },
+        "buttons_dTnknC": {
+          "type": "buttons",
+          "settings": {
+            "button_text_size": "t3",
+            "button_label_1": "get your boxes",
+            "button_link_1": "shopify://collections/kiss-of-krimson",
+            "button_style_1": "primary",
+            "button_style_1_show_arrow": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_2": "secondary",
+            "button_style_2_show_arrow": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_FmmeDE",
+        "text_j4PQcD",
+        "buttons_dTnknC"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_max_width": "m",
+        "desktop_content_alignment": "center",
+        "mobile_content_alignment": "center",
+        "section_color_scheme": "",
+        "container_color_scheme": "",
+        "show_content_shadow": false,
+        "line_separator": "",
+        "top_padding": "pt-s",
+        "bottom_padding": "pb-s",
+        "hide_when_empty": false
+      }
+    },
+    "gifting_form_iBpMTN": {
+      "type": "gifting-form",
+      "disabled": true,
+      "name": "Corporate Gifting Form",
+      "settings": {
+        "left_image": "shopify://shop_images/Form_banner.jpg",
+        "heading": "Talk to our Corporate Gifting Experts",
+        "subheading": "",
+        "button_text": "Submit",
+        "secondary_button_link": "",
+        "secondary_button_text": "Contact Us",
+        "text_color": "#215175",
+        "button_bg": "#215175",
+        "button_text_color": "#ffffff",
+        "button_border": "#000000"
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs",
+    "main",
+    "slideshow_VtnKtf",
+    "rich_text_qTA9aT",
+    "gifting_form_iBpMTN"
+  ]
+}

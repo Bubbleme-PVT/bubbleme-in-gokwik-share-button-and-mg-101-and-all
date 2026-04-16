@@ -1,0 +1,274 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Standardized Design Language */
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  #swaps-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    overflow: hidden;
+  }
+
+  .swaps-title-wrap-{{ section_id }} {
+    text-align: center;
+    margin-bottom: 30px; 
+    padding: 0 20px;
+  }
+
+  /* Title - Matched to Rituals H2 */
+  .swaps-title-wrap-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    color: var(--heading-dark-{{ section_id }});
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .underline-{{ section_id }} {
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-blue-{{ section_id }});
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  .swaps-slider-{{ section_id }} {
+    display: flex;
+    overflow-x: auto;
+    padding: 5px 0 5px;
+    position: relative;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+
+  .swaps-slider-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .swaps-track-{{ section_id }} {
+    display: flex;
+    gap: {{ section.settings.grid_gap }}px;
+    width: max-content;
+    padding: 0 20px;
+    {% if section.settings.auto_rotate %}
+      animation: scroll-{{ section_id }} {{ section.settings.rotation_speed }}s linear infinite;
+    {% endif %}
+  }
+
+  {% if section.settings.auto_rotate %}
+  .swaps-track-{{ section_id }}:hover { animation-play-state: paused; }
+  @keyframes scroll-{{ section_id }} {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - ({{ section.settings.grid_gap }}px / 2))); }
+  }
+  {% endif %}
+
+  .swap-card-{{ section_id }} {
+    background-color: #ffffff;
+    border-radius: 32px; /* Matched Rituals Card Roundness */
+    padding: 30px 40px; 
+    width: {{ section.settings.card_width }}px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-light-{{ section_id }});
+    flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .swap-card-{{ section_id }}:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-blue-{{ section_id }});
+  }
+
+  .swap-side-{{ section_id }} { 
+    display: flex; 
+    flex-direction: column; 
+    flex: 1; 
+  }
+  
+  /* Labels - Matched to Pill Label Style */
+  .swap-label-{{ section_id }} { 
+    font-size: 10px; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    color: #94A3B8; 
+    margin-bottom: 6px; 
+    letter-spacing: 0.12em;
+    opacity: 0.9;
+  }
+
+  .swap-side-{{ section_id }}.luminous .swap-label-{{ section_id }} { 
+    color: var(--primary-blue-{{ section_id }}); 
+  }
+
+  /* Swap Text - Matched to Ritual Card Titles */
+  .swap-text-{{ section_id }} { 
+    font-size: 20px; 
+    font-weight: 800; 
+    color: var(--heading-dark-{{ section_id }});
+    position: relative; 
+    display: inline-block;
+    width: fit-content;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .swap-text-{{ section_id }}.strikethrough { 
+    color: #CBD5E1; 
+    font-weight: 600;
+  }
+
+ .swap-text-{{ section_id }}.strikethrough::after {
+    content: "";
+    position: absolute;
+    display: block;
+    left: -4px;
+    right: -4px;
+    top: 50%;
+    height: {{ section.settings.strike_thickness }}px;
+    background-color: {{ section.settings.strike_color }};
+    transform: translateY(-50%); 
+    opacity: 0.6;
+    z-index: 2;
+  }
+
+  .swap-arrow-{{ section_id }} { 
+    color: var(--primary-blue-{{ section_id }}); 
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+  }
+
+  .medical-alert-{{ section_id }} {
+    background-color: var(--bg-soft-{{ section_id }}); 
+    border-radius: 24px; padding: 35px; 
+    display: flex; align-items: flex-start; gap: 20px; 
+    margin: 30px auto 0; 
+    max-width: {{ section.settings.max_width }}px;
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  .medical-icon-{{ section_id }} { 
+    flex-shrink: 0; width: 48px; height: 48px; 
+    background-color: #ffffff; border-radius: 12px; 
+    display: flex; align-items: center; justify-content: center; 
+    color: var(--primary-blue-{{ section_id }});
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  /* Alert Title - Matched to Card Titles */
+  .medical-content-{{ section_id }} h3 { 
+    font-size: 20px; font-weight: 800; margin: 0 0 8px 0; 
+    color: var(--heading-dark-{{ section_id }});
+    letter-spacing: -0.01em;
+  }
+
+  /* Alert Text - Matched to Step Text */
+  .medical-content-{{ section_id }} p { 
+    font-size: 15px; line-height: 1.6; color: var(--secondary-text-{{ section_id }}); margin: 0;
+  }
+
+  @media (max-width: 767px) {
+    .swaps-title-wrap-{{ section_id }} h2 { font-size: 28px; }
+    .swap-card-{{ section_id }} { width: 290px; padding: 25px; border-radius: 24px; }
+    .swap-text-{{ section_id }} { font-size: 18px; }
+    .medical-alert-{{ section_id }} { flex-direction: column; text-align: left; margin: 15px; padding: 25px; }
+    .swaps-slider-{{ section_id }} { padding-bottom: 10px; }
+  }
+{%- endstyle -%}
+
+<section id="swaps-{{ section_id }}">
+  <div class="swaps-title-wrap-{{ section_id }}">
+    <h2>{{ section.settings.heading }}</h2>
+    <div class="underline-{{ section_id }}"></div>
+  </div>
+
+  <div class="swaps-slider-{{ section_id }}">
+    <div class="swaps-track-{{ section_id }}">
+      {% assign loop_count = 1 %}
+      {% if section.settings.auto_rotate %}{% assign loop_count = 2 %}{% endif %}
+      
+      {% for i in (1..loop_count) %}
+        {% for block in section.blocks %}
+          <div class="swap-card-{{ section_id }}" {{ block.shopify_attributes }}>
+            <div class="swap-side-{{ section_id }}">
+              <span class="swap-label-{{ section_id }}">Traditional</span>
+              <span class="swap-text-{{ section_id }} strikethrough">{{ block.settings.old_choice }}</span>
+            </div>
+            <div class="swap-arrow-{{ section_id }}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4M2 12h20M6 8l-4 4 4 4"/></svg>
+            </div>
+            <div class="swap-side-{{ section_id }} luminous">
+              <span class="swap-label-{{ section_id }}">Swap</span>
+              <span class="swap-text-{{ section_id }}" style="color: var(--primary-blue-{{ section_id }});">{{ block.settings.new_choice }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if section.settings.show_medical_box %}
+    <div class="medical-alert-{{ section_id }}">
+      <div class="medical-icon-{{ section_id }}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.82 2.96 0L15 8.04"/><path d="m12 10 2.96 2.96a2.17 2.17 0 0 0 3.08 0v0c.82-.82.82-2.13 0-2.96L15.04 7.04"/></svg>
+      </div>
+      <div class="medical-content-{{ section_id }}">
+        <h3>{{ section.settings.medical_title }}</h3>
+        <p>{{ section.settings.medical_text }}</p>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Rotating Swaps Pro",
+  "settings": [
+    { "type": "header", "content": "Layout Settings" },
+    { "type": "checkbox", "id": "auto_rotate", "label": "Enable Auto-Rotate", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Optimized Swaps" },
+    { "type": "range", "id": "rotation_speed", "label": "Scroll Speed", "min": 10, "max": 60, "step": 5, "default": 30 },
+    { "type": "range", "id": "max_width", "label": "Container Max Width", "min": 800, "max": 1400, "step": 50, "default": 1100 },
+    { "type": "range", "id": "card_width", "label": "Individual Card Width", "min": 300, "max": 600, "step": 10, "default": 420 },
+    { "type": "range", "id": "grid_gap", "label": "Gap Between Cards", "min": 10, "max": 50, "step": 5, "default": 30 },
+    { "type": "header", "content": "Choice Customizer" },
+    { "type": "color", "id": "strike_color", "label": "Strike Line Color", "default": "#ef4444" },
+    { "type": "range", "id": "strike_thickness", "label": "Strike Line Thickness", "min": 1, "max": 5, "step": 1, "default": 2 },
+    { "type": "header", "content": "Section Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "header", "content": "Medical Info" },
+    { "type": "checkbox", "id": "show_medical_box", "label": "Show Medical Box", "default": true },
+    { "type": "text", "id": "medical_title", "label": "Alert Title", "default": "When to consult a professional" },
+    { "type": "textarea", "id": "medical_text", "label": "Alert Text", "default": "Always consult with a healthcare provider before making significant changes to your ritual." },
+    { "type": "header", "content": "Section Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "swap",
+      "name": "Meal Swap",
+      "settings": [
+        { "type": "text", "id": "old_choice", "label": "Traditional Choice", "default": "Tea/Coffee" },
+        { "type": "text", "id": "new_choice", "label": "Swap", "default": "Chamomile Tea" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Rotating Swaps Pro" }]
+}
+{% endschema %}

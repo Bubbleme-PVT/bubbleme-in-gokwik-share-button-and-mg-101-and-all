@@ -1,0 +1,235 @@
+{% layout none %}
+{% if metaobject.web_stories != blank %}
+<!DOCTYPE html>
+<html amp lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ page_title }}</title>
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
+    <script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script>
+    <!-- <script async custom-element="amp-story-auto-ads" src="https://cdn.ampproject.org/v0/amp-story-auto-ads-0.1.js"></script> -->
+    <style amp-custom>
+    amp-story-grid-layer[style*="top: 61%;"] {
+        margin-top: 101%;
+    }
+     amp-img img{
+      object-fit: cover;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+      }
+    
+      to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+    }
+    amp-story-page[active] amp-story-grid-layer:nth-child(2) * {
+        animation: fadeInUp;
+        animation-duration: 1s;
+        animation-delay: 0s;
+        animation-fill-mode: forwards;
+    }  
+    
+    /* Animations */
+    amp-story-page[active] .slide-right-to-left {
+      animation: slideInRTL 1.5s ease-out forwards;
+    }
+    
+    amp-story-page[active] .slide-left-to-right {
+      animation: slideInLTR 1.5s ease-out forwards;
+    }
+    
+    @keyframes slideInRTL {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideInLTR {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+      
+    * {
+      box-sizing: border-box;
+    }
+    amp-story * {
+      font-family: 'Helvitica Nueve', sans-serif;
+      color: white;
+      text-decoration: none;
+    }
+    amp-story-page {
+      background: white;
+    }
+    amp-story h1 {
+      font-size: 46px;
+    }
+    amp-story h2 {
+      font-size: 36px;
+    }
+    amp-story p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .bottom {
+      align-content: end;
+    }
+    .medium {
+      font-weight: 600;
+    }
+    .first {
+      padding-top: 65px;
+    }
+    .last {
+      padding-bottom: 65px;
+    }
+    .blue {
+      color: #4285F4;
+    }
+    .twenty-px {
+      font-size: 20px;
+    }
+    .center {
+      text-align: center;
+    }
+    .lh30 {
+      line-height: 30px;
+    }
+    .icon {
+      background-image: url(https://ampbyexample.com/img/AMP-Brand-White-Icon.svg);
+      background-repeat: no-repeat;
+      background-size: 50px 50px;
+      height: 50px;
+      object-fit: contain;
+      width: 50px;
+    }
+    .byline {
+      letter-spacing: 1.28px;
+      padding-bottom: 58px;
+    }
+    .introducing * {
+      line-height: 42px;
+    }
+    .subtitle-page {
+      padding-top: 80px;
+    }
+    .button {
+      align-items: center;
+      border: 4px solid #FFFFFF;
+      color: #FFFFFF;
+      display: flex;
+      height: 60px;
+      margin: 0 auto;
+      max-width: 240px;
+      text-decoration:none;
+    }
+    .button p {
+      font-size: 20px;
+      width: 100%;
+    }
+    amp-ad[template="image-template"] img,
+    amp-ad[template="video-template"] {
+      object-fit: cover;
+    }
+    ::cue {
+      background-color: rgba(0, 0, 0, 0.75);
+      font-size: 24px;
+      line-height: 1.5;
+    }
+  </style>
+
+  <body id="webstories">
+    <amp-story standalone
+  title="{{ page_title }}"
+  publisher="Embarkperfumes"
+  publisher-logo-src="https://www.embarkperfumes.com/cdn/shop/files/embarklogo_black.png?height=104&v=1761388148"
+  poster-portrait-src="{% for first in metaobject.web_stories.value %}{% if forloop.first %}https:{{ first.image | img_url: '640x' }}{% endif %}{% endfor %}">
+  <!-- <amp-ad width="400" height="750"  type="mediavine" data-site="banton-frameworks"></amp-ad>
+<amp-story-page id="page-ads" auto-advance-after="4s">
+  <amp-story-grid-layer template="fill">
+  </amp-story-grid-layer>
+</amp-story-page>     -->
+<!-- <amp-story-auto-ads>
+  <script type="application/json">
+    {
+      "ad-attributes": {
+        "type": "mediavine",
+        "data-slot": "banton-frameworks"
+      }
+    }
+  </script>
+</amp-story-auto-ads> -->
+  
+{% for story in metaobject.web_stories.value %}
+    {%- assign mediafile = story.image_video -%}
+    <amp-story-page id="page-{{ forloop.index }}" auto-advance-after="{% if mediafile.value.media_type contains "image" %}4s{% else %}video-{{ forloop.index }}{% endif %}">
+      <amp-story-grid-layer template="fill" {% if story.background_color != 'rgba(0,0,0,0)' and story.background_color != blank %}style="height: 61%;background: {{ story.background_color }};"{% endif %}>
+          {% if mediafile.value.media_type contains "image" %}     
+            <amp-img alt="{{ mediafile.alt | default: story.heading }}" width="400" height="750" layout="fill" src="https:{{ mediafile | image_url }}"></amp-img>
+          {% else %}
+            {% assign videoId = 'video-' | append: forloop.index %}
+            {% comment %}{{ mediafile.value | video_tag: width: '400', height: '750', layout: 'fill', id: videoId, autoplay: true, loop: true | replace: '<video','<amp-video' | replace: '</video>','</amp-video>' }}{% endcomment %}
+            <amp-video 
+              id="{{ videoId }}" 
+              width="400" 
+              height="750" 
+              layout="fill" 
+              autoplay 
+              loop 
+              poster="{{ mediafile.value | image_url  }}"
+              muted >
+              <source src="{{ mediafile.value.sources.first.url }}" type="video/mp4">
+            </amp-video>
+          {% endif %}
+      </amp-story-grid-layer>
+      {% if story.heading != blank or story.description != blank %}
+      <amp-story-grid-layer template="vertical" class="bottom" {% if story.background_color != 'rgba(0,0,0,0)' and story.background_color != blank %}style="height: 40%; top: 61%;background: {{ story.background_color }};"{% endif %}>
+        {% if story.heading != blank %}<h2 style="color: {{ story.text_color | default: '#fff' }}" class="bold">{{ story.heading }}</h2>{% endif %}
+        {% if story.description != blank %}
+          <p style="color: {{ story.description_color | default: '#fff' }}">{{ story.description }}</p>
+        {% endif %}
+      </amp-story-grid-layer>
+      {% endif %}
+    </amp-story-page>   
+{% endfor %}
+{% if metaobject.other_stories != blank %}
+  {% assign otherstory = metaobject.other_stories.value %}
+  <amp-story-page id="other-stories" auto-advance-after="4s">
+    
+  <amp-story-grid-layer template="vertical" class="story-bg" style="  background: {{ otherstory.background_color | default: '#fff' }}; justify-content: flex-start; align-items: center;">
+    <h2 class="section-heading" style="  font-size: 2em; text-align: center; color: {{ otherstory.title_color | default: '#000' }}; margin-bottom: 20px;">Other Stories</h2>
+    <div class="card-row slide-right-to-left" style="  display: flex; justify-content: center;max-width: 100%; width: 100%; margin: 10px 0;    width: auto ;">
+      <div class="card dummy-card" style="  min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center; opacity: 0.3;margin: 0 20px;"></div>
+      <div class="card real-card" style="    max-height: 152px;min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center;margin: 0 20px;">
+        <amp-img width="210" height="155" style="object-fit: cover;height: 100% ;width: 100%; border-radius: 20px 20px 0 0;" src="{{ otherstory.first_image | image_url }}" alt="{{ otherstory.first_image.alt | default: 'webstory image' }}"></amp-img>
+      </div>
+      <div class="card dummy-card" style="  min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center; opacity: 0.3;margin: 0 20px;"></div>
+    </div>
+    <a href="{{ otherstory.first_url | default: '#' }}"><p class="card-title" style="max-width: 200px;margin: auto;text-align: center;font-size: 1em; font-weight: bold; color: {{ otherstory.card_title_color | default: '#000' }}; padding: 10px;">{{ otherstory.first_heading }}</p></a>
+    <div class="card-row slide-left-to-right" style="  display: flex; justify-content: center;max-width: 100%; width: 100%; margin: 10px 0;    width: auto ;">
+      <div class="card dummy-card" style="  min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center; opacity: 0.3;margin: 0 20px;"></div>
+      <div class="card real-card" style="    max-height: 152px;min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center;margin: 0 20px;">
+        <amp-img width="210" height="155" style="object-fit: cover;height: 100% ;width: 100%; border-radius: 20px 20px 0 0;" src="{{ otherstory.second_image | image_url }}" alt="{{ otherstory.second_image.alt | default: 'webstory image' }}"></amp-img>
+      </div>
+      <div class="card dummy-card" style="  min-width: 210px; height: auto; border-radius: 20px; overflow: hidden; background: {{ otherstory.dummybackground_color | default: '#000' }}; text-align: center; opacity: 0.3;margin: 0 20px;"></div>
+    </div>
+    <a href="{{ otherstory.second_url | default: '#' }}"><p class="card-title" style="max-width: 200px;margin: auto;text-align: center;font-size: 1em; font-weight: bold; color: {{ otherstory.card_title_color | default: '#000' }}; padding: 10px;">{{ otherstory.second_heading }}</p></a>
+  </amp-story-grid-layer>
+</amp-story-page>      
+{% endif %}
+</amp-story>
+  
+</html>
+{% endif %}

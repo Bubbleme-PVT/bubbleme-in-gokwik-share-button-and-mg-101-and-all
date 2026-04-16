@@ -1,0 +1,225 @@
+{% if section.settings.enable_banner %}
+  <style>
+    .bmrk-after-footer {
+      width: 100%;
+      background: {{ section.settings.bg_color }};
+      padding: 16px 0;
+    }
+
+    .bmrk-after-footer__inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .bmrk-after-footer__card {
+      width: 100%;
+      min-height: 200px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      border-radius: 18px;
+      background: {{ section.settings.card_bg }};
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    }
+
+    .bmrk-after-footer__media {
+      flex: 0 0 320px;
+      width: 320px;
+      min-height: 200px;
+      background: rgba(255,255,255,.25);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .bmrk-after-footer__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .bmrk-after-footer__content {
+      flex: 1;
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .bmrk-after-footer__title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: {{ section.settings.text_color }};
+    }
+
+    .bmrk-after-footer__desc {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: {{ section.settings.text_color }};
+      opacity: .92;
+      max-width: 60ch;
+    }
+
+    .bmrk-after-footer__cta {
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 50px;
+      padding: 0 18px;
+      border-radius: 14px;
+      background: {{ section.settings.cta_bg }};
+      color: {{ section.settings.cta_text_color }};
+      text-decoration: none;
+      font-weight: 900;
+      width: fit-content;
+      white-space: nowrap;
+    }
+
+    .bmrk-after-footer__cta:hover {
+      filter: brightness(0.96);
+    }
+
+    @media (max-width: 749px) {
+      .bmrk-after-footer__card {
+        min-height: 170px;
+      }
+      .bmrk-after-footer__media {
+        flex: 0 0 140px;
+        width: 140px;
+        min-height: 170px;
+      }
+      .bmrk-after-footer__content {
+        padding: 14px 14px 12px;
+      }
+      .bmrk-after-footer__title {
+        font-size: 16px;
+      }
+      .bmrk-after-footer__desc {
+        font-size: 13px;
+      }
+      .bmrk-after-footer__cta {
+        height: 46px;
+        padding: 0 14px;
+        border-radius: 12px;
+      }
+    }
+  </style>
+
+  {%- liquid
+    assign final_cta_url = section.settings.cta_url
+    if final_cta_url == blank
+      assign final_cta_url = routes.cart_url
+    endif
+  -%}
+
+  <section class="bmrk-after-footer">
+    <div class="bmrk-after-footer__inner">
+      <div class="bmrk-after-footer__card">
+        <div class="bmrk-after-footer__media">
+          {% if section.settings.image != blank %}
+            {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: 'Banner' }}
+          {% else %}
+            <div style="width:100%;height:100%;display:grid;place-items:center;color:rgba(0,0,0,.35);font-weight:700;">
+              Add image
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="bmrk-after-footer__content">
+          <p class="bmrk-after-footer__title">{{ section.settings.title }}</p>
+          <p class="bmrk-after-footer__desc">{{ section.settings.desc }}</p>
+
+          <a class="bmrk-after-footer__cta" href="{{ final_cta_url }}">
+            {{ section.settings.cta_label }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "After Footer Banner (BM)",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_banner",
+      "label": "Enable banner",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Left image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Congratulations!"
+    },
+    {
+      "type": "text",
+      "id": "desc",
+      "label": "Description",
+      "default": "You unlocked a free gift. Add items to cart to claim it before checkout."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "View Cart"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA link (optional)"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "#ffd7e0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "CTA background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "After Footer Banner (BM)"
+    }
+  ]
+}
+{% endschema %}

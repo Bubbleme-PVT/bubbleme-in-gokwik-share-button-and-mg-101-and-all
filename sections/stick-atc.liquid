@@ -1,0 +1,132 @@
+<div class="sticky-row mobile-layout">
+
+  <!-- Price -->
+  <div class="m-price">
+    {{ current_variant.price | money }}
+  </div>
+
+  <!-- Quantity -->
+  <div class="m-qty-box">
+    <button class="m-qty-btn minus">−</button>
+    <input id="sticky-qty" type="number" min="1" value="1">
+    <button class="m-qty-btn plus">+</button>
+  </div>
+
+  <!-- Add to Cart Button -->
+  <button id="sticky-atc-btn" class="btn button button--{{ section.settings.btn_style }}">
+    ADD TO CART
+  </button>
+
+</div>
+<style>
+    /* Default – hide mobile layout on desktop */
+#md-sticky-atc .mobile-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Price */
+#md-sticky-atc .m-price {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Qty Box */
+#md-sticky-atc .m-qty-box {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#md-sticky-atc .m-qty-btn {
+  padding: 8px 12px;
+  font-size: 18px;
+  background: #f4f4f4;
+  border: none;
+}
+
+#md-sticky-atc #sticky-qty {
+  width: 38px;
+  text-align: center;
+  border: none;
+  font-size: 16px;
+}
+
+/* ===== DESKTOP HIDE ===== */
+@media (min-width: 990px) {
+  #md-sticky-atc .mobile-layout {
+    display: none !important;
+  }
+}
+
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  
+  const qtyInput = document.querySelector('#sticky-qty');
+  const plus = document.querySelector('.m-qty-btn.plus');
+  const minus = document.querySelector('.m-qty-btn.minus');
+
+  if (qtyInput) {
+    plus.addEventListener('click', () => {
+      qtyInput.value = Number(qtyInput.value) + 1;
+    });
+
+    minus.addEventListener('click', () => {
+      if (Number(qtyInput.value) > 1) {
+        qtyInput.value = Number(qtyInput.value) - 1;
+      }
+    });
+  }
+
+  // Sync quantity with main ATC button
+  stickyBtn.addEventListener("click", function () {
+    const mainQty = document.querySelector('input[name="quantity"]');
+    if (mainQty && qtyInput) {
+      mainQty.value = qtyInput.value;
+    }
+  });
+
+});
+</script>
+{% schema %}
+{
+  "name": "Sticky ATC (Mobile Only)",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_section",
+      "label": "Enable Sticky ATC",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "btn_style",
+      "label": "Add to cart button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "offset",
+      "label": "Offset",
+      "min": 0,
+      "max": 500,
+      "step": 10,
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky ATC Mobile",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,156 @@
+{% if collection.metafields.custom.collection_list != blank %}
+  <style>
+    .splide__list{
+      gap: 1rem;
+    }
+    .collection-slideshow-wrapper{
+      margin-left: 20px;
+    }
+    #shopify-section-{{ section.id }} {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + var(--header-offset, 0px));
+      z-index: 5;
+      background: #fff;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    @media (min-width: 769px) {
+      .collection-slideshow-wrapper {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .collection-slideshow-wrapper {
+        display: block;
+      }
+    }
+
+    /* ✅ Center static items when <=3 */
+    #shopify-section-{{ section.id }} .static-center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 10px;
+    }
+
+    .text_link .title_text {
+      display: inline-block;
+      padding: 6px 14px;
+      background: #f8f8f8;
+      color: #215174;
+      border: 1px solid #215174;
+      border-radius: 20px;
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .text_link .title_text:hover {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .splide__pagination {
+      display: none;
+    }
+  </style>
+
+  <div class="collection-slideshow-wrapper" id="collection-slideshow-{{ section.id }}">
+    <div class="splide" id="splide-{{ section.id }}">
+      <div class="splide__track">
+        <ul class="splide__list">
+          {% for coll in collection.metafields.custom.collection_list.value %}
+            {% if coll %}
+              <li class="splide__slide">
+                <a class="text_link" href="{{ coll.url }}">
+                  <span class="title_text">{{ coll.title }}</span>
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.6/dist/css/splide.min.css"
+  >
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.6/dist/js/splide.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const wrapper = document.getElementById("collection-slideshow-{{ section.id }}");
+      const splideEl = document.querySelector('#splide-{{ section.id }}');
+      const listEl = splideEl.querySelector('.splide__list');
+      const slides = splideEl.querySelectorAll('.splide__slide');
+
+      // ✅ If 3 or fewer slides, show static centered pills (no Splide)
+      if (slides.length <= 3) {
+        const staticContainer = document.createElement("div");
+        staticContainer.className = "static-center";
+
+        slides.forEach(slide => {
+          staticContainer.appendChild(slide.querySelector("a"));
+        });
+
+        wrapper.innerHTML = ""; // remove Splide wrapper
+        wrapper.appendChild(staticContainer);
+      } else {
+        // ✅ If more than 3, mount Splide normally
+        var splide{{ section.id | replace: '-', '_' }} = new Splide('#splide-{{ section.id }}', {
+          type: 'slide',
+          perPage: 4.5,
+          perMove: 1,
+          arrows: false,
+          pagination: false,
+          gap: '8px',
+          focus: 'center',
+          autoWidth: true,
+          {% if section.settings.autoplay %}
+            autoplay: true,
+            interval: {{ section.settings.autoplay_seconds | times: 1000 }},
+            pauseOnHover: true,
+          {% endif %}
+          breakpoints: {
+            480: { perPage: 3.2 }
+          }
+        });
+        splide{{ section.id | replace: '-', '_' }}.mount();
+      }
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection Meta Slideshow",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay"
+    },
+    {
+      "id": "autoplay_seconds",
+      "type": "range",
+      "label": "Seconds Between Slides",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 3
+    }
+  ],
+  "presets": [
+    { "name": "Collection Meta Slideshow" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,124 @@
+{%- comment -%}
+  Displays a product badge
+  
+  Parameters:
+  - badge_product: {Object} - Product liquid object.
+  - max_badges: {Number} - Max of number of badges to display (Defaults to settings.badge_max, optional)
+  - badge_alignment: {String} - Either start, center, end. Optional, defaults to start
+
+  Usage:
+  {%- render 'product-badge', badge_product: product -%}
+{%- endcomment -%}
+
+{%- capture product_badge -%}
+  {%- liquid
+    assign num_badges = 0
+    unless max_badges
+      assign max_badges = settings.badge_max
+    endunless
+
+    unless badge_alignment
+      assign badge_alignment = 'start'
+    endunless
+
+    assign badge_position = settings.badge_position
+    if settings.quick_add_icon_over_image != 'never' and settings.card_enable_quick_add
+      assign badge_position = badge_position | replace: 'bottom', 'top'
+    endif
+  -%}
+
+  {%- if num_badges < max_badges and badge_product.metafields.custom.badge != blank and settings.badge_custom_show -%}
+      <span class="badge badge--custom badge--bottom-left badge--{{ settings.badge_shape }}"
+        {% if badge_product.metafields.custom.badge_background_color != blank or badge_product.metafields.custom.badge_foreground_color != blank or badge_product.metafields.custom.badge_border_color != blank %}
+          style="{% if badge_product.metafields.custom.badge_background_color != blank %}background: {{ badge_product.metafields.custom.badge_background_color }};{% endif %}{% if badge_product.metafields.custom.badge_foreground_color != blank %}color: {{ badge_product.metafields.custom.badge_foreground_color }};{% endif %}{% if badge_product.metafields.custom.badge_border_color != blank %}border-color: {{ badge_product.metafields.custom.badge_border_color }};{% endif %}"
+        {% endif %}
+      >
+        {{- badge_product.metafields.custom.badge -}}
+      </span>
+    {%- assign num_badges = num_badges | plus: 1 -%}
+  {%- endif -%}
+
+  {%- if num_badges < max_badges and badge_product.template_suffix contains 'preorder' and settings.badge_preorder_show -%}
+    <span class="badge badge--preorder badge--bottom-left badge--{{ settings.badge_shape }}">
+      {{- 'products.product.preorder' | t -}}
+    </span>
+    {%- assign num_badges = num_badges | plus: 1 -%}
+  {%- endif -%}
+
+  {%- liquid
+    unless current_variant
+      assign current_variant = badge_product.selected_or_first_available_variant
+    endunless
+    assign current_discount_percent = 0
+    assign current_discount_value = 0
+
+    if current_variant.price > 0 and current_variant.compare_at_price > current_variant.price
+      # Calculate percentage
+      assign div_discount = 1.0 | times: current_variant.price | divided_by: current_variant.compare_at_price
+      assign current_discount_percent = 1.0 | minus: div_discount | times: 100.0 | round
+      
+      # Calculate absolute monetary value
+      assign current_discount_value = current_variant.compare_at_price | minus: current_variant.price
+    endif
+  -%}
+
+  {%- if num_badges < max_badges and settings.badge_sale_show and current_discount_value > 0 -%}
+    <span class="badge badge--sale badge--bottom-left badge--{{ settings.badge_shape }}">
+      {%- if settings.badge_sale_type == "text" -%}
+        {{- 'products.product.on_sale' | t -}}
+
+      {%- elsif settings.badge_sale_type == "percent" -%}
+        {%- if current_discount_percent > 0 -%}
+          {{- 'products.product.on_sale_percent' | t: discount: current_discount_percent -}}
+        {%- else -%}
+          {{- 'products.product.on_sale' | t -}}
+        {%- endif -%}
+
+      {%- elsif settings.badge_sale_type == "value" -%}
+        {%- if current_discount_value > 0 -%}
+          {%- liquid
+            assign formatted_discount = current_discount_value | money_without_trailing_zeros
+          -%}
+          {{- 'products.product.on_sale_value' | t: discount: formatted_discount -}}
+        {%- else -%}
+          {{- 'products.product.on_sale' | t -}}
+        {%- endif -%}
+
+      {%- endif -%}
+    </span>
+    {%- assign num_badges = num_badges | plus: 1 -%}
+  {%- endif -%}
+
+  {%- if num_badges < max_badges and badge_product.available == false and settings.badge_sold_out_show -%}
+    <span class="badge badge--sold-out badge--bottom-left badge--{{ settings.badge_shape }}">
+      {{- 'products.product.sold_out' | t -}}
+    </span>
+    {%- assign num_badges = num_badges | plus: 1 -%}
+  {%- endif -%}
+
+  {%- if num_badges < max_badges and settings.badge_new_show -%}
+    {%- liquid
+      assign show_new_badge = false
+      assign handles = settings.badge_new_collections | map: 'handle'
+      for collection in badge_product.collections
+        if handles contains collection.handle
+          assign show_new_badge = true
+          break
+        endif
+      endfor
+    -%}
+    {%- if show_new_badge -%}
+      <span class="badge badge--new badge--bottom-left badge--{{ settings.badge_shape }}">
+        {{- 'products.product.new' | t -}}
+      </span>
+      {%- assign num_badges = num_badges | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+
+{%- endcapture -%}
+
+{%- if product_badge != blank -%}
+  <div class="card__badge inline-flex gap-05 flex-wrap justify-{{ badge_alignment }}{% unless badge_position == "content" %} {{ badge_position }}{% endunless %}">
+    {{- product_badge -}}
+  </div>
+{%- endif -%}

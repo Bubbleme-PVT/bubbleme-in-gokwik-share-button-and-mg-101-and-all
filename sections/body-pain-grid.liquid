@@ -1,0 +1,160 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  .pain-section-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .pain-title-{{ section_id }} {
+    font-family: serif; 
+    font-size: {{ section.settings.title_size }}px;
+    font-style: italic;
+    font-weight: 500;
+    color: {{ section.settings.text_color }};
+    margin: 0 auto 50px;
+    padding: 0 20px;
+    max-width: {{ section.settings.max_width }}px;
+  }
+
+  /* Horizontal Container Logic */
+  .pain-flex-{{ section_id }} {
+    display: flex;
+    justify-content: {% if section.settings.center_cards %}center{% else %}flex-start{% endif %};
+    align-items: stretch;
+    gap: {{ section.settings.gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px 20px;
+    overflow-x: auto; /* Enables horizontal swipe */
+    flex-wrap: nowrap; /* Forces horizontal on desktop & mobile */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pain-flex-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .pain-card-{{ section_id }} {
+    background-color: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_roundness }}px;
+    padding: 40px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 {{ section.settings.card_width }}px; /* Controls card width */
+    transition: transform 0.3s ease;
+  }
+
+  .pain-icon-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    margin-bottom: 20px;
+    color: {{ section.settings.icon_color }};
+  }
+
+  .pain-icon-{{ section_id }} img, 
+  .pain-icon-{{ section_id }} svg {
+    width: 100%; height: 100%; object-fit: contain; fill: currentColor;
+  }
+
+  .pain-card-title-{{ section_id }} {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+  }
+
+  .pain-card-text-{{ section_id }} {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4a4a4a;
+    margin: 0;
+  }
+
+  @media (max-width: 767px) {
+    .pain-flex-{{ section_id }} {
+      justify-content: flex-start;
+      padding-left: 20px;
+    }
+    .pain-card-{{ section_id }} {
+      flex: 0 0 260px; /* Comfortable width for swiping on mobile */
+    }
+    .pain-title-{{ section_id }} {
+      font-size: calc({{ section.settings.title_size }}px * 0.8);
+    }
+  }
+{%- endstyle -%}
+
+<section class="pain-section-{{ section_id }}">
+  {% if section.settings.title != blank %}
+    <h2 class="pain-title-{{ section_id }}">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  <div class="pain-flex-{{ section_id }}">
+    {% for block in section.blocks %}
+      <div class="pain-card-{{ section_id }}" {{ block.shopify_attributes }}>
+        <div class="pain-icon-{{ section_id }}">
+          {% if block.settings.icon_image != blank %}
+            <img src="{{ block.settings.icon_image | image_url: width: 200 }}" alt="{{ block.settings.title }}" loading="lazy">
+          {% else %}
+            {{ 'image' | placeholder_svg_tag }}
+          {% endif %}
+        </div>
+
+        <h3 class="pain-card-title-{{ section_id }}">{{ block.settings.title }}</h3>
+        <p class="pain-card-text-{{ section_id }}">{{ block.settings.description }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Horizontal Body Pain",
+  "settings": [
+    { "type": "header", "content": "Header Settings" },
+    { "type": "text", "id": "title", "label": "Section Title", "default": "What Body Pain can feel like" },
+    { "type": "range", "id": "title_size", "label": "Title Font Size", "min": 20, "max": 60, "step": 2, "default": 32 },
+    { "type": "color", "id": "text_color", "label": "Title Color", "default": "#1a1a1a" },
+    { "type": "header", "content": "Card Styling" },
+    { "type": "range", "id": "card_width", "label": "Card Width (Desktop)", "min": 200, "max": 400, "step": 10, "default": 280 },
+    { "type": "range", "id": "card_roundness", "label": "Card Corner Radius", "min": 0, "max": 60, "step": 2, "default": 30 },
+    { "type": "color", "id": "card_bg", "label": "Card Background", "default": "#f8f8f5" },
+    { "type": "range", "id": "icon_size", "label": "Icon Size", "min": 20, "max": 80, "step": 5, "default": 40 },
+    { "type": "color", "id": "icon_color", "label": "Icon Color", "default": "#6d5f08" },
+    { "type": "header", "content": "Layout Settings" },
+    { "type": "checkbox", "id": "center_cards", "label": "Center Cards on Desktop", "default": true },
+    { "type": "range", "id": "gap", "label": "Gap between cards", "min": 10, "max": 50, "step": 5, "default": 20 },
+    { "type": "range", "id": "max_width", "label": "Max Section Width", "min": 800, "max": 1600, "step": 20, "default": 1200 },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 2, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 2, "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "pain_type",
+      "name": "Pain Type",
+      "settings": [
+        { "type": "image_picker", "id": "icon_image", "label": "Icon Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Cramps" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "Sudden, involuntary muscle contractions often caused by electrolyte imbalance." }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Horizontal Body Pain", "blocks": [
+        { "type": "pain_type", "settings": { "title": "Cramps" } },
+        { "type": "pain_type", "settings": { "title": "Soreness" } },
+        { "type": "pain_type", "settings": { "title": "Stiffness" } },
+        { "type": "pain_type", "settings": { "title": "Fatigue" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

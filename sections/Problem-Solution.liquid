@@ -1,0 +1,137 @@
+{% comment %}
+  Enhanced Problem-Solution Section
+  - Supports multiple collections per problem
+  - Customizable colors and text
+  - Mobile optimized
+{% endcomment %}
+  
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | plus: 0 | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | plus: 0 | times: 0.75 | round: 0 }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+  .tab-button.is-active .tab-image-wrapper {
+    border-color: {{ section.settings.accent_color }};
+    transform: scale(1.05);
+  }
+  .tab-button.is-active .tab-label {
+    color: {{ section.settings.accent_color }};
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }};
+      padding-bottom: {{ section.settings.padding_bottom }};
+    }
+  }
+{%- endstyle -%}
+
+<div class="problem-tabs-section section-{{ section.id }}-padding">
+  <div class="page-width">
+    
+    <div class="section-header center" style="margin-bottom: 40px;">
+      {% if section.settings.title != blank %}
+        <h2 class="{{ section.settings.heading_size }}">{{ section.settings.title }}</h2>
+      {% endif %}
+    </div>
+
+    <div class="problem-tabs-nav">
+      <div class="tab-scroll-wrapper" style="justify-content: {{ section.settings.tab_alignment }};">
+        {% for block in section.blocks %}
+          <button class="tab-button {% if forloop.first %}is-active{% endif %}" data-target="problem-{{ block.id }}">
+            <div class="tab-image-wrapper">
+              {% if block.settings.problem_image != blank %}
+                {{ block.settings.problem_image | image_url: width: 300 | image_tag: loading: 'lazy', class: 'tab-img' }}
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {% endif %}
+            </div>
+            <span class="tab-label">{{ block.settings.problem_label }}</span>
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="problem-tabs-content">
+      {% for block in section.blocks %}
+        <div id="problem-{{ block.id }}" class="tab-panel {% if forloop.first %}is-active{% endif %}">
+          
+          <div class="grid grid--2-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop">
+            
+            {% comment %} Logic to pull from two collections if needed {% endcomment %}
+            {% assign col1 = collections[block.settings.collection_1] %}
+            {% assign col2 = collections[block.settings.collection_2] %}
+            {% assign limit_num = section.settings.products_to_show | plus: 0 %}
+
+            {% for product in col1.products limit: limit_num %}
+              <div class="grid__item">
+                {% render 'card-product', card_product: product, media_aspect_ratio: section.settings.image_ratio %}
+              </div>
+            {% endfor %}
+
+            {% if col2 != blank %}
+              {% for product in col2.products limit: limit_num %}
+                <div class="grid__item">
+                  {% render 'card-product', card_product: product, media_aspect_ratio: section.settings.image_ratio %}
+                </div>
+              {% endfor %}
+            {% endif %}
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .tab-scroll-wrapper { display: flex; gap: 30px; overflow-x: auto; padding: 10px; scrollbar-width: none; }
+  .tab-button { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 110px; }
+  .tab-image-wrapper { width: 90px; height: 90px; border-radius: 50%; overflow: hidden; margin-bottom: 10px; border: 2px solid #eee; transition: 0.3s; }
+  .tab-img { width: 100%; height: 100%; object-fit: cover; }
+  .tab-panel { display: none; }
+  .tab-panel.is-active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('is-active'));
+        panels.forEach(p => p.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        document.getElementById(tab.dataset.target).classList.add('is-active');
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Problem Tabs V2",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Solutions" },
+    { "type": "select", "id": "tab_alignment", "label": "Alignment", "options": [{"value":"center","label":"Center"},{"value":"flex-start","label":"Left"}], "default": "center" },
+    { "type": "number", "id": "products_to_show", "label": "Products per collection", "default": 4 },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "Columns" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#000000" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Problem Tab",
+      "settings": [
+        { "type": "image_picker", "id": "problem_image", "label": "Icon" },
+        { "type": "text", "id": "problem_label", "label": "Label", "default": "Problem" },
+        { "type": "collection", "id": "collection_1", "label": "Primary Collection" },
+        { "type": "collection", "id": "collection_2", "label": "Secondary Collection (Optional)" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Problem Tabs V2" }]
+}
+{% endschema %}

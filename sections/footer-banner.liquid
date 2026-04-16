@@ -1,0 +1,303 @@
+<style>
+  :root{
+    --bmrk-gift-space-desktop: 230px;
+    --bmrk-gift-space-mobile: 200px;
+  }
+
+  /* IMPORTANT: Prevent covering anything */
+  body.bmrk-has-gift-banner{
+    padding-bottom: calc(var(--bmrk-gift-space-desktop) + env(safe-area-inset-bottom)) !important;
+  }
+  @media (max-width: 480px){
+    body.bmrk-has-gift-banner{
+      padding-bottom: calc(var(--bmrk-gift-space-mobile) + env(safe-area-inset-bottom)) !important;
+    }
+  }
+
+  /* ===== Banner container fixed at bottom ===== */
+  .bmrk-gift-overlay{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: none;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    pointer-events: none;
+  }
+  .bmrk-gift-overlay.is-visible{
+    display: block;
+  }
+
+  /* ===== Card wide + short (600x200 vibe) ===== */
+  .bmrk-gift-card{
+    pointer-events: auto;
+    max-width: 640px;
+    height: 200px;
+    margin: 0 auto;
+    background: var(--bmrk-bg);
+    border-radius: 20px;
+    box-shadow: 0 14px 40px rgba(0,0,0,.25);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* Close button */
+  .bmrk-gift-close{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0,0,0,.12);
+    color: #111;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .bmrk-gift-close:hover{
+    background: rgba(0,0,0,.18);
+  }
+
+  /* Left image */
+  .bmrk-gift-media{
+    width: 220px;
+    height: 100%;
+    background: rgba(255,255,255,.25);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .bmrk-gift-media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Right content */
+  .bmrk-gift-right{
+    flex: 1;
+    padding: 18px 18px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .bmrk-gift-eyebrow{
+    margin: 0;
+    font-size: 18px;
+    font-weight: 750;
+    color: var(--bmrk-text);
+  }
+
+  .bmrk-gift-title{
+    margin: 0;
+    font-size: 18px;
+    font-weight: 650;
+    color: var(--bmrk-text);
+    line-height: 1.2;
+  }
+
+  /* CTA pill */
+  .bmrk-gift-cta{
+    margin-top: 6px;
+    width: 100%;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--bmrk-cta-bg);
+    color: var(--bmrk-cta-text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-weight: 900;
+    gap: 12px;
+  }
+  .bmrk-cta-left{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+  }
+  .bmrk-cta-divider{
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,.35);
+    flex: 0 0 1px;
+  }
+  .bmrk-cta-right{
+    font-weight: 950;
+  }
+  .bmrk-gift-bag{
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 480px){
+    .bmrk-gift-card{
+      max-width: 94vw;
+      height: 170px;
+      border-radius: 18px;
+    }
+    .bmrk-gift-media{ width: 140px; }
+    .bmrk-gift-right{ padding: 14px 14px 12px 14px; }
+    .bmrk-gift-eyebrow{ font-size: 16px; }
+    .bmrk-gift-title{ font-size: 15px; }
+    .bmrk-gift-cta{ height: 52px; border-radius: 12px; }
+  }
+</style>
+
+{% if section.settings.enable_overlay %}
+  <div
+    id="bmrkGiftOverlay"
+    class="bmrk-gift-overlay"
+    style="--bmrk-bg: {{ section.settings.bg_color }}; --bmrk-text: {{ section.settings.text_color }}; --bmrk-cta-bg: {{ section.settings.cta_bg }}; --bmrk-cta-text: {{ section.settings.cta_text_color }};"
+    data-hide-days="{{ section.settings.hide_days }}"
+    data-delay-ms="{{ section.settings.delay_ms }}"
+    data-only-cart="{{ section.settings.show_only_if_cart_has_items }}"
+    data-show-only-on-footer="{{ section.settings.show_only_on_footer }}"
+  >
+    <div class="bmrk-gift-card" role="dialog" aria-label="Gift banner">
+      <button class="bmrk-gift-close" type="button" aria-label="Close">×</button>
+
+      <div class="bmrk-gift-media">
+        {% if section.settings.overlay_image != blank %}
+          {{ section.settings.overlay_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: 'Gift banner' }}
+        {% else %}
+          <div style="width:100%;height:100%;display:grid;place-items:center;color:rgba(0,0,0,.35);font-weight:700;">
+            Add image
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="bmrk-gift-right">
+        <p class="bmrk-gift-eyebrow">{{ section.settings.eyebrow_text }}</p>
+        <p class="bmrk-gift-title">{{ section.settings.title_text }}</p>
+
+        <a class="bmrk-gift-cta" href="{% if section.settings.cta_link != blank %}{{ section.settings.cta_link }}{% else %}{{ routes.cart_url }}{% endif %}">
+          <span class="bmrk-cta-left">
+            <svg class="bmrk-gift-bag" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 9V7a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 9h12l-1 12H7L6 9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <span id="bmrkGiftItems">{{ cart.item_count }}</span> items
+          </span>
+
+          <span class="bmrk-cta-divider" aria-hidden="true"></span>
+
+          <span class="bmrk-cta-right">{{ section.settings.cta_label }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var el = document.getElementById('bmrkGiftOverlay');
+      if(!el) return;
+
+      var hideDays = parseInt(el.getAttribute('data-hide-days') || '7', 10);
+      var delayMs  = parseInt(el.getAttribute('data-delay-ms') || '800', 10);
+      var onlyCart = el.getAttribute('data-only-cart') === 'true';
+      var onlyOnFooter = el.getAttribute('data-show-only-on-footer') === 'true';
+
+      var itemCount = {{ cart.item_count | json }};
+      if(onlyCart && (!itemCount || itemCount < 1)) return;
+
+      var key = 'bmrk_gift_overlay_closed_until';
+      try{
+        var closedUntil = parseInt(localStorage.getItem(key) || '0', 10);
+        if(Date.now() < closedUntil) return;
+      } catch(e){}
+
+      function showBanner(){
+        if(el.classList.contains('is-visible')) return;
+        el.classList.add('is-visible');
+        document.body.classList.add('bmrk-has-gift-banner');
+      }
+
+      function hideBanner(){
+        el.classList.remove('is-visible');
+        document.body.classList.remove('bmrk-has-gift-banner');
+      }
+
+      // Close button
+      var closeBtn = el.querySelector('.bmrk-gift-close');
+      if(closeBtn){
+        closeBtn.addEventListener('click', function(){
+          hideBanner();
+          try{
+            localStorage.setItem(key, String(Date.now() + hideDays * 24 * 60 * 60 * 1000));
+          } catch(e){}
+        });
+      }
+
+      // If you want it to appear only when user reaches footer
+      if(onlyOnFooter){
+        var footer = document.querySelector('footer');
+        if(!footer){
+          // fallback: just show normally
+          window.setTimeout(showBanner, delayMs);
+          return;
+        }
+
+        var obs = new IntersectionObserver(function(entries){
+          if(entries && entries[0] && entries[0].isIntersecting){
+            window.setTimeout(showBanner, delayMs);
+          } else {
+            // keep hidden until footer visible
+            hideBanner();
+          }
+        }, { threshold: 0.08 });
+
+        obs.observe(footer);
+        return;
+      }
+
+      // Default: show after delay anywhere
+      window.setTimeout(showBanner, delayMs);
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "BM Gift Overlay Banner",
+  "settings": [
+    { "type": "checkbox", "id": "enable_overlay", "label": "Enable overlay banner", "default": true },
+    { "type": "image_picker", "id": "overlay_image", "label": "Left image (model/product)" },
+
+    { "type": "text", "id": "eyebrow_text", "label": "Top line", "default": "Congratulations!" },
+    { "type": "text", "id": "title_text", "label": "Main line", "default": "You unlocked a free gift" },
+
+    { "type": "text", "id": "cta_label", "label": "CTA right text", "default": "View Cart" },
+    { "type": "url", "id": "cta_link", "label": "CTA link (default: cart)" },
+
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffd7e0" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#111111" },
+
+    { "type": "color", "id": "cta_bg", "label": "CTA background", "default": "#111111" },
+    { "type": "color", "id": "cta_text_color", "label": "CTA text color", "default": "#ffffff" },
+
+    { "type": "checkbox", "id": "show_only_if_cart_has_items", "label": "Show only if cart has items", "default": false },
+    { "type": "checkbox", "id": "show_only_on_footer", "label": "Show only when user reaches footer", "default": true },
+
+    { "type": "range", "id": "delay_ms", "label": "Show delay (ms)", "min": 0, "max": 5000, "step": 100, "default": 400 },
+    { "type": "range", "id": "hide_days", "label": "Hide for days after closing", "min": 1, "max": 30, "step": 1, "default": 7 }
+  ],
+  "presets": [
+    { "name": "BM Gift Overlay Banner" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,200 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Matched to Rituals & Floating Banner */
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+  }
+
+  .impact-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+  }
+
+  .impact-wrapper-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding: 0 20px;
+  }
+
+  .impact-image-{{ section_id }} { 
+    flex: 1; 
+  }
+
+  .impact-image-{{ section_id }} img { 
+    width: 100%; 
+    border-radius: 32px;
+    display: block; 
+    object-fit: contain; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); /* Matched Rituals Shadow */
+  }
+
+  .impact-content-{{ section_id }} { 
+    flex: 1; 
+  }
+
+  /* Title - Matched to Rituals H2 */
+  .impact-content-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, 42px); 
+    font-weight: 800; 
+    margin: 0 0 20px; 
+    color: var(--heading-dark-{{ section_id }}); 
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Description - Matched to Rituals Subheading */
+  .impact-content-{{ section_id }} p { 
+    font-size: 18px; 
+    color: var(--secondary-text-{{ section_id }}); 
+    line-height: 1.6; 
+    margin-bottom: 35px; 
+  }
+
+  .impact-stats-{{ section_id }} { 
+    display: flex; 
+    gap: 20px; 
+  }
+
+  .impact-stat-card-{{ section_id }} {
+    background: #F8FAFC; 
+    padding: 30px; 
+    border-radius: 24px; 
+    flex: 1;
+    border: 1px solid var(--border-light-{{ section_id }});
+    transition: transform 0.3s ease;
+  }
+
+  /* Stat Number - Matched to Pill Value Style */
+  .impact-stat-card-{{ section_id }} h3 { 
+    font-size: clamp(24px, 4vw, 32px); 
+    font-weight: 800;
+    margin: 0 0 8px; 
+    color: var(--primary-blue-{{ section_id }});
+    letter-spacing: -0.01em;
+  }
+
+  /* Stat Label - Matched to Pill Label Style */
+  .impact-stat-card-{{ section_id }} span { 
+    font-size: 10px; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    color: var(--secondary-text-{{ section_id }}); 
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    display: block;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 991px) {
+    .impact-wrapper-{{ section_id }} { gap: 30px; }
+    .impact-content-{{ section_id }} h2 { font-size: 34px; }
+  }
+
+  @media (max-width: 767px) {
+    .impact-wrapper-{{ section_id }} { 
+      flex-direction: column; 
+      text-align: left; 
+    }
+    
+    .impact-content-{{ section_id }} { 
+        order: 1; 
+        width: 100%;
+        display: block;
+    }
+    
+    .impact-image-{{ section_id }} { 
+        order: 2; 
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .impact-stats-{{ section_id }} { 
+      order: 3;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .impact-stat-card-{{ section_id }} {
+        padding: 20px 15px;
+    }
+
+    .impact-content-{{ section_id }} h2 { 
+        text-align: left; 
+        font-size: 28px;
+    }
+    
+    .impact-content-{{ section_id }} p {
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="impact-{{ section_id }}">
+  <div class="impact-wrapper-{{ section_id }}">
+    
+    <div class="impact-image-{{ section_id }}">
+      {% if section.settings.image != blank %}
+        <img src="{{ section.settings.image | image_url: width: 1000 }}" alt="{{ section.settings.heading | escape }}" loading="lazy">
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+
+    <div class="impact-content-{{ section_id }}">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.text }}</p>
+      
+      <div class="impact-stats-{{ section_id }}">
+        {% for block in section.blocks %}
+          <div class="impact-stat-card-{{ section_id }}" {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.stat_value }}</h3>
+            <span>{{ block.settings.stat_label }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Magnesium Impact",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Main Image/Chart" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why Magnesium matters right now" },
+    { "type": "textarea", "id": "text", "label": "Description", "default": "Stress doesn't just feel bad—it's a 'magnesium burner.'" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1400, "step": 20, "default": 1100 },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat Card",
+      "settings": [
+        { "type": "text", "id": "stat_value", "label": "Stat Value", "default": "300+" },
+        { "type": "text", "id": "stat_label", "label": "Stat Label", "default": "Enzymatic Reactions" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Magnesium Impact" }]
+}
+{% endschema %}

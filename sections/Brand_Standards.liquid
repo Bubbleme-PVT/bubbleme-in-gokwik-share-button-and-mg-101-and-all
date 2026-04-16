@@ -1,0 +1,199 @@
+{%- comment -%}
+  Brand Standards Section (Standalone)
+  - Layout: Left (Text & Accordions) | Right (4-Image Grid with Changeable Center Image)
+  - Fixed Schema Step Error (Max 101 steps)
+{%- endcomment -%}
+
+{%- liquid
+  assign std_uid = section.id | replace: '-', '' | replace: '_', '' | downcase
+  assign one_open = section.settings.one_open
+-%}
+
+{%- style -%}
+  .std-grid-{{ std_uid }} {
+    --std-bg: {{ section.settings.section_bg }};
+    --std-text: {{ section.settings.text_color }};
+    --std-border: {{ section.settings.border_color }};
+    --std-icon: {{ section.settings.icon_color }};
+    --std-maxw: {{ section.settings.max_width }}px;
+    --std-pt: {{ section.settings.padding_top }}px;
+    --std-pb: {{ section.settings.padding_bottom }}px;
+    background: var(--std-bg);
+  }
+
+  .std-grid-wrap-{{ std_uid }} {
+    padding: var(--std-pt) 20px var(--std-pb);
+    max-width: var(--std-maxw);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  /* Left Side Content */
+  .std-grid-title-{{ std_uid }} { margin: 0 0 20px; font-size: {{ section.settings.title_size_desktop }}px; font-weight: 800; color: var(--std-text); line-height: 1.1; }
+  .std-grid-desc-{{ std_uid }} { margin-bottom: 40px; font-size: 16px; line-height: 1.6; color: var(--std-text); opacity: 0.85; }
+
+  .std-grid-list-{{ std_uid }} { border-top: 1px solid var(--std-border); }
+  .std-grid-item-{{ std_uid }} { border-bottom: 1px solid var(--std-border); }
+  .std-grid-btn-{{ std_uid }} {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0; background: transparent; border: 0; cursor: pointer; text-align: left;
+  }
+  .std-grid-q-{{ std_uid }} { margin: 0; font-weight: 700; color: var(--std-text); font-size: var(--b-q-d, 18px); }
+
+  .std-grid-plus-{{ std_uid }} { width: 14px; height: 14px; position: relative; transition: transform .3s ease; flex-shrink: 0; }
+  .std-grid-plus-{{ std_uid }}::before, .std-grid-plus-{{ std_uid }}::after {
+    content: ''; position: absolute; background: var(--std-icon); top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 999px;
+  }
+  .std-grid-plus-{{ std_uid }}::before { width: 14px; height: 1.5px; }
+  .std-grid-plus-{{ std_uid }}::after { width: 1.5px; height: 14px; }
+  .is-open .std-grid-plus-{{ std_uid }} { transform: rotate(45deg); }
+
+  .std-grid-panel-{{ std_uid }} { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .std-grid-inner-{{ std_uid }} { padding: 0 0 20px; line-height: 1.6; color: var(--std-text); opacity: 0.9; font-size: var(--b-a-d, 15px); }
+
+  /* Right Side Gallery */
+  .std-grid-gallery-{{ std_uid }} { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; }
+  .std-grid-img-{{ std_uid }} { border-radius: 12px; overflow: hidden; background: #eee; aspect-ratio: 1 / 1; }
+  .std-grid-img-{{ std_uid }} img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Center Badge Image */
+  .std-grid-center-img-{{ std_uid }} {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: {{ section.settings.center_img_width }}px; z-index: 10; line-height: 0;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+  }
+  .std-grid-center-img-{{ std_uid }} img { width: 100%; height: auto; border-radius: 4px; }
+
+  @media screen and (max-width: 990px) {
+    .std-grid-wrap-{{ std_uid }} { grid-template-columns: 1fr; gap: 40px; }
+    .std-grid-center-img-{{ std_uid }} { width: calc({{ section.settings.center_img_width }}px * 0.8); }
+  }
+{%- endstyle -%}
+
+<section class="std-grid-{{ std_uid }}">
+  <div class="std-grid-wrap-{{ std_uid }}">
+    
+    <div class="std-grid-content-{{ std_uid }}">
+      <div class="std-grid-head-{{ std_uid }}">
+        {% if section.settings.heading != blank %}<h2 class="std-grid-title-{{ std_uid }}">{{ section.settings.heading }}</h2>{% endif %}
+        {% if section.settings.description != blank %}<div class="std-grid-desc-{{ std_uid }}">{{ section.settings.description }}</div>{% endif %}
+      </div>
+
+      <div class="std-grid-list-{{ std_uid }}">
+        {% for block in section.blocks %}
+          {%- liquid
+            assign b_styles = ""
+            if block.settings.use_custom_sizes
+              assign b_styles = b_styles | append: "--b-q-d:" | append: block.settings.q_size_desktop | append: "px;"
+              assign b_styles = b_styles | append: "--b-a-d:" | append: block.settings.a_size_desktop | append: "px;"
+            endif
+          -%}
+          <div class="std-grid-item-{{ std_uid }}" style="{{ b_styles }}" {{ block.shopify_attributes }}>
+            <button type="button" class="std-grid-btn-{{ std_uid }}" data-toggle-btn aria-expanded="{{ block.settings.open_by_default }}">
+              <p class="std-grid-q-{{ std_uid }}">{{ block.settings.question | escape }}</p>
+              <span class="std-grid-plus-{{ std_uid }}"></span>
+            </button>
+            <div class="std-grid-panel-{{ std_uid }}">
+              <div class="std-grid-inner-{{ std_uid }}">{{ block.settings.answer }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="std-grid-gallery-{{ std_uid }}">
+      {% for i in (1..4) %}
+        {% capture cur_img %}image_{{ i }}{% endcapture %}
+        <div class="std-grid-img-{{ std_uid }}">
+          {% if section.settings[cur_img] != blank %}
+            {{ section.settings[cur_img] | image_url: width: 800 | image_tag: loading: 'lazy' }}
+          {% else %}{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}{% endif %}
+        </div>
+      {% endfor %}
+
+      {% if section.settings.center_image != blank %}
+      <div class="std-grid-center-img-{{ std_uid }}">
+        {{ section.settings.center_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: 'Center Badge' }}
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function() {
+    const setup = () => {
+      const root = document.querySelector('.std-grid-{{ std_uid }}');
+      if (!root) return;
+      const oneOpen = {{ section.settings.one_open | json }};
+
+      root.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-toggle-btn]');
+        if (!btn) return;
+        const item = btn.closest('.std-grid-item-{{ std_uid }}');
+        const panel = item.querySelector('.std-grid-panel-{{ std_uid }}');
+        const isOpen = item.classList.contains('is-open');
+        
+        if (!isOpen && oneOpen) {
+          root.querySelectorAll('.std-grid-item-{{ std_uid }}.is-open').forEach(el => {
+            el.classList.remove('is-open');
+            el.querySelector('.std-grid-panel-{{ std_uid }}').style.maxHeight = null;
+          });
+        }
+        item.classList.toggle('is-open');
+        panel.style.maxHeight = item.classList.contains('is-open') ? panel.scrollHeight + "px" : null;
+      });
+    };
+    setup();
+    if (window.Shopify && Shopify.designMode) document.addEventListener('shopify:section:load', setup);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand Standards Split",
+  "settings": [
+    { "type": "header", "content": "Text Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Additional Key Standards" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Commitment to quality standards...</p>" },
+    { "type": "range", "id": "title_size_desktop", "label": "Heading Size", "min": 20, "max": 70, "step": 1, "default": 40 },
+    { "type": "checkbox", "id": "one_open", "label": "Only one open at a time", "default": true },
+    { "type": "header", "content": "Gallery Images" },
+    { "type": "image_picker", "id": "image_1", "label": "Top Left" },
+    { "type": "image_picker", "id": "image_2", "label": "Top Right" },
+    { "type": "image_picker", "id": "image_3", "label": "Bottom Left" },
+    { "type": "image_picker", "id": "image_4", "label": "Bottom Right" },
+    { "type": "header", "content": "Center Badge Image" },
+    { "type": "image_picker", "id": "center_image", "label": "Center Image (Badge)" },
+    { "type": "range", "id": "center_img_width", "label": "Center Image Width", "min": 50, "max": 200, "step": 2, "default": 100, "unit": "px" },
+    { "type": "header", "content": "Design" },
+    { "type": "color", "id": "section_bg", "label": "Background", "default": "#fdf5f2" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#4a1c1c" },
+    { "type": "color", "id": "border_color", "label": "Dividers", "default": "#e8d5d1" },
+    { "type": "color", "id": "icon_color", "label": "Plus Icon", "default": "#4a1c1c" },
+    { "type": "range", "id": "max_width", "label": "Max Section Width", "min": 800, "max": 1600, "step": 10, "default": 1100 },
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 120, "step": 2, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 120, "step": 2, "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "standard",
+      "name": "Standard Row",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Title", "default": "Vegan" },
+        { "type": "richtext", "id": "answer", "label": "Description", "default": "<p>Content goes here.</p>" },
+        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": false },
+        { "type": "header", "content": "Custom Sizing" },
+        { "type": "checkbox", "id": "use_custom_sizes", "label": "Use custom sizes", "default": false },
+        { "type": "range", "id": "q_size_desktop", "label": "Title Size", "min": 12, "max": 40, "step": 1, "default": 18 },
+        { "type": "range", "id": "a_size_desktop", "label": "Answer Size", "min": 10, "max": 30, "step": 1, "default": 15 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Brand Standards Split" }]
+}
+{% endschema %}

@@ -1,0 +1,450 @@
+{%- liquid
+  assign original_picker_type = block.settings.picker_type
+-%}
+{%- unless product.has_only_default_variant -%}
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    class="no-js-hidden variant-selects--{{ original_picker_type }}"
+    data-section="{{ section.id }}"
+    data-url="{{ product.url }}"
+    data-show-availability="{{ block.settings.show_availability }}"
+    {% if update_url == false %}
+      data-update-url="false"
+    {% endif %}
+    {{ block.shopify_attributes }}
+  >
+    {%- assign size_chart_options = block.settings.size_chart_options | downcase | replace: ',,', ',' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' -%}
+
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign option_name_downcase = option.name | downcase
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = original_picker_type
+
+        if block.settings.swatch_enabled and swatch_count > 0
+          assign picker_type = 'swatch'
+        endif
+      -%}
+      {%- if size_chart_options contains option_name_downcase and block.settings.size_chart_page.content != blank -%}
+        {%- capture size_chart -%}
+          <modal-opener class="popup-modal__opener no-js-hidden quick-add-hidden" data-modal="#PopupModal-{{ block.id }}">
+            <button
+                id="ProductPopup-{{ block.id }}"
+                class="flex items-start text-left gap-05 t5 p-0 tap-target--small link{% if block.settings.size_chart_icon and block.settings.size_chart_label != blank %} button-with-icon button-with-icon--left{% endif %}"
+                type="button"
+                aria-haspopup="dialog"
+            >
+              {%- render 'icon', icon: block.settings.size_chart_icon, class: 'mt-0', size: 18 -%}
+              {% if block.settings.size_chart_label != blank %}
+                {{ block.settings.size_chart_label }}
+              {% else %}
+                <span class="visually-hidden">{{ block.settings.size_chart_page.title }}</span>
+              {% endif %}
+            </button>
+          </modal-opener>
+          <a href="{{ block.settings.size_chart_page.url }}" target="_blank" class="flex gap-05 t5 p-0 link no-js">
+            {%- render 'icon', icon: block.settings.size_chart_icon, size: 15 -%}
+            {{- block.settings.text -}}
+          </a>
+        {%- endcapture -%}
+      {%- else -%}
+        {%- assign size_chart = "" -%}
+      {%- endif -%}
+
+      {%- if option_name_downcase contains 'pack' -%}
+
+        <style>
+          .pack-cards-fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+          }
+          .pack-cards {
+            flex-wrap: wrap;
+            display: flex;
+            overflow-x: auto;
+            padding-top: 20px;
+            margin-top: -20px;
+            gap: 12px;
+            width: 100%;
+          }
+          .pack-card-label {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            cursor: pointer;
+            background: #fff;
+            text-align: center;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            min-height: 160px;
+            width: calc(25% - 9px);
+            min-width: 150px;
+          }
+          @media (max-width: 749px) {
+            .pack-card-label {
+              width: calc(33.33% - 8px);
+              min-width: calc(33.33% - 8px);
+            }
+            .pack-cards:not(:has(.pack-card-label:nth-child(3))) .pack-card-label,
+            .pack-cards:has(.pack-card-label:nth-child(4)) .pack-card-label {
+                width: calc(50% - 8px);
+                min-width: calc(50% - 8px);
+            }            
+          }
+          .pack-card-label:hover {
+            border-color: #b0b8c8;
+          }
+          .pack-card-label.is-selected {
+            border-color: #3b5998;
+            background: #f0f4ff;
+            box-shadow: 0 0 0 1px #3b5998;
+          }
+          .pack-card-label.is-unavailable {
+            opacity: 0.45;
+            pointer-events: none;
+          }
+          .pack-card__badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a2d5a;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+          }
+          .pack-card__image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+          }
+          .pack-card__image-placeholder {
+            width: 60px;
+            height: 60px;
+            background: #f3f3f3;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+          }
+          .pack-card__title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a1a1a;
+            line-height: 1.3;
+          }
+          .pack-card__subtitle {
+            font-size: 12px;
+            color: #e05252;
+            font-weight: 500;
+          }
+          .pack-card__price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+          }
+          .pack-card__compare-price {
+            font-size: 12px;
+            color: #888;
+            text-decoration: line-through;
+            font-weight: 400;
+          }
+          .pack-card__radio {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+          }
+        </style>
+
+        <fieldset class="js product-form__input pack-cards-fieldset">
+          <legend class="variant-form__label flex w-full items-center m-0 justify-between font-{{ block.settings.variant_label_text_weight }} {{ block.settings.variant_label_text_size }} {{ block.settings.variant_label_text_transform }}">
+            <span>{{ option.name }}</span>
+          </legend>
+          <div class="pack-cards">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign matched_variant = nil
+                for variant in product.variants
+                  if option.position == 1 and variant.option1 == value
+                    assign matched_variant = variant
+                    break
+                  elsif option.position == 2 and variant.option2 == value
+                    assign matched_variant = variant
+                    break
+                  elsif option.position == 3 and variant.option3 == value
+                    assign matched_variant = variant
+                    break
+                  endif
+                endfor
+              -%}
+
+              {%- liquid
+                assign card_badge = ''
+                assign card_subtitle = ''
+                assign card_variant_image = nil
+                assign card_available = true
+
+                if matched_variant != nil
+                  if matched_variant.metafields.custom.badge != blank
+                    assign card_badge = matched_variant.metafields.custom.badge | strip
+                  endif
+                  if matched_variant.metafields.custom.subtitle != blank
+                    assign card_subtitle = matched_variant.metafields.custom.subtitle | strip
+                  endif
+                  if matched_variant.featured_image != nil
+                    assign card_variant_image = matched_variant.featured_image
+                  endif
+                  assign card_available = matched_variant.available
+                endif
+              -%}
+
+              <label
+                class="pack-card-label{% if value == option.selected_value %} is-selected{% endif %}{% unless card_available %} is-unavailable{% endunless %}"
+                data-pack-label
+              >
+                <input
+                  class="pack-card__radio"
+                  type="radio"
+                  name="{{ option.name }}"
+                  value="{{ value | escape }}"
+                  form="{{ product_form_id }}"
+                  {% if value == option.selected_value %}checked{% endif %}
+                  {% unless card_available %}disabled{% endunless %}
+                />
+
+                {%- if card_badge != blank -%}
+                  <span class="pack-card__badge">{{ card_badge }}</span>
+                {%- endif -%}
+
+                {%- if card_variant_image != nil -%}
+                  <img
+                    src="{{ card_variant_image | image_url: width: 120 }}"
+                    alt="{{ value | escape }}"
+                    class="pack-card__image"
+                    width="60"
+                    height="60"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  <div class="pack-card__image-placeholder" aria-hidden="true">
+                    {%- render 'icon', icon: 'placeholder', size: 28 -%}
+                  </div>
+                {%- endif -%}
+
+                <span class="pack-card__title">{{ value }}</span>
+
+                {%- if card_subtitle != blank -%}
+                  <span class="pack-card__subtitle">{{ card_subtitle }}</span>
+                {%- endif -%}
+
+                {%- if matched_variant != nil -%}
+                  <span class="pack-card__price">{{ matched_variant.price | money }}</span>
+                  {%- if matched_variant.compare_at_price > matched_variant.price -%}
+                    <span class="pack-card__compare-price">{{ matched_variant.compare_at_price | money }}</span>
+                  {%- endif -%}
+                {%- endif -%}
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+        <script>
+          (function () {
+            var fieldset = document.currentScript.previousElementSibling;
+            while (fieldset && !fieldset.classList.contains('pack-cards-fieldset')) {
+              fieldset = fieldset.previousElementSibling;
+            }
+            if (!fieldset) return;
+            fieldset.addEventListener('change', function (e) {
+              if (!e.target.classList.contains('pack-card__radio')) return;
+              fieldset.querySelectorAll('[data-pack-label]').forEach(function (lbl) {
+                lbl.classList.remove('is-selected');
+              });
+              e.target.closest('[data-pack-label]').classList.add('is-selected');
+            });
+          })();
+        </script>
+
+      {%- elsif picker_type == 'swatch' -%}
+        <fieldset class="js product-form__input{% if block.settings.swatch_box %} product-form__input--pill product-form__input--box product-form__input--swatch-box{% else %} product-form__input--swatch{% endif %}" style="{% if block.settings.swatch_box %}--max-boxes:3;{% endif %}--swatch-size: {{ block.settings.swatch_size }}em">
+          <legend class="variant-form__label flex{% if size_chart %} gap-2{% endif %} w-full items-center m-0 justify-between font-{{ block.settings.variant_label_text_weight }} {{ block.settings.variant_label_text_size }} {{ block.settings.variant_label_text_transform }}">
+            <span>
+              {% if block.settings.prefix != blank %}{{ block.settings.prefix | escape }} {{ option.name | downcase }}{% else %}{{ option.name }}{% endif %}:
+              <span class="font-normal" data-selected-swatch-value="{{ option.name }}">
+                {{- option.selected_value -}}
+              </span>
+            </span>
+            {{ size_chart }}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- elsif picker_type == 'button' or picker_type == 'box' -%}
+        {%- liquid
+          if picker_type == 'box'
+            assign max_boxes = block.settings.box_size
+            if max_boxes == 'auto'
+              assign pill_text_transform = block.settings.pill_text_transform
+
+              if pill_text_transform != 'uppercase'
+                assign first_option = option.values.first
+                assign first_option_uppercase = first_option | upcase
+                if first_option == first_option_uppercase
+                  assign pill_text_transform = 'uppercase'
+                endif
+              endif
+
+              assign total_chars = 0
+              assign total_values = option.values.size
+              for value in option.values
+                assign escaped_value = value | escape
+                assign total_chars = total_chars | plus: escaped_value.size
+              endfor
+
+              if total_values != 0
+                assign average_chars = total_chars | divided_by: total_values
+              endif
+
+              if average_chars <= 2
+                assign max_boxes = 5
+              elsif average_chars < 7
+                assign max_boxes = 4
+              elsif average_chars < 15
+                assign max_boxes = 3
+              else
+                assign max_boxes = 2
+              endif
+
+              if section.settings.media_size == 'large'
+                assign max_boxes = max_boxes | minus: 1
+              elsif section.settings.media_size == 'small'
+                assign max_boxes = max_boxes | plus: 1
+              endif
+
+              if pill_text_transform == 'uppercase'
+                assign max_boxes = max_boxes | minus: 1
+              endif
+            endif
+          endif
+        -%}
+        <fieldset class="js {{ block.settings.pill_text_size }} product-form__input product-form__input--pill{% if picker_type == 'box' %} product-form__input--box{% else %} flex flex-wrap gap-1{% endif %}"
+          style="--variant-pill-font-weight: {{ block.settings.pill_text_weight }};--variant-pill-text-transform: {{ block.settings.pill_text_transform }};{% if picker_type == 'box' %}--max-boxes: {{ max_boxes }};{% endif %}">
+          <legend class="variant-form__label flex{% if size_chart %} gap-2{% endif %} w-full items-center m-0 justify-between font-{{ block.settings.variant_label_text_weight }} {{ block.settings.variant_label_text_size }} {{ block.settings.variant_label_text_transform }}">
+            <span class="grow basis-1/2">{% if block.settings.prefix != blank %}{{ block.settings.prefix | escape }} {{ option.name | downcase }}:{% else %}{{ option.name }}{% endif %}</span>
+            {{ size_chart }}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: 'button'
+          %}
+        </fieldset>
+      {%- else -%}
+        <div class="product-form__input product-form__input--dropdown">
+          <label class="variant-form__label flex{% if size_chart %} gap-2{% endif %} w-full items-center m-0 justify-between font-{{ block.settings.variant_label_text_weight }} {{ block.settings.variant_label_text_size }} {{ block.settings.variant_label_text_transform }}" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            <span class="grow basis-1/2">{% if block.settings.prefix != blank %}{{ block.settings.prefix | escape }} {{ option.name | downcase }}:{% else %}{{ option.name }}{% endif %}</span>
+            {{ size_chart }}
+          </label>
+          <div class="select">
+            {%- if picker_type == 'swatch_dropdown' -%}
+              <span
+                data-selected-dropdown-swatch="options[{{ option.name | escape }}]"
+                class="dropdown-swatch"
+              >
+                {% render 'swatch', swatch: option.selected_value.swatch %}
+              </span>
+            {%- endif -%}
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="styled-select select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {% render 'product-variant-options',
+                product: product,
+                option: option,
+                block: block,
+                picker_type: picker_type
+              %}
+            </select>
+            {% render 'icon-caret' %}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+    <script type="application/json">
+      {{ product.variants | json }}
+    </script>
+  </variant-selects>
+
+  <noscript class="product-form__noscript-wrapper-{{ section.id }}">
+    <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+      <label class="form__label" for="Variants-{{ section.id }}">
+        {{- 'products.product.product_variants' | t -}}
+      </label>
+      <div class="select">
+        <select
+          name="id"
+          id="Variants-{{ section.id }}"
+          class="styled-select select__select"
+          form="{{ product_form_id }}"
+        >
+          {%- for variant in product.variants -%}
+            <option
+              {% if variant == product.selected_or_first_available_variant %}
+                selected="selected"
+              {% endif %}
+              {% if variant.available == false %}
+                disabled
+              {% endif %}
+              value="{{ variant.id }}"
+            >
+              {%- liquid
+                echo variant.title
+                echo variant.price | money | strip_html | prepend: ' - '
+                if variant.available == false
+                  echo 'products.product.sold_out' | t | prepend: ' - '
+                endif
+                if variant.quantity_rule.increment > 1
+                  echo 'products.product.quantity.multiples_of' | t: quantity: variant.quantity_rule.increment | prepend: ' - '
+                endif
+                if variant.quantity_rule.min > 1
+                  echo 'products.product.quantity.minimum_of' | t: quantity: variant.quantity_rule.min | prepend: ' - '
+                endif
+                if variant.quantity_rule.max != null
+                  echo 'products.product.quantity.maximum_of' | t: quantity: variant.quantity_rule.max | prepend: ' - '
+                endif
+                assign cart_quantity = cart | item_count_for_variant: variant.id
+                if cart_quantity > 0
+                  echo 'products.product.quantity.in_cart_html' | t: quantity: cart_quantity | prepend: ' - '
+                endif
+              -%}
+            </option>
+          {%- endfor -%}
+        </select>
+        {% render 'icon-caret' %}
+      </div>
+    </div>
+  </noscript>
+{%- endunless -%}

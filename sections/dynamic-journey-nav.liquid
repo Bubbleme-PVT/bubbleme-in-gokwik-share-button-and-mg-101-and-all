@@ -1,0 +1,211 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  .journey-section-{{ section_id }} {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color }};
+    text-align: center;
+    font-family: "Inter", "Montserrat", sans-serif;
+    overflow: hidden;
+  }
+
+  /* Main Title - Matched to Rituals H2 */
+  .journey-title-{{ section_id }} {
+    font-size: clamp(28px, 5vw, {{ section.settings.title_size }}px);
+    font-weight: 800;
+    color: var(--heading-dark-{{ section_id }});
+    margin-bottom: 40px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    padding: 0 20px;
+  }
+
+  .journey-flex-{{ section_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ section.settings.gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 10px 20px 30px; /* Bottom padding for hover lift */
+  }
+
+  /* Journey Buttons - Matched to btn-std */
+  .journey-btn-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: {{ section.settings.btn_roundness }}px;
+    gap: 12px;
+    border: 1.5px solid transparent;
+  }
+
+  /* Standardized Button Sizes */
+  {% if section.settings.btn_size == 'small' %}
+    .journey-btn-{{ section_id }} { padding: 12px 28px; font-size: 13px; }
+  {% elsif section.settings.btn_size == 'medium' %}
+    .journey-btn-{{ section_id }} { padding: 16px 36px; font-size: 15px; }
+  {% else %}
+    .journey-btn-{{ section_id }} { padding: 20px 48px; font-size: 16px; }
+  {% endif %}
+
+  .journey-btn-{{ section_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(33, 81, 116, 0.15);
+  }
+
+  /* Icons */
+  .icon-grid-{{ section_id }} { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; width: 16px; }
+  .icon-grid-{{ section_id }} span { width: 6px; height: 6px; background: currentColor; border-radius: 1px; }
+
+  .icon-flask-{{ section_id }} {
+    width: 16px; height: 18px;
+    border-bottom: 2.5px solid currentColor;
+    border-left: 2px solid transparent;
+    border-right: 2px solid transparent;
+    position: relative;
+    border-radius: 0 0 4px 4px;
+  }
+  .icon-flask-{{ section_id }}::after {
+    content: ''; position: absolute; top: -4px; left: 50%;
+    transform: translateX(-50%); width: 5px; height: 11px; background: currentColor;
+    border-radius: 2px 2px 0 0;
+  }
+
+  @media (max-width: 767px) {
+    .journey-title-{{ section_id }} { font-size: 28px; margin-bottom: 30px; }
+
+    {% if section.settings.mobile_layout == 'scroll' %}
+      .journey-flex-{{ section_id }} {
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 40px;
+      }
+      .journey-flex-{{ section_id }}::-webkit-scrollbar { display: none; }
+      .journey-btn-{{ section_id }} { 
+        scroll-snap-align: center; 
+        padding: 14px 28px;
+        font-size: 14px;
+      }
+    {% else %}
+      .journey-flex-{{ section_id }} {
+        flex-direction: column;
+        width: 100%;
+      }
+      .journey-btn-{{ section_id }} {
+        width: 100%;
+        justify-content: center;
+      }
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<section class="journey-section-{{ section_id }}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <h2 class="journey-title-{{ section_id }}">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="journey-flex-{{ section_id }}">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.url | default: '#' }}" 
+           class="journey-btn-{{ section_id }}" 
+           style="
+             background-color: {{ block.settings.btn_bg }}; 
+             color: {{ block.settings.btn_text }};
+             flex-direction: {% if block.settings.icon_pos == 'right' %}row-reverse{% else %}row{% endif %};
+             {% if block.settings.use_border %}border-color: {{ block.settings.btn_text | color_modify: 'alpha', 0.2 }};{% endif %}
+           "
+           {{ block.shopify_attributes }}>
+          
+          {% if block.settings.icon == 'grid' %}
+            <div class="icon-grid-{{ section_id }}"><span></span><span></span><span></span><span></span></div>
+          {% elsif block.settings.icon == 'flask' %}
+            <div class="icon-flask-{{ section_id }}"></div>
+          {% endif %}
+
+          {{ block.settings.text }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Dynamic Journey Nav",
+  "settings": [
+    { "type": "header", "content": "Title Settings" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Continue Your Journey" },
+    { "type": "range", "id": "title_size", "label": "Heading Size", "min": 20, "max": 60, "step": 2, "default": 32 },
+    { "type": "header", "content": "Mobile Settings" },
+    { "type": "select", "id": "mobile_layout", "label": "Mobile Layout", "options": [
+        { "value": "scroll", "label": "Horizontal Scroll" },
+        { "value": "stack", "label": "Vertical Stack" }
+      ], "default": "scroll" },
+    { "type": "header", "content": "Global Button Styling" },
+    { "type": "select", "id": "btn_size", "label": "Button Size", "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ], "default": "medium" },
+    { "type": "range", "id": "btn_roundness", "label": "Corner Roundness", "min": 0, "max": 100, "step": 4, "default": 100 },
+    { "type": "range", "id": "gap", "label": "Gap between buttons", "min": 5, "max": 50, "step": 5, "default": 20 },
+    { "type": "header", "content": "Layout & Background" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 10, "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Button Text", "default": "Return to Hub" },
+        { "type": "url", "id": "url", "label": "Button Link" },
+        { "type": "checkbox", "id": "use_border", "label": "Show subtle border", "default": false },
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+            { "value": "none", "label": "None" },
+            { "value": "grid", "label": "Grid (Hub)" },
+            { "value": "flask", "label": "Flask (Ingredients)" }
+          ], "default": "none" },
+        { "type": "select", "id": "icon_pos", "label": "Icon Position", "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "right", "label": "Right" }
+          ], "default": "left" },
+        { "type": "color", "id": "btn_bg", "label": "Background Color", "default": "#215174" },
+        { "type": "color", "id": "btn_text", "label": "Text Color", "default": "#ffffff" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic Journey Nav",
+      "blocks": [
+        { "type": "button", "settings": { "text": "Return to Hub", "icon": "grid", "btn_bg": "#215174" } },
+        { "type": "button", "settings": { "text": "Explore Ingredients", "icon": "flask", "btn_bg": "#F8FAFC", "btn_text": "#215174", "use_border": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

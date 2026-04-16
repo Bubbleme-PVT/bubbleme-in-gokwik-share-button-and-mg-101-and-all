@@ -1,0 +1,258 @@
+{% schema %}
+{
+  "name": "Testimonial Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Feel Our Rhythm"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote" },
+        { "type": "text", "id": "name", "label": "Name" },
+        { "type": "text", "id": "designation", "label": "Designation" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "label": "Rating"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Testimonial Slider" }
+  ]
+}
+{% endschema %}
+
+<section class="hz-testimonial">
+  <div class="hz-wrap page-width">
+
+    <span class="hz-badge">{{ section.settings.badge_text }}</span>
+
+    <div class="hz-slider">
+      {% for block in section.blocks %}
+      <div class="hz-slide {% if forloop.first %}active{% endif %}">
+
+        <!-- LEFT -->
+        <div class="hz-left">
+          <p class="hz-quote">“{{ block.settings.quote }}”</p>
+
+          <div class="hz-rating">
+            {% for i in (1..block.settings.rating) %}★{% endfor %}
+            <span>4.8</span>
+          </div>
+
+          <h4 class="hz-name">{{ block.settings.name }}</h4>
+          <p class="hz-role">{{ block.settings.designation }}</p>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="hz-right">
+          {% if block.settings.image %}
+            <img
+              src="{{ block.settings.image | image_url: width: 700 }}"
+              alt="{{ block.settings.name }}"
+            >
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- CENTER NAV -->
+    <div class="hz-center-nav">
+      <button class="hz-prev">←</button>
+      {% comment %} <span class="hz-count">
+        <b class="hz-current">01</b>/<span>{{ section.blocks.size | prepend: '0' }}</span>
+      </span> {% endcomment %}
+      <button class="hz-next active">→</button>
+    </div>
+
+  </div>
+</section>
+
+<style>
+/* =====================
+   BASE
+===================== */
+{% comment %} .hz-testimonial {
+  padding: 80px 0;
+} {% endcomment %}
+.hz-wrap {
+  position: relative;
+}
+.hz-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+/* =====================
+   SLIDER
+===================== */
+.hz-slide {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  align-items: center;
+}
+.hz-slide.active {
+  display: grid;
+}
+
+.hz-quote {
+  font-size: 28px;
+  line-height: 1.5;
+}
+
+.hz-rating {
+  margin: 18px 0;
+  font-size: 18px;
+  color: #f5a623;
+}
+.hz-rating span {
+  color: #000;
+  margin-left: 10px;
+}
+
+.hz-name {
+  font-size: 22px;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+.hz-role {
+  margin: 0;
+  color: #777;
+}
+
+.hz-right img {
+  width: 100%;
+  border-radius: 26px;
+  display: block;
+}
+
+/* =====================
+   CENTER NAV
+===================== */
+.hz-center-nav {
+  position: absolute;
+  left: 40%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.hz-center-nav button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+.hz-center-nav button.active {
+  background: #4da6ff;
+  color: #fff;
+  border-color: #4da6ff;
+}
+.hz-count {
+  font-size: 18px;
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media (max-width: 1024px) {
+  .hz-quote {
+    font-size: 24px;
+  }
+  .hz-slide {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hz-slide {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .hz-right img {
+    border-radius: 20px;
+  }
+
+  .hz-quote {
+    font-size: 22px;
+  }
+
+  .hz-name {
+    font-size: 20px;
+  }
+
+  .hz-center-nav {
+    position: relative;
+    left: 0;
+    bottom: 0;
+    transform: none;
+    margin-top: 24px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hz-quote {
+    font-size: 20px;
+  }
+  .hz-rating {
+    font-size: 16px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".hz-testimonial").forEach(section => {
+
+    const slides = section.querySelectorAll(".hz-slide");
+    const prev = section.querySelector(".hz-prev");
+    const next = section.querySelector(".hz-next");
+    const current = section.querySelector(".hz-current");
+    let index = 0;
+
+    function showSlide(i) {
+      slides.forEach(s => s.classList.remove("active"));
+      slides[i].classList.add("active");
+      current.textContent = String(i + 1).padStart(2, '0');
+    }
+
+    prev.onclick = () => {
+      index = (index - 1 + slides.length) % slides.length;
+      showSlide(index);
+    };
+
+    next.onclick = () => {
+      index = (index + 1) % slides.length;
+      showSlide(index);
+    };
+
+  });
+});
+</script>

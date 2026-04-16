@@ -1,0 +1,242 @@
+{% comment %}
+  Responsive 4-Image Grid Section
+  Desktop: Left tall image + Right nested grid (2 squares on top, banner on bottom)
+  Mobile: Vertical stack layout
+{% endcomment %}
+
+<style>
+  .image-grid-section {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Outer grid: left large image + right column */
+  .image-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  /* Desktop: left column tall, right column is a nested grid */
+  @media (min-width: 769px) {
+    .image-grid {
+      grid-template-columns: 1fr 1.2fr;
+      align-items: start;
+    }
+
+    .left-tall {
+      border-radius: 14px;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .right-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 20px;
+      align-items: stretch;
+      height: 100%;
+    }
+
+    .right-top-left,
+    .right-top-right {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* bottom banner spans both right columns */
+    .right-bottom {
+      grid-column: 1 / -1;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* Aspect ratios on desktop */
+    .left-tall .img-wrap { 
+      aspect-ratio: 1;
+    }
+    
+    .right-top-left .img-wrap,
+    .right-top-right .img-wrap { 
+      aspect-ratio: 1;
+    }
+    
+    .right-bottom .img-wrap { 
+      aspect-ratio: 16 / 6;
+    }
+  }
+
+  /* Mobile: stack vertically in order 1,2,3,4 */
+  @media (max-width: 768px) {
+    .image-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .right-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .left-tall,
+    .right-top-left,
+    .right-top-right,
+    .right-bottom {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* mobile aspect tweaks */
+    .left-tall .img-wrap,
+    .right-bottom .img-wrap { 
+      aspect-ratio: 16 / 9;
+    }
+    
+    .right-top-left .img-wrap,
+    .right-top-right .img-wrap { 
+      aspect-ratio: 1 / 1;
+    }
+    .right-top-left.grid-item {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .right-top-right.grid-item {
+        grid-row: 1;
+    }
+    .right-bottom.grid-item {grid-column: 1 / -1;aspect-ratio: 6 / 2;}    
+  }
+
+  /* Shared image styles */
+  .img-wrap {
+    width: 100%;
+    height: 100%;
+    background: #f2f2f2;
+  }
+
+  .img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .grid-item {
+    position: relative;
+  }
+</style>
+
+<section class="image-grid-section">
+  <div class="image-grid">
+    <!-- LEFT: Tall image spanning two rows on desktop -->
+    <div class="left-tall grid-item">
+      <div class="img-wrap">
+        {% if section.settings.image_1 != blank %}
+          <img
+            src="{{ section.settings.image_1 | img_url: '1200x' }}"
+            srcset="{{ section.settings.image_1 | img_url: '400x' }} 400w,
+                    {{ section.settings.image_1 | img_url: '800x' }} 800w,
+                    {{ section.settings.image_1 | img_url: '1200x' }} 1200w,
+                    {{ section.settings.image_1 | img_url: '1600x' }} 1600w"
+            sizes="(max-width: 768px) 100vw, 55vw"
+            alt="{{ section.settings.image_1.alt | escape }}"
+            loading="lazy"
+          />
+        {% else %}
+          <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;">Image 1</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- RIGHT: nested grid -->
+    <div class="right-grid">
+      <!-- top-left small square -->
+      <div class="right-top-left grid-item">
+        <div class="img-wrap">
+          {% if section.settings.image_2 != blank %}
+            <img
+              src="{{ section.settings.image_2 | img_url: '800x' }}"
+              srcset="{{ section.settings.image_2 | img_url: '400x' }} 400w,
+                      {{ section.settings.image_2 | img_url: '800x' }} 800w"
+              sizes="(max-width: 768px) 100vw, 22vw"
+              alt="{{ section.settings.image_2.alt | escape }}"
+              loading="lazy"
+            />
+          {% else %}
+            <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;">Image 2</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- top-right small square -->
+      <div class="right-top-right grid-item">
+        <div class="img-wrap">
+          {% if section.settings.image_3 != blank %}
+            <img
+              src="{{ section.settings.image_3 | img_url: '800x' }}"
+              srcset="{{ section.settings.image_3 | img_url: '400x' }} 400w,
+                      {{ section.settings.image_3 | img_url: '800x' }} 800w"
+              sizes="(max-width: 768px) 100vw, 22vw"
+              alt="{{ section.settings.image_3.alt | escape }}"
+              loading="lazy"
+            />
+          {% else %}
+            <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;">Image 3</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- bottom-wide banner that spans both columns -->
+      <div class="right-bottom grid-item">
+        <div class="img-wrap">
+          {% if section.settings.image_4 != blank %}
+            <img
+              src="{{ section.settings.image_4 | img_url: '1400x' }}"
+              srcset="{{ section.settings.image_4 | img_url: '600x' }} 600w,
+                      {{ section.settings.image_4 | img_url: '1000x' }} 1000w,
+                      {{ section.settings.image_4 | img_url: '1400x' }} 1400w"
+              sizes="(max-width: 768px) 100vw, 40vw"
+              alt="{{ section.settings.image_4.alt | escape }}"
+              loading="lazy"
+            />
+          {% else %}
+            <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;">Image 4</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "4-Image Grid",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image 1 (Left column on desktop, Top on mobile)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image 2 (Top left on right column)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image 3 (Top right on right column)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image 4 (Bottom right banner)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "4-Image Grid"
+    }
+  ]
+}
+{% endschema %}

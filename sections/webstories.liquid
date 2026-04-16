@@ -1,0 +1,357 @@
+{% if shop.metaobjects.web_stories != blank %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js" integrity="sha512-HGOnQO9+SP1V92SrtZfjqxxtLmVzqZpjFFekvzZVWoiASSQgSr4cw9Kqd2+l8Llp4Gm0G8GIFJ4ddwZilcdb8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+:root {
+  --rf-primary: #1e90ff;
+  --rf-story-width: 90px;
+  --rf-story-width-tb: 90px;
+  --rf-story-width-mb: 80px;
+  --rf-border-color: rgb(252, 209, 47);
+  --rf-inner-border-color: white;
+  --rf-title-width: 80px;
+  --rf-title-font-size: 13px;
+  --rf-title-font-weight: 500;
+  --rf-title-line-height: 1.4;
+  --rf-title-color: #2a2a2a;
+  --rf-line-clamp: 2;
+  --rf-mobile-spacing: 8px;
+  --rf-desktop-spacing: 16px;
+  --rf-space: 10px;
+  --rf-card-border-radius: 5px;
+  --rf-button-height: 48px;
+  --rf-button-color: #FFF;
+  --rf-button-radius: 5px;
+  --rf-button-background: #161616;
+  --rf-button-border: #161616;
+  --rf-title-size: 14px;
+  --rf-title-weight: 400
+}
+.reelfy_card_video video,
+.reelfy_link_main {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0
+}
+
+.dot-dark {
+  --dot-background: #000
+}
+
+.dot-dot {
+  --dot-radius: 50%
+}
+
+.pn-light {
+  --pn-background: #FFF;
+  --pn-color: #000
+}
+
+.pn-circle {
+  --pn-radius: 50%
+}
+
+.reelfy_card,
+.reelfy_card_video_wrapper {
+  border-radius: var(--rf-card-border-radius)
+}
+
+.dot-outside {
+  --dots-spacing: 25px
+}
+
+.rf-row {
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--rf-mobile-spacing);
+  row-gap: var(--rf-mobile-spacing)
+}
+
+.rf-2-col-sm .carousel-cell {
+  width: calc(50% - var(--rf-mobile-spacing)/ 2);
+  /* max-width: calc(50% - var(--rf-mobile-spacing)/ 2) */
+}
+
+.rf-carousel .carousel-cell {
+  {% comment %} margin-right: var(--rf-mobile-spacing);
+  margin-bottom: var(--rf-mobile-spacing) {% endcomment %}
+}
+
+@media (min-width:768px) {
+  .rf-row {
+    column-gap: var(--rf-desktop-spacing);
+    row-gap: var(--rf-desktop-spacing)
+  }
+
+  .rf-3-col-md .carousel-cell {
+    width: calc(33.33% - var(--rf-desktop-spacing) * 2 / 3);
+    /* max-width: calc(33.33% - var(--rf-desktop-spacing) * 2 / 3) */
+  }
+}
+.reelfy-gallery {
+    margin-bottom: 25px;
+    padding: 20px 30px;
+}
+.reelfy-gallery ul.slick-dots {
+    bottom: -25px;
+}
+.reelfy-gallery .slick-dots li button {
+    width: 10px;
+    height: 10px;
+}
+@media (min-width:1024px) {
+  .rf-4-col-lg .carousel-cell {
+    width: calc(25% - var(--rf-desktop-spacing) * 3 / 4);
+    /* max-width: calc(25% - var(--rf-desktop-spacing) * 3 / 4) */
+  }
+
+  .rf-carousel .carousel-cell {
+    {% comment %} margin-right: var(--rf-desktop-spacing);
+    margin-bottom: var(--rf-desktop-spacing) {% endcomment %}
+  }
+  .reelfy-gallery {
+    /* padding-left: 0 !important;
+    padding-right: 0 !important; */
+  }
+
+}
+
+
+.reelfy-gallery *,
+.reelfy-gallery ::after,
+.reelfy-gallery ::before {
+  box-sizing: border-box
+}
+
+.reelfy-gallery:after {
+  content: "";
+  clear: both;
+  display: table-cell;
+  width: 100%
+}
+
+.reelfy_link_main {
+  width: 100%;
+  z-index: 2
+}
+
+.reelfy-gallery.reelfy-carousel .rf-video-item,
+.reelfy_card {
+  position: relative
+}
+
+.rf-row.rf-carousel:not(.flickityrf-enabled) {
+  {% comment %} row-gap: 0;
+  column-gap: 0 {% endcomment %}
+}
+
+.flickityrf-enabled.is-draggable:focus-visible {
+  box-shadow: none
+}
+
+.reelfy_card_video_wrapper {
+  position: relative;
+  overflow: hidden
+}
+
+.reelfy_card_video {
+  width: 100%;
+  aspect-ratio: 9/16
+}
+
+.reelfy_card_video video {
+  width: 100%;
+  object-fit: cover
+}
+.rf-gallery-main .slick-list {
+    width: 100%;
+    max-width: 100%;
+}
+.reelfy_card_video video::-webkit-media-controls-panel {
+  display: none !important;
+  opacity: 1 !important
+}
+
+h3.h2.text-center {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 600;
+}
+.reelfy_card_video img {
+    width: 100%;
+    object-fit: cover;
+    object-position: center center;
+    height: 100%;
+    display: block;
+}
+.slick-slide {
+    margin-right: 10px;
+}
+.reelfy_link_main {
+    display: block !important;
+}
+.reelfy_card h2 {
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    color: #fff;
+    padding: 10px;
+    margin: 0;
+    font-size: 15px;
+    line-height: normal;
+}
+.reelfy_card .reelfy_card_video_wrapper:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 0;
+    cursor: pointer;
+}
+.reelfy_card {
+    position: relative;
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" integrity="sha512-wR4oNhLBHf7smjy0K4oqzdWumd+r5/+6QO/vDda76MW5iug4PT7v86FoEkySIJft3XA0Ae6axhIvHrqwm793Nw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css" integrity="sha512-6lLUdeQ5uheMFbWm3CP271l14RsX1xtx+J5x2yeIDkkiBpeVTNhTqijME7GgRKKi6hCqovwCoBTlRBEC20M8Mg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="reelfy-gallery reelfy-status-active reelfy-gallery-id rf-gallery-site reelfy-carousel publish-status reelfy-template-simple container">
+  {% if section.settings.heading != blank %}  
+  <h3 class="h2 text-center mb-5" data-aos="fade-up" data-aos-duration="500">
+    <span>{{ section.settings.heading }}</span>
+  </h3>
+  {% endif %}
+  <div class="rf-gallery-main rf-row kt-space-normal rf-4-col-lg rf-3-col-md rf-2-col-sm rf-carousel  dot-dark dot-outside dot-dot pn-circle pn-light">
+    {% paginate shop.metaobjects.web_stories.values by 1000 %}
+    {% for story in shop.metaobjects.web_stories.values %}
+        {% for sto in story.web_stories.value, limit: 1 %}
+        <div class="rf-video-item video-29758 rf-video-products carousel-cell is-selected">
+        <div class="reelfy_card card_type-simple reelfy_card_autoplay">
+            <a target="_blank" href="{{ story.system.url }}" class="reelfy_link_main"></a>
+            <h2>{{ sto.heading }}</h2>
+            <div class="reelfy_card_video_wrapper">
+            <div class="reelfy_card_video">
+                {% if sto.image_video.value.media_type contains "image" %}
+                    {{ sto.image_video.value | image_url: width: 500 | image_tag: loading: 'lazy' }}
+                {% else %}
+                    {{ sto.image_video.value | video_tag: preload: 'none', loop: true, playsinline: '', muted: 'true', width: '100%', controls: false, class: 'observelazyvideo' | replace: 'poster', 'data-poster' }}
+                {% endif %}
+            </div>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+    {% endpaginate %}
+  </div>
+</div>
+{% comment %} <script>
+$('.rf-gallery-main').slick({
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: false,
+    infinite: true,
+    arrows: true,
+    dots: true,
+    pauseOnHover: true,
+    centerMode: false,
+    variableWidth: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3
+        }
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 3
+        }
+      },
+      {
+        breakpoint: 535,
+        settings: {
+          slidesToShow: 2
+        }
+      }
+    ]
+  });
+</script> {% endcomment %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const lazyVideos = document.querySelectorAll(".reelfy-gallery .observelazyvideo");
+
+    if ("IntersectionObserver" in window) {
+      const videoObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting || entry.intersectionRatio > 0) {
+            const video = entry.target;
+
+            // Load video source only if not already loaded
+            if (video.preload === "none") {
+              const source = video.querySelector("source");
+              if (source && source.src && !video.src) {
+                video.src = source.src;
+                video.load();
+              }
+            }
+
+            // Autoplay when ready
+            video.play().catch(() => {
+              // Autoplay might be blocked; ignore errors
+            });
+
+            // Unobserve to avoid replaying when scrolling back up
+            observer.unobserve(video);
+          }
+        });
+      }, {
+        rootMargin: "200px 0px", // Start loading before fully visible
+        threshold: 0.25 // When at least 25% of the video is in view
+      });
+
+      lazyVideos.forEach((video) => {
+        videoObserver.observe(video);
+      });
+    } else {
+      // Fallback for unsupported browsers: load all videos immediately
+      lazyVideos.forEach((video) => {
+        const source = video.querySelector("source");
+        if (source && source.src && !video.src) {
+          video.src = source.src;
+          video.load();
+        }
+        video.play().catch(() => {});
+      });
+    }
+  });
+</script>
+{% endif %}
+{% schema %}
+  {
+  "name": "Webstory",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Webstory"
+    }
+  ]
+}  
+{% endschema %}

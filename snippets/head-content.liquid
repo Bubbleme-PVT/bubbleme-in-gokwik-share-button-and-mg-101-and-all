@@ -1,0 +1,285 @@
+<script>
+(() => {
+  try {
+    var e,
+      t = navigator.userAgent,
+      r = 0,
+      n = (e, t, r) => e.setAttribute(t, r),
+      s = (e, t) => e.removeAttribute(t),
+      d = "tagName",
+      o = "forEach",
+      a = "indexOf",
+      i = location.href.includes("nonopt=1") || (navigator.platform[a]("x86_64") > -1 && 0 > t[a]("CrOS")) || t[a]("power") > -1 || t[a]("rix") > -1;
+      !i && (document.documentElement.classList.add("mainopt"));
+	  window.mainopt = i;
+    let c = new MutationObserver((e) => {
+      e[o](({ addedNodes: e }) => {
+        e[o]((e) => {
+          if (
+            "SCRIPT" === e[d] &&
+            ("web-pixels-manager-setup" === e.id ||
+              e.innerHTML.includes('Bspd') || e.innerHTML.includes('kwikpass') || e.src.includes('koala') || e.src.includes('helioai') || e.src.includes('bitespeed') || e.innerHTML.includes('bitespeed') || e.src.includes('judge') || e.src.includes('uuid') || e.src.includes('axios') || e.innerHTML.includes('jdgm') || e.src.includes('spark-new') || e.src.includes('forms-'))  &&
+            1 === e.nodeType
+          ) {
+            if (e.src) {
+              n(e, "d-src", e.src);
+              s(e, "src");
+            }
+            if (e.type === 'module'){
+              n(e, "dxt", 'module');
+            };
+            e.type = "load";
+          }
+        }),
+          document.documentElement.classList.contains("xh") && c.disconnect();
+      });
+    });
+    c.observe(document.documentElement, { childList: !0, subtree: !0 });
+  } catch (i) {
+    console.error("An error occurred:", i);
+  }
+})();	
+</script>
+<style id="xbgl">div:not(.xbg), section:not(.xbg), ifz:not(.xbg){background-image:none !important;}</style>
+<script>
+	var xllbp = 200,
+		gfdl = 1e4,
+		xllj = 1,
+		xej = 0;
+	class xls {
+		constructor(e) {
+			this.triggerEvents = e, this.eventOptions = {
+				passive: !0
+			}, this.userEventListener = this.tl.bind(this), this.ltgr, this.cslf, this.lslffd = 0, this.slfired = 0, this.slfire = 0, this.excluded_js = xej, this.xllj = xllj, this.xfonts = "undefined" != typeof xgft ? xgft : [], this.xstyles = [], this.xsts = {
+				n: [],
+				async: [],
+				defer: [],
+				lazy: []
+			}, this.ajqrs = []
+		}
+		uea(e) {
+			this.triggerEvents.forEach(t => window.addEventListener(t, e.userEventListener, e.eventOptions))
+		}
+		uer(e) {
+			this.triggerEvents.forEach(t => window.removeEventListener(t, e.userEventListener, e.eventOptions))
+		}
+		tol() {
+			"loading" === document.readyState ? document.addEventListener("DOMContentLoaded", this.lr.bind(this)) : this.lr()
+		}
+		tl() {
+			this.uer(this), this.lslffd = 1, this.ahc("xh"), "loading" === document.readyState ? (document.addEventListener("DOMContentLoaded", this.lsr.bind(this)), this.slfire || document.addEventListener("DOMContentLoaded", this.lr.bind(this))) : (this.lsr(), this.slfire || this.lr())
+		}
+		async lsr() {
+			this.cslf || (this.cslf = !0, this.rc(), document.getElementsByTagName("html")[0].setAttribute("data-css", this.xstyles.length), document.getElementsByTagName("html")[0].setAttribute("dcld", 0), this.prelss(this.xstyles), this.lsp())
+		}
+		async lsp() {
+			setTimeout(function(e) {
+				document.getElementsByTagName("html")[0].classList.contains("spl") ? e.lcc(e.xstyles) : e.lsp()
+			}, 200, this)
+		}
+		async lr() {
+			this.slfired || (this.slfired = !0, this.hel(), this.exedw(), this.rs(), this.ahc("xr"), "function" == typeof xeosj && xeosj(), this.prelss(this.xsts.n), this.prelss(this.xsts.defer), this.prelss(this.xsts.async), {% unless template contains 'cart' %}this.za(), this.zb(),{% endunless %} await this.lss(this.xsts.n), await this.lss(this.xsts.defer), await this.lss(this.xsts.async), await this.edc(), await this.ewl(), window.dispatchEvent(new Event("xsts-loaded")), this.ahc("xst"), "function" == typeof xeoej && xeoej(), this.ltgr = setInterval(this.xtls, 500, this))
+		}
+		async xtls(e) {
+			e.lslffd && (await e.lss(e.xsts.lazy), e.ahc("scld"), setTimeout(function(){e.ahc("scldl")}, 1000),clearInterval(e.ltgr))
+		}
+		ahc(e) {
+			document.getElementsByTagName("html")[0].classList.add(e)
+		}
+		rs() {
+			document.querySelectorAll("script[type=load]").forEach(e => {
+				e.hasAttribute("d-src") ? e.hasAttribute("async") && !1 !== e.async ? this.xsts.async.push(e) : e.hasAttribute("defer") && !1 !== e.defer || "module" === e.getAttribute("dxt") ? this.xsts.defer.push(e) : this.xsts.n.push(e) : this.xsts.n.push(e)
+			}), document.querySelectorAll("script[type=lload]").forEach(e => {
+				this.xsts.lazy.push(e)
+			})
+		}
+		rc() {
+			document.querySelectorAll("link[d-href]").forEach(e => {
+				this.xstyles.push(e)
+			})
+		}
+		async es(e) {
+			return await this.rpf(), new Promise(t => {
+				let s = document.createElement("script"),
+					a;
+				[...e.attributes].forEach(e => {
+					let t = e.nodeName;
+					"type" !== t && "d-src" !== t && ("dxt" === t && (t = "type", a = e.nodeValue),  s.setAttribute(t, e.nodeValue))
+				}), e.hasAttribute("d-src") ? (s.setAttribute("src", e.getAttribute("d-src")), s.addEventListener("load", t), s.addEventListener("error", t)) : (s.text = e.text, t()), null !== e.parentNode && e.parentNode.replaceChild(s, e)
+			})
+		}
+		async ec(e) {
+			var t;
+			let s;
+			return t = e, void((s = document.createElement("link")).href = t.getAttribute("d-href"), s.rel = "stylesheet", document.head.appendChild(s), t.parentNode.removeChild(t))
+		}
+		async lss(e) {
+			let t = e.shift();
+			return t ? (await this.es(t), this.lss(e)) : Promise.resolve()
+		}
+		async lcc(e) {
+			let t = e.shift();
+			return t ? (this.ec(t), this.lcc(e)) : "loaded"
+		}
+		async lfts(e) {
+			var t = document.createDocumentFragment();
+			e.forEach(e => {
+				let s = document.createElement("link");
+				s.href = e, s.rel = "stylesheet", t.appendChild(s)
+			}), setTimeout(function() {
+				document.head.appendChild(t)
+			}, gfdl)
+		}
+		prelss(e) {
+			var t = document.createDocumentFragment(),
+				s = 0,
+				a = this;
+			[...e].forEach(i => {
+				let r = i.getAttribute("d-src"),
+					n = i.getAttribute("d-href");
+				if (r) {
+					let d = document.createElement("link");
+					d.href = r, d.rel = "preload", d.as = "script", t.appendChild(d)
+				} else if (n) {
+					let l = document.createElement("link");
+					l.href = n, l.rel = "preload", l.as = "style", s++, e.length == s && (l.dataset.last = 1), t.appendChild(l), l.onload = function() {
+						fetch(this.href).then(e => e.blob()).then(e => {
+							a.ucl()
+						}).catch(e => {
+							a.ucl()
+						})
+					}, l.onerror = function() {
+						a.ucl()
+					}
+				}
+			}), document.head.appendChild(t)
+		}
+		ucl() {
+			document.getElementsByTagName("html")[0].setAttribute("dcld", parseInt(document.getElementsByTagName("html")[0].getAttribute("dcld")) + 1), document.getElementsByTagName("html")[0].getAttribute("data-css") == document.getElementsByTagName("html")[0].getAttribute("dcld") && document.getElementsByTagName("html")[0].classList.add("spl")
+		}
+		hel() {
+			let e = {};
+
+			function t(t, s) {
+				! function(t) {
+					function s(s) {
+						return e[t].eventsToRewrite.indexOf(s) >= 0 ? "x" + s : s
+					}
+					e[t] || (e[t] = {
+						originalFunctions: {
+							add: t.addEventListener,
+							remove: t.removeEventListener
+						},
+						eventsToRewrite: []
+					}, t.addEventListener = function() {
+						arguments[0] = s(arguments[0]), e[t].originalFunctions.add.apply(t, arguments)
+					}, t.removeEventListener = function() {
+						arguments[0] = s(arguments[0]), e[t].originalFunctions.remove.apply(t, arguments)
+					})
+				}(t), e[t].eventsToRewrite.push(s)
+			}
+
+			function s(e, t) {
+				let s = e[t];
+				Object.defineProperty(e, t, {
+					get: () => s || function() {},
+					set(a) {
+						e["y" + t] = s = a
+					}
+				})
+			}
+			t(document, "DOMContentLoaded"), t(window, "DOMContentLoaded"), t(window, "load"), t(window, "pageshow"), t(document, "readystatechange"), s(document, "onreadystatechange"), s(window, "onload"), s(window, "onpageshow")
+		}
+		hj(e) {
+			let t = window.jQuery;
+			Object.defineProperty(window, "jQuery", {
+				get: () => t,
+				set(s) {
+					if (s && s.fn && !e.ajqrs.includes(s)) {
+						s.fn.ready = s.fn.init.prototype.ready = function(t) {
+							if (void 0 !== t) return e.slfired ? e.domReadyFired ? t.bind(document)(s) : document.addEventListener("xDOMContentLoaded", () => t.bind(document)(s)) : t.bind(document)(s), s(document)
+						};
+						let a = s.fn.on;
+						s.fn.on = s.fn.init.prototype.on = function() {
+							if ("ready" == arguments[0]) {
+								if (this[0] !== document) return a.apply(this, arguments), this;
+								arguments[1].bind(document)(s)
+							}
+							if (this[0] === window) {
+								function e(e) {
+									return e.split(" ").map(e => "load" === e || 0 === e.indexOf("load.") ? "xjld" : e).join(" ")
+								}
+								"string" == typeof arguments[0] || arguments[0] instanceof String ? arguments[0] = e(arguments[0]) : "object" == typeof arguments[0] && Object.keys(arguments[0]).forEach(t => {
+									Object.assign(arguments[0], {
+										[e(t)]: arguments[0][t]
+									})[t]
+								})
+							}
+							return a.apply(this, arguments), this
+						}, e.ajqrs.push(s)
+					}
+					t = s
+				}
+			})
+		}
+		async edc() {
+			this.domReadyFired = !0, await this.rpf(), document.dispatchEvent(new Event("xDOMContentLoaded")), await this.rpf(), window.dispatchEvent(new Event("xDOMContentLoaded")), await this.rpf(), document.dispatchEvent(new Event("xreadystatechange")), await this.rpf(), document.yonreadystatechange && document.yonreadystatechange()
+		}
+		async ewl() {
+			await this.rpf(), setTimeout(function() {
+				window.dispatchEvent(new Event("xload"))
+			}, 100), await this.rpf(), window.yonload && window.yonload(), await this.rpf(), this.ajqrs.forEach(e => e(window).trigger("xjld")), window.dispatchEvent(new Event("xps")), await this.rpf(), window.yonpageshow && window.yonpageshow()
+		}
+		exedw() {
+			let e = new Map;
+			document.write = document.writeln = function(t) {
+				let s = document.currentScript,
+					a = document.createRange(),
+					i = s.parentElement,
+					r = e.get(s);
+				void 0 === r && (r = s.nextSibling, e.set(s, r));
+				let n = document.createDocumentFragment();
+				a.setStart(n, 0), n.appendChild(a.createContextualFragment(t)), i.insertBefore(n, r)
+			}
+		}
+		async rpf() {
+			return new Promise(e => requestAnimationFrame(e))
+		}
+		static et() {
+			let e = new xls(["keydown", "mousemove", "touchmove", "touchstart", "touchend", "wheel"]);
+			e.lfts(e.xfonts), e.uea(e), e.excluded_js || e.hj(e), e.xllj || (e.slfire = 1, e.tol());
+			let t = setInterval(function e(s) {
+				null != document.body && (document.body.getBoundingClientRect().top < -30 && s.tl(), clearInterval(t))
+			}, 500, e)
+		}	
+		static ur() {
+			let e = new xls(["keydown", "mousemove", "touchmove", "touchstart", "touchend", "wheel"]);
+			e.lfts(e.xfonts), e.uea(e), e.excluded_js || e.hj(e), e.xllj || (e.slfire = 1, e.tol());
+			e.tl();
+		}
+        {% unless template contains 'cart' %}
+		za() {
+			document.querySelectorAll(".analytics").forEach(function(e) {
+				trekkie.integrations = !1;
+				var t = document.createElement("script");
+				t.innerHTML = e.innerHTML, e.parentNode.insertBefore(t, e.nextSibling), e.parentNode.removeChild(e)
+			})
+		}
+		zb() {
+			document.querySelectorAll(".boomerang").forEach(function(e) {
+				window.BOOMR.version = !1;
+				var t = document.createElement("script");
+				t.innerHTML = e.innerHTML, e.parentNode.insertBefore(t, e.nextSibling), e.parentNode.removeChild(e)
+			})
+			setTimeout(function() {
+				document.querySelectorAll(".rcss").forEach(function(a) {
+					a.remove();
+				});
+			}, 8000);
+		}
+        {% endunless %}
+	}
+	setTimeout(function() {
+		xls.et();
+	},1000);
+</script>

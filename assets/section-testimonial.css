@@ -1,0 +1,221 @@
+.consumer-love-title {
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.review-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 50px;
+  padding: 30px;
+}
+
+.review-container::-webkit-scrollbar {
+  display: none;
+}
+
+.review-card {
+  width: 351px;
+  min-width: 230px;
+  flex: 1 0 26%;
+  border: 1px solid #eaeaea;
+  border-radius: 72px 10px 72px 72px;
+  padding: 20px 20px 40px;
+  font-family: Arial, sans-serif;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  scroll-margin: 30px;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.review-header img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin-right: 15px;
+  position: absolute;
+  left: -18px;
+  top: -21px;
+}
+
+.review-person-name {
+  padding-left: 100px;
+  text-align: left;
+  width: 80%;
+  position: relative;
+}
+
+.review-person-name svg {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+}
+
+.review-rating {
+  display: flex;
+  margin-bottom: 10px;
+  margin-top: 60px;
+}
+
+.review-text {
+  font-size: 13px;
+  line-height: 27px;
+  color: #333;
+  text-align: left;
+  font-family: "poppins-Regular" !important;
+  text-transform: capitalize;
+  margin-bottom: auto;
+}
+
+.review-text b {
+  font-family: "poppins-SemiBold" !important;
+  font-size: 15px;
+}
+
+.product-image {
+  display: flex;
+  align-items: center;
+  width: 30vw;
+  gap: 10px;
+}
+
+.product-image img {
+  width: 80px;
+  height: 80px;
+}
+
+.product-image p {
+  font-family: "poppins-Regular" !important;
+  font-size: 10px;
+  margin: 0;
+}
+
+.shop-now {
+  display: inline-block;
+  color: #ff40b1;
+  font-weight: 700;
+  font-size: 12px;
+  font-family: "poppins-SemiBold" !important;
+  text-decoration: underline;
+}
+
+.parent-review-contianer {
+  margin: 75px 0 50px !important;
+}
+
+.parent-review-contianer .consumer-love-title {
+  margin-bottom: 60px;
+  font-size: 36px;
+}
+
+.testimonial-carousel-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 25px;
+}
+
+.testimonial-dot {
+  height: 10px;
+  width: 10px;
+  border: 1px solid #c8c8c8;
+  background-color: #c8c8c8;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.2s ease-out;
+  cursor: pointer;
+}
+
+.testimonial-dot.active {
+  background-color: #ff40b1;
+  width: 15px;
+  height: 10px;
+  border-radius: 5px;
+  border-color: #ff40b1;
+}
+
+/* ----------- Desktop Styles ----------- */
+@media (min-width: 768px) {
+  .review-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 6%;
+  }
+
+  .testimonial-dot,
+  .testimonial-dot.active {
+    height: 15px;
+    width: 15px;
+    border-color: #000;
+  }
+
+  .testimonial-dot {
+    background-color: #fff;
+  }
+
+  .testimonial-dot.active {
+    background-color: #000;
+    border-radius: 50%;
+  }
+
+  .testimonial-carousel-dots {
+    display: none;
+  }
+
+  .parent-review-contianer {
+    margin: 85px 20px 20px;
+  }
+
+  .parent-review-contianer .consumer-love-title {
+    margin-bottom: 60px;
+    font-size: 36px;
+  }
+}
+
+/* ----------- Mobile Styles ----------- */
+@media (max-width: 768px) {
+  .review-card {
+    flex: 0 0 78vw;
+  }
+
+  .review-container {
+    gap: 20px;
+  }
+
+  .product-image {
+    width: auto;
+    margin: 0 -18px;
+  }
+
+  .review-text {
+    font-size: 13px;
+  }
+
+  .product-image p {
+    font-size: 10px;
+  }
+}
+
+/* ----------- Small Devices ----------- */
+@media (max-width: 420px) {
+  .review-person-name {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .review-card {
+    flex: 0 0 82vw;
+    padding-bottom: 20px;
+  }
+}

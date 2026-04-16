@@ -1,0 +1,213 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #0A2B3D;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  #ing-section-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 15px {{ section.settings.padding_bottom }}px;
+    font-family: "Inter", "Montserrat", sans-serif;
+  }
+
+  .ing-inner-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ section.settings.inner_padding }}px;
+    background: {{ section.settings.container_bg }};
+    border-radius: {{ section.settings.roundness }}px;
+    border: 1px solid var(--border-light-{{ section_id }});
+    overflow: hidden;
+  }
+
+  .ing-header-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 60px;
+    gap: 20px;
+  }
+
+  .ing-title-{{ section_id }} {
+    color: var(--heading-dark-{{ section_id }});
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 800;
+    margin: 0 0 15px 0;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .ing-subtitle-{{ section_id }} {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--secondary-text-{{ section_id }});
+  }
+
+  /* DESKTOP: Horizontal Scroll Nx1 */
+  .ing-grid-{{ section_id }} {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: {{ section.settings.gap_desktop }}px;
+    padding-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-blue-{{ section_id }}) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ing-grid-{{ section_id }}::-webkit-scrollbar {
+    height: 4px;
+  }
+  .ing-grid-{{ section_id }}::-webkit-scrollbar-thumb {
+    background: var(--primary-blue-{{ section_id }});
+    border-radius: 10px;
+  }
+
+  .ing-card-{{ section_id }} {
+    background: {{ section.settings.card_bg }};
+    padding: 35px;
+    border-radius: 24px;
+    border: 1px solid var(--border-light-{{ section_id }});
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-width: 300px;
+    flex: 0 0 auto;
+    word-break: break-word;
+  }
+
+  .ing-stat-num {
+    color: var(--primary-blue-{{ section_id }});
+    font-size: 48px;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    line-height: 1;
+  }
+
+  .ing-stat-title {
+    color: var(--heading-dark-{{ section_id }});
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+
+  .ing-sourcing-btn-{{ section_id }} {
+    background-color: var(--primary-blue-{{ section_id }});
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 18px 35px;
+    border-radius: 100px;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  @media (max-width: 767px) {
+    .ing-inner-{{ section_id }} { padding: 35px 15px; }
+    
+    .ing-grid-{{ section_id }} {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      flex-wrap: wrap;
+      overflow-x: visible;
+      gap: 12px;
+    }
+
+    .ing-card-{{ section_id }} { 
+      padding: 20px 15px; 
+      text-align: center; 
+      align-items: center; 
+      min-width: 0;
+    }
+    
+    .ing-stat-num { font-size: 32px; }
+    .ing-stat-title { font-size: 16px; }
+    .ing-stat-text { font-size: 12px !important; }
+    
+    .ing-sourcing-btn-{{ section_id }} { width: 100%; text-align: center; }
+  }
+{%- endstyle -%}
+
+<section id="ing-section-{{ section_id }}">
+  <div class="ing-inner-{{ section_id }}">
+    
+    <div class="ing-header-{{ section_id }}">
+      <div class="ing-center-content">
+        <h2 class="ing-title-{{ section_id }}">{{ section.settings.heading }}</h2>
+        {% if section.settings.subheading != blank %}
+          <p class="ing-subtitle-{{ section_id }}">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="ing-button-wrapper">
+          <a href="{{ section.settings.button_link | default: '#' }}" class="ing-sourcing-btn-{{ section_id }}">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="ing-grid-{{ section_id }}">
+      {% for block in section.blocks %}
+        <div class="ing-card-{{ section_id }}" {{ block.shopify_attributes }}>
+          <div class="ing-stat-num">{{ block.settings.statistic_number }}</div>
+          <span class="ing-stat-label" style="color: #94A3B8; text-transform: uppercase; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 20px; display: block;">
+            {{ block.settings.statistic_label }}
+          </span>
+          <h3 class="ing-stat-title">{{ block.settings.title }}</h3>
+          <p class="ing-stat-text" style="color: var(--secondary-text-{{ section_id }}); font-size: 14px; line-height: 1.5; margin: 0;">
+            {{ block.settings.description }}
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How We Select Ingredients",
+  "settings": [
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 10, "default": 1200 },
+    { "type": "range", "id": "inner_padding", "label": "Inner Padding", "min": 10, "max": 100, "step": 5, "default": 60 },
+    { "type": "range", "id": "roundness", "label": "Rounding", "min": 0, "max": 80, "step": 2, "default": 40 },
+    { "type": "range", "id": "gap_desktop", "label": "Desktop Gap", "min": 10, "max": 50, "step": 5, "default": 25 },
+    { "type": "color", "id": "bg_color", "label": "Section BG", "default": "#ffffff" },
+    { "type": "color", "id": "container_bg", "label": "Inner Box BG", "default": "#F8FAFC" },
+    { "type": "color", "id": "card_bg", "label": "Card BG", "default": "#ffffff" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Clinical Selection Process" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Our curation process is rigorous." },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "View Sourcing Ethics" },
+    { "type": "url", "id": "button_link", "label": "Button Link" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "purity_statistic",
+      "name": "Purity Statistic",
+      "settings": [
+        { "type": "text", "id": "statistic_number", "label": "Stat (e.g. 99%)", "default": "99.9%" },
+        { "type": "text", "id": "statistic_label", "label": "Label", "default": "PURITY STANDARD" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Pharmaceutical Grade" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "Third-party tested." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "How We Select Ingredients" }]
+}
+{% endschema %}

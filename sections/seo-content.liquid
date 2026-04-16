@@ -1,0 +1,125 @@
+<style>
+  #shopify-section-{{ section.id }} .row {
+    padding: 0 5rem;
+    margin: auto;
+    max-width: var(--page-width);
+    padding-bottom: 3rem;
+  }
+  #shopify-section-{{ section.id }} {
+    background: rgb(var(--color-foreground));
+    color: rgb(var(--color-background));
+  }
+  #shopify-section-{{ section.id }} * {
+    color: rgb(var(--color-background));
+  }
+  #shopify-section-{{ section.id }} h1, #shopify-section-{{ section.id }} h2, #shopify-section-{{ section.id }} h3, #shopify-section-{{ section.id }} h4, #shopify-section-{{ section.id }} h5 {
+    font-size: calc(var(--font-heading-scale) * 1.6rem);
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+
+  #shopify-section-{{ section.id }} p {
+    font-size: 1.3rem;
+    margin-block-end: 0.5rem;
+  }
+
+    #shopify-section-{{ section.id }} p:nth-of-type(even) {
+      margin-bottom: 20px; /* adjust value as needed */
+      padding-bottom: 0px;
+    }
+
+  #shopify-section-{{ section.id }} hr {
+      margin: 0px;
+
+    }
+
+    #shopify-section-{{ section.id }} p:nth-of-type(odd), #shopify-section-{{ section.id }} p > strong, #shopify-section-{{ section.id }} hr, #shopify-section-{{ section.id }} .small-12  {
+        padding-bottom: 0px;
+      }
+
+
+  @media (max-width: 749px){
+    #shopify-section-{{ section.id }} h1, #shopify-section-{{ section.id }} h2, #shopify-section-{{ section.id }} h3,     #shopify-section-{{ section.id }} h4, #shopify-section-{{ section.id }} h5 {
+      font-size: calc(var(--font-heading-scale) * 1.5rem);
+    }
+
+   #shopify-section-{{ section.id }} .row {
+    padding: 0 1.5rem;
+   }
+  }
+</style>
+
+{% if template contains 'product' %}
+  {% if product.metafields.custom.seo_additional.value.below_footer
+    or product.metafields.custom.seo_additional.value.below_footer_link_text
+  %}
+    <div class="row">
+      <div class="small-12 columns">
+        <hr style="border-bottom-color: rgba(202, 202, 202, 0.8); ">
+      </div>
+      <div class="columns">
+        {% if product.metafields.custom.seo_additional.value.below_footer_link_text %}
+          <div style="margin-bottom: 40px">
+            {{ product.metafields.custom.seo_additional.value.below_footer_link_text | metafield_tag }}
+          </div>
+        {% endif %}
+
+        {{ product.metafields.custom.seo_additional.value.below_footer | metafield_tag }}
+      </div>
+    </div>
+  {% endif %}
+{% elsif template contains 'collection' %}
+  {% if collection.metafields.custom.seo_additional.value.below_footer
+    or collection.metafields.custom.seo_additional.value.below_footer_link_text
+  %}
+    <div class="row">
+      <div class="small-12 columns"><hr style="border-bottom-color: rgba(202, 202, 202, 0.8)"></div>
+      <div class="columns">
+        {% if collection.metafields.custom.seo_additional.value.below_footer_link_text %}
+          <div style="margin-bottom: 40px">
+            {{ collection.metafields.custom.seo_additional.value.below_footer_link_text | metafield_tag }}
+          </div>
+        {% endif %}
+
+        {{ collection.metafields.custom.seo_additional.value.below_footer | metafield_tag }}
+      </div>
+    </div>
+  {% endif %}
+{% elsif template == 'index' %}
+  {% if section.settings.homepage_content or section.settings.homepage_para %}
+    <div class="row">
+      <div class="small-12 columns"><hr style="border-bottom-color: rgba(202, 202, 202, 0.8);"></div>
+      <div class="columns">
+        {% if section.settings.homepage_para %}
+          <div style="margin-bottom: 40px">{{ section.settings.homepage_para }}</div>
+        {% endif %}
+
+        {{ section.settings.homepage_content }}
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "SEO Footer UFC",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "homepage_para",
+      "label": "Homepage Paragraph Only"
+    },
+    {
+      "type": "richtext",
+      "id": "homepage_content",
+      "label": "Homepage Content Only"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SEO Footer UFC"
+    }
+  ]
+}
+{% endschema %}

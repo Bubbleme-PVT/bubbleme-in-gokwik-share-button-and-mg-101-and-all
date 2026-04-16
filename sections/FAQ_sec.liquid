@@ -1,0 +1,420 @@
+{%- comment -%}
+  FAQ — Category Accordion (Optimized)
+  Search for "BOX SIZE" to find the width controls.
+{%- endcomment -%}
+
+{%- liquid
+  assign bmfaq_uid = section.id | replace: '-', '' | replace: '_', '' | downcase
+  assign mode = section.settings.bm_mode
+  assign one_open = section.settings.bm_one_open
+  assign default_cat = section.settings.bm_default_category
+  assign cat_handles = 'magnesium,product,order,payment,returns' | split: ','
+-%}
+
+{%- style -%}
+  .bmfaq-{{ bmfaq_uid }} {
+    --bm-blue: {{ section.settings.bm_primary_color }};
+    --bm-text: {{ section.settings.bm_text_color }};
+    --bm-soft: {{ section.settings.bm_card_bg }};
+    --bm-border: {{ section.settings.bm_card_border }};
+    --bm-iconbg: {{ section.settings.bm_icon_bg }};
+    --bm-radius: {{ section.settings.bm_radius }}px;
+    background: {{ section.settings.bm_section_bg }};
+    --bm-q-d: {{ section.settings.bm_question_size_desktop }}px;
+    --bm-q-m: {{ section.settings.bm_question_size_mobile }}px;
+    --bm-a-d: {{ section.settings.bm_answer_size_desktop }}px;
+    --bm-a-m: {{ section.settings.bm_answer_size_mobile }}px;
+  }
+
+  .bmfaq-wrap-{{ bmfaq_uid }}{
+    padding: {{ section.settings.bm_padding_top }}px 12px {{ section.settings.bm_padding_bottom }}px;
+  }
+
+  .bmfaq-head-{{ bmfaq_uid }}{ text-align: center; max-width: 840px; margin: 0 auto 24px; }
+  
+  /* ==========================================
+     BOX SIZE (WIDTH) CSS
+     ========================================== */
+  .bmfaq-panels-{{ bmfaq_uid }}{
+    max-width: {{ section.settings.bm_max_width }}px; /* This controls the container width */
+    margin: 0 auto;
+    padding: 0 12px;
+  }
+
+  .bmfaq-title-{{ bmfaq_uid }}{ 
+    margin: 0 0 10px; font-size: {{ section.settings.bm_title_size_desktop }}px; 
+    line-height: 1.15; font-weight: 750; color: var(--bm-text); 
+  }
+  .bmfaq-sub-{{ bmfaq_uid }}{ font-size: {{ section.settings.bm_subtitle_size_desktop }}px; opacity: .78; color: var(--bm-text); }
+
+  .bmfaq-tabs-{{ bmfaq_uid }}{
+    display: {% if mode == 'faq_page' and section.settings.bm_show_categories %}flex{% else %}none{% endif %};
+    gap: 12px; flex-wrap: wrap; justify-content: center; margin: 18px auto 26px;
+  }
+  
+  .bmfaq-tab-{{ bmfaq_uid }}{
+    border: 2px solid var(--bm-blue); background: transparent; color: var(--bm-blue);
+    border-radius: 999px; padding: 10px 18px; font-weight: 700; cursor: pointer;
+    transition: all .2s ease; white-space: nowrap;
+  }
+  .bmfaq-tab-{{ bmfaq_uid }}.is-active{ background: var(--bm-blue); color: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.1); }
+
+  .bmfaq-searchwrap-{{ bmfaq_uid }}{
+    display: {% if mode == 'faq_page' and section.settings.bm_show_search %}block{% else %}none{% endif %};
+    max-width: 760px; margin: 0 auto 22px;
+  }
+  .bmfaq-search-{{ bmfaq_uid }}{
+    width: 100%; border: 1px solid var(--bm-border); border-radius: 999px;
+    padding: 12px 20px; font-size: 16px; background: #fff; outline: none;
+  }
+
+  .bmfaq-list-{{ bmfaq_uid }}{ display: flex; flex-direction: column; gap: {{ section.settings.bm_item_gap }}px; }
+  .bmfaq-item-{{ bmfaq_uid }}{ border-radius: var(--bm-radius); border: 1px solid var(--bm-border); background: var(--bm-soft); overflow: hidden; }
+  
+  .bmfaq-btn-{{ bmfaq_uid }}{
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: {{ section.settings.bm_item_padding_y }}px {{ section.settings.bm_item_padding_x }}px;
+    background: transparent; border: 0; cursor: pointer; text-align: left;
+  }
+  
+  .bmfaq-q-{{ bmfaq_uid }}{ margin: 0; font-size: var(--bm-q-d); font-weight: 800; color: var(--bm-text); line-height: 1.25; }
+  
+  .bmfaq-iconwrap-{{ bmfaq_uid }}{
+    width: 44px; height: 44px; border-radius: 50%; background: var(--bm-iconbg);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  
+  .bmfaq-plus-{{ bmfaq_uid }}{ width: 14px; height: 14px; position: relative; transition: transform .3s ease; }
+  .bmfaq-plus-{{ bmfaq_uid }}::before, .bmfaq-plus-{{ bmfaq_uid }}::after{
+    content: ''; position: absolute; background: var(--bm-blue); border-radius: 2px;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .bmfaq-plus-{{ bmfaq_uid }}::before{ width: 14px; height: 2px; }
+  .bmfaq-plus-{{ bmfaq_uid }}::after{ width: 2px; height: 14px; transition: opacity .2s; }
+  
+  .is-open .bmfaq-plus-{{ bmfaq_uid }}{ transform: rotate(45deg); }
+
+  .bmfaq-a-{{ bmfaq_uid }}{ max-height: 0; overflow: hidden; transition: max-height .35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .bmfaq-ainner-{{ bmfaq_uid }}{
+    padding: 0 {{ section.settings.bm_item_padding_x }}px {{ section.settings.bm_answer_padding_bottom }}px;
+    font-size: var(--bm-a-d); line-height: 1.6; color: var(--bm-text); opacity: 0.9;
+  }
+
+  .bmfaq-panel-{{ bmfaq_uid }}{ display: none; }
+  .bmfaq-panel-{{ bmfaq_uid }}.is-active{ display: block; }
+  .bmfaq-empty-{{ bmfaq_uid }}{ padding: 20px; text-align: center; border: 1px dashed var(--bm-border); opacity: 0.6; }
+
+  @media screen and (max-width: 749px){
+    .bmfaq-title-{{ bmfaq_uid }}{ font-size: {{ section.settings.bm_title_size_mobile }}px; }
+    .bmfaq-q-{{ bmfaq_uid }}{ font-size: var(--bm-q-m); }
+    .bmfaq-ainner-{{ bmfaq_uid }}{ font-size: var(--bm-a-m); }
+    .bmfaq-tabs-{{ bmfaq_uid }}{ justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  }
+{%- endstyle -%}
+
+<section class="bmfaq-{{ bmfaq_uid }} color-{{ section.settings.bm_color_scheme }} gradient">
+  <div class="page-width bmfaq-wrap-{{ bmfaq_uid }}">
+    
+    <div class="bmfaq-head-{{ bmfaq_uid }}">
+      {%- if section.settings.bm_heading != blank -%}<h2 class="bmfaq-title-{{ bmfaq_uid }}">{{ section.settings.bm_heading | escape }}</h2>{%- endif -%}
+      {%- if section.settings.bm_subheading != blank -%}<p class="bmfaq-sub-{{ bmfaq_uid }}">{{ section.settings.bm_subheading | escape }}</p>{%- endif -%}
+    </div>
+
+    {%- if mode == 'faq_page' and section.settings.bm_show_search -%}
+      <div class="bmfaq-searchwrap-{{ bmfaq_uid }}">
+        <input class="bmfaq-search-{{ bmfaq_uid }}" type="search" placeholder="{{ section.settings.bm_search_placeholder }}" aria-label="Search FAQs">
+      </div>
+    {%- endif -%}
+
+    {%- if mode == 'faq_page' and section.settings.bm_show_categories -%}
+      <div class="bmfaq-tabs-{{ bmfaq_uid }}" role="tablist">
+        {%- for cat in cat_handles -%}
+          {%- liquid
+            assign label_id = 'bm_cat_label_' | append: cat
+            assign label = section.settings[label_id] | default: cat
+          -%}
+          <button type="button" class="bmfaq-tab-{{ bmfaq_uid }}{% if cat == default_cat %} is-active{% endif %}" 
+                  role="tab" aria-selected="{% if cat == default_cat %}true{% else %}false{% endif %}"
+                  data-bmfaq-tab="{{ cat }}">
+            {{ label }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="bmfaq-panels-{{ bmfaq_uid }}">
+      {%- if mode == 'homepage' -%}
+        <div class="bmfaq-panel-{{ bmfaq_uid }} is-active" data-bmfaq-panel="homepage">
+          <div class="bmfaq-list-{{ bmfaq_uid }}">
+            {%- assign count = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.settings.bm_show_on_homepage and count < section.settings.bm_homepage_limit -%}
+                {%- liquid
+                  assign is_open = block.settings.bm_default_open
+                  assign qd = section.settings.bm_question_size_desktop
+                  assign qm = section.settings.bm_question_size_mobile
+                  assign ad = section.settings.bm_answer_size_desktop
+                  assign am = section.settings.bm_answer_size_mobile
+                  if block.settings.bm_use_custom_sizes
+                    assign qd = block.settings.bm_item_question_size_desktop
+                    assign qm = block.settings.bm_item_question_size_mobile
+                    assign ad = block.settings.bm_item_answer_size_desktop
+                    assign am = block.settings.bm_item_answer_size_mobile
+                  endif
+                -%}
+                <div class="bmfaq-item-{{ bmfaq_uid }}{% if is_open %} is-open{% endif %}"
+                     style="--bm-q-d: {{ qd }}px; --bm-q-m: {{ qm }}px; --bm-a-d: {{ ad }}px; --bm-a-m: {{ am }}px;" {{ block.shopify_attributes }}>
+                  <button type="button" class="bmfaq-btn-{{ bmfaq_uid }}" aria-expanded="{{ is_open }}">
+                    <p class="bmfaq-q-{{ bmfaq_uid }}">{{ block.settings.bm_question }}</p>
+                    <span class="bmfaq-iconwrap-{{ bmfaq_uid }}"><span class="bmfaq-plus-{{ bmfaq_uid }}"></span></span>
+                  </button>
+                  <div class="bmfaq-a-{{ bmfaq_uid }}"><div class="bmfaq-ainner-{{ bmfaq_uid }}">{{ block.settings.bm_answer }}</div></div>
+                </div>
+                {%- assign count = count | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- else -%}
+        {%- for cat in cat_handles -%}
+          <div id="bmfaq-panel-{{ bmfaq_uid }}-{{ cat }}" 
+               class="bmfaq-panel-{{ bmfaq_uid }}{% if cat == default_cat %} is-active{% endif %}" 
+               data-bmfaq-panel="{{ cat }}">
+            <div class="bmfaq-list-{{ bmfaq_uid }}">
+              {%- assign has_any = false -%}
+              {%- for block in section.blocks -%}
+                {%- assign block_cat = block.settings.bm_category | default: 'magnesium' -%}
+                {%- if block_cat == cat -%}
+                  {%- assign has_any = true -%}
+                  {%- liquid
+                    assign is_open = block.settings.bm_default_open
+                    assign qd = section.settings.bm_question_size_desktop
+                    assign qm = section.settings.bm_question_size_mobile
+                    assign ad = section.settings.bm_answer_size_desktop
+                    assign am = section.settings.bm_answer_size_mobile
+                    if block.settings.bm_use_custom_sizes
+                      assign qd = block.settings.bm_item_question_size_desktop
+                      assign qm = block.settings.bm_item_question_size_mobile
+                      assign ad = block.settings.bm_item_answer_size_desktop
+                      assign am = block.settings.bm_item_answer_size_mobile
+                    endif
+                  -%}
+                  <div class="bmfaq-item-{{ bmfaq_uid }}{% if is_open %} is-open{% endif %}"
+                       style="--bm-q-d: {{ qd }}px; --bm-q-m: {{ qm }}px; --bm-a-d: {{ ad }}px; --bm-a-m: {{ am }}px;" {{ block.shopify_attributes }}>
+                    <button type="button" class="bmfaq-btn-{{ bmfaq_uid }}" aria-expanded="{{ is_open }}">
+                      <p class="bmfaq-q-{{ bmfaq_uid }}">{{ block.settings.bm_question }}</p>
+                      <span class="bmfaq-iconwrap-{{ bmfaq_uid }}"><span class="bmfaq-plus-{{ bmfaq_uid }}"></span></span>
+                    </button>
+                    <div class="bmfaq-a-{{ bmfaq_uid }}"><div class="bmfaq-ainner-{{ bmfaq_uid }}">{{ block.settings.bm_answer }}</div></div>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- unless has_any -%}<div class="bmfaq-empty-{{ bmfaq_uid }}">No questions in this category.</div>{%- endunless -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const setupFaq = () => {
+      const root = document.querySelector('.bmfaq-{{ bmfaq_uid }}');
+      if (!root) return;
+
+      const oneOpen = {{ section.settings.bm_one_open | json }};
+
+      const setHeight = (item, open) => {
+        const panel = item.querySelector('.bmfaq-a-{{ bmfaq_uid }}');
+        const btn = item.querySelector('.bmfaq-btn-{{ bmfaq_uid }}');
+        item.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open);
+        panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '0px';
+      };
+
+      root.addEventListener('click', (e) => {
+        const btn = e.target.closest('.bmfaq-btn-{{ bmfaq_uid }}');
+        if (btn) {
+          const item = btn.closest('.bmfaq-item-{{ bmfaq_uid }}');
+          const isOpen = item.classList.contains('is-open');
+
+          if (oneOpen && !isOpen) {
+            root.querySelectorAll('.bmfaq-item-{{ bmfaq_uid }}.is-open').forEach(el => setHeight(el, false));
+          }
+          setHeight(item, !isOpen);
+          return;
+        }
+
+        const tab = e.target.closest('[data-bmfaq-tab]');
+        if (tab) {
+          const cat = tab.dataset.bmfaqTab;
+          root.querySelectorAll('[data-bmfaq-tab]').forEach(t => {
+            t.classList.toggle('is-active', t === tab);
+            t.setAttribute('aria-selected', t === tab);
+          });
+          root.querySelectorAll('[data-bmfaq-panel]').forEach(p => p.classList.toggle('is-active', p.dataset.bmfaqPanel === cat));
+        }
+      });
+
+      const searchInput = root.querySelector('.bmfaq-search-{{ bmfaq_uid }}');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.toLowerCase();
+          const activeList = root.querySelector('.bmfaq-panel-{{ bmfaq_uid }}.is-active .bmfaq-list-{{ bmfaq_uid }}');
+          if (!activeList) return;
+
+          activeList.querySelectorAll('.bmfaq-item-{{ bmfaq_uid }}').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(val) ? '' : 'none';
+          });
+        });
+      }
+
+      root.querySelectorAll('.bmfaq-item-{{ bmfaq_uid }}.is-open').forEach(el => {
+        const p = el.querySelector('.bmfaq-a-{{ bmfaq_uid }}');
+        p.style.maxHeight = p.scrollHeight + 'px';
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupFaq);
+    } else {
+      setupFaq();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ — Category Accordion",
+  "tag": "section",
+  "class": "section bm-faq-category-accordion",
+  "settings": [
+    {
+      "type": "select",
+      "id": "bm_mode",
+      "label": "Mode",
+      "default": "faq_page",
+      "options": [
+        { "value": "homepage", "label": "Homepage (Top FAQs + View more)" },
+        { "value": "faq_page", "label": "FAQ page (Category tabs)" }
+      ]
+    },
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "bm_heading", "label": "Heading", "default": "Frequently Asked Questions" },
+    { "type": "text", "id": "bm_subheading", "label": "Subheading", "default": "Quick answers, no confusion." },
+    { "type": "header", "content": "FAQ page settings" },
+    { "type": "checkbox", "id": "bm_show_categories", "label": "Show category tabs", "default": true },
+    {
+      "type": "select",
+      "id": "bm_default_category",
+      "label": "Default category",
+      "default": "magnesium",
+      "options": [
+        { "value": "magnesium", "label": "Magnesium" },
+        { "value": "product", "label": "Product" },
+        { "value": "order", "label": "Order" },
+        { "value": "payment", "label": "Payment" },
+        { "value": "returns", "label": "Returns" }
+      ]
+    },
+    { "type": "checkbox", "id": "bm_show_search", "label": "Show search box", "default": true },
+    { "type": "text", "id": "bm_search_placeholder", "label": "Search placeholder", "default": "Search your question" },
+    { "type": "header", "content": "Category labels" },
+    { "type": "text", "id": "bm_cat_label_magnesium", "label": "Magnesium label", "default": "Magnesium" },
+    { "type": "text", "id": "bm_cat_label_product", "label": "Product label", "default": "Product" },
+    { "type": "text", "id": "bm_cat_label_order", "label": "Order label", "default": "Order" },
+    { "type": "text", "id": "bm_cat_label_payment", "label": "Payment label", "default": "Payment" },
+    { "type": "text", "id": "bm_cat_label_returns", "label": "Returns label", "default": "Returns" },
+    { "type": "header", "content": "Homepage settings" },
+    { "type": "range", "id": "bm_homepage_limit", "label": "Number of FAQs on homepage", "min": 3, "max": 10, "step": 1, "default": 5 },
+    { "type": "text", "id": "bm_view_more_label", "label": "View more button label", "default": "View more FAQs" },
+    { "type": "url", "id": "bm_view_more_link", "label": "View more button link" },
+    { "type": "header", "content": "Behavior" },
+    { "type": "checkbox", "id": "bm_one_open", "label": "Only one open at a time", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "color_scheme", "id": "bm_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color", "id": "bm_section_bg", "label": "Section background", "default": "#FFFFFF" },
+    
+    /* ==========================================
+       BOX SIZE (WIDTH) SCHEMA SETTING
+       ========================================== */
+    { 
+      "type": "range", 
+      "id": "bm_max_width", 
+      "label": "Box Size (Max width)", 
+      "min": 520, 
+      "max": 1040, 
+      "step": 20, 
+      "unit": "px", 
+      "default": 920 
+    },
+
+    { "type": "range", "id": "bm_padding_top", "label": "Padding top", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "bm_padding_bottom", "label": "Padding bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "bm_item_gap", "label": "Gap between items", "min": 10, "max": 28, "step": 2, "unit": "px", "default": 18 },
+    { "type": "range", "id": "bm_radius", "label": "Corner radius", "min": 14, "max": 34, "step": 2, "unit": "px", "default": 26 },
+    { "type": "range", "id": "bm_item_padding_x", "label": "Item padding X", "min": 16, "max": 40, "step": 2, "unit": "px", "default": 30 },
+    { "type": "range", "id": "bm_item_padding_y", "label": "Item padding Y", "min": 16, "max": 40, "step": 2, "unit": "px", "default": 30 },
+    { "type": "range", "id": "bm_answer_padding_bottom", "label": "Answer padding bottom", "min": 12, "max": 34, "step": 2, "unit": "px", "default": 18 },
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "bm_title_size_desktop", "label": "Title size (desktop)", "min": 24, "max": 60, "step": 2, "unit": "px", "default": 44 },
+    { "type": "range", "id": "bm_title_size_mobile", "label": "Title size (mobile)", "min": 18, "max": 44, "step": 2, "unit": "px", "default": 32 },
+    { "type": "range", "id": "bm_subtitle_size_desktop", "label": "Subtitle size (desktop)", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "bm_subtitle_size_mobile", "label": "Subtitle size (mobile)", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "bm_question_size_desktop", "label": "Question size (desktop)", "min": 16, "max": 30, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "bm_question_size_mobile", "label": "Question size (mobile)", "min": 14, "max": 26, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "bm_answer_size_desktop", "label": "Answer size (desktop)", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "bm_answer_size_mobile", "label": "Answer size (mobile)", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bm_primary_color", "label": "Primary Color", "default": "#215174" },
+    { "type": "color", "id": "bm_text_color", "label": "Text Color", "default": "#0A2B3D" },
+    { "type": "color", "id": "bm_card_bg", "label": "Card Background", "default": "#F2FAFF" },
+    { "type": "color", "id": "bm_card_border", "label": "Card Border", "default": "#D8EAF6" },
+    { "type": "color", "id": "bm_icon_bg", "label": "Icon Background", "default": "#E6F1FA" }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "bm_category",
+          "label": "Category",
+          "default": "magnesium",
+          "options": [
+            { "value": "magnesium", "label": "Magnesium" },
+            { "value": "product", "label": "Product" },
+            { "value": "order", "label": "Order" },
+            { "value": "payment", "label": "Payment" },
+            { "value": "returns", "label": "Returns" }
+          ]
+        },
+        { "type": "text", "id": "bm_question", "label": "Question", "default": "Your question goes here" },
+        { "type": "richtext", "id": "bm_answer", "label": "Answer", "default": "<p>Your answer goes here.</p>" },
+        { "type": "checkbox", "id": "bm_default_open", "label": "Open by default", "default": false },
+        { "type": "checkbox", "id": "bm_show_on_homepage", "label": "Show on homepage", "default": false },
+        { "type": "header", "content": "Custom Sizes" },
+        { "type": "checkbox", "id": "bm_use_custom_sizes", "label": "Use custom sizes", "default": false },
+        { "type": "range", "id": "bm_item_question_size_desktop", "label": "Q Size (Desktop)", "min": 16, "max": 32, "step": 1, "unit": "px", "default": 24 },
+        { "type": "range", "id": "bm_item_question_size_mobile", "label": "Q Size (Mobile)", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 20 },
+        { "type": "range", "id": "bm_item_answer_size_desktop", "label": "A Size (Desktop)", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+        { "type": "range", "id": "bm_item_answer_size_mobile", "label": "A Size (Mobile)", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 13 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ — Category Accordion",
+      "blocks": [
+        { "type": "faq_item" },
+        { "type": "faq_item" },
+        { "type": "faq_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

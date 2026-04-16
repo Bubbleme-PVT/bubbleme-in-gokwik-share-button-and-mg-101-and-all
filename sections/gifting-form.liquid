@@ -1,0 +1,238 @@
+{% schema %}
+{
+  "name": "Corporate Gifting Form",
+  "settings": [
+    { "type": "image_picker", "id": "left_image", "label": "Left Side Image" },
+    { "type": "text", "id": "heading", "label": "Form Heading", "default": "Talk to our Corporate Gifting Experts" },
+    { "type": "text", "id": "subheading", "label": "Subheading (optional)" },
+    { "type": "text", "id": "button_text", "label": "Primary Button Text", "default": "Submit" },
+    { "type": "url", "id": "secondary_button_link", "label": "Secondary Button Link (optional)" },
+    { "type": "text", "id": "secondary_button_text", "label": "Secondary Button Text", "default": "Contact Us" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#000000" },
+    { "type": "color", "id": "button_bg", "label": "Button Background", "default": "#000000" },
+    { "type": "color", "id": "button_text_color", "label": "Button Text", "default": "#ffffff" },
+    { "type": "color", "id": "button_border", "label": "Outline Button Border", "default": "#000000" }
+  ],
+  "presets": [{ "name": "Corporate Gifting Form" }]
+}
+{% endschema %}
+
+<section class="gift-clean">
+  <div class="gift-container page-width">
+    {% if section.settings.left_image != blank %}
+      <div class="gift-left">
+        <img 
+          src="{{ section.settings.left_image | image_url }}" 
+          alt="Corporate Gifting" 
+          class="gift-image"
+        >
+      </div>
+    {% endif %}
+
+    <div class="gift-right">
+      {% if section.settings.heading != blank %}
+        <h2 class="gift-heading" style="color: {{ section.settings.text_color }}">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+      
+      {% if section.settings.subheading != blank %}
+        <p class="gift-subheading" style="color: {{ section.settings.text_color }}">
+          {{ section.settings.subheading }}
+        </p>
+      {% endif %}
+
+      {% assign form_id = 'giftForm-' | append: section.id %}
+     <form method="post" action="/contact#contact_form" class="gift-form" accept-charset="UTF-8">
+  <input type="hidden" name="form_type" value="contact">
+  <input type="hidden" name="utf8" value="✓">
+
+      
+
+
+        <div class="gift-grid">
+          <input type="text" name="contact[Company Name]" placeholder="Company Name">
+          <input type="text" name="contact[Your Name]" placeholder="Your Name">
+          <input type="tel" name="contact[Mobile No.]" placeholder="Mobile No.">
+          <input type="email" name="contact[email]" placeholder="Email">
+          <input type="text" name="contact[Budget Per Gift]" placeholder="Budget Per Gift">
+          <input type="text" name="contact[Quantity]" placeholder="Quantity">
+        </div>
+
+        <input type="text" name="contact[Occasion]" placeholder="Occasion" class="full-width">
+
+        <textarea name="contact[Message]" placeholder="Message"></textarea>
+
+        {% if section.settings.button_text != blank %}
+          <button 
+            type="submit" 
+            class="gift-submit" 
+            style="background: {{ section.settings.button_bg }}; color: {{ section.settings.button_text_color }}"
+          >
+            {{ section.settings.button_text }}
+          </button>
+        {% endif %}
+      </form>
+<div id="gift-success-msg" style="display:none;" class="form-status success">
+  ✅ Thank you! Your message has been sent successfully.
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.search.includes("contact_posted=true")) {
+    const msg = document.getElementById("gift-success-msg");
+    msg.style.display = "block";
+    window.history.replaceState({}, document.title, window.location.pathname + "#gift-form");
+  }
+});
+</script>
+
+      {% if section.settings.secondary_button_link != blank and section.settings.secondary_button_text != blank %}
+        <a 
+          href="{{ section.settings.secondary_button_link }}" 
+          class="gift-secondary" 
+          style="color: {{ section.settings.button_border }}; border-color: {{ section.settings.button_border }}"
+        >
+          {{ section.settings.secondary_button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+.gift-clean {
+  padding: 80px 0;
+  background: #fff;
+}
+.gift-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 60px;
+}
+.gift-left {
+  flex: 1 1 50%;
+}
+.gift-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 18px; /* ✅ curved corners */
+}
+.gift-right {
+  flex: 1 1 45%;
+}
+.gift-heading {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-family: var(--font-heading-family);
+}
+.gift-subheading {
+  font-size: 16px;
+  margin-bottom: 25px;
+  color: #555;
+  font-family: var(--font-body-family);
+}
+.gift-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.gift-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+.gift-form input,
+.gift-form textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  padding: 1.5rem;
+  font-size: 14px;
+  font-family: var(--font-body-family); 
+  background: #fff;
+  color: #333;
+  transition: border 0.2s ease;
+}
+.gift-form input{
+    border-color: #b2c2cf;
+}
+.gift-form input:focus,
+.gift-form textarea:focus {
+  outline: none;
+  border-color: #000;
+}
+.gift-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.gift-form input::placeholder,
+.gift-form textarea::placeholder {
+  color: #215175
+;
+  font-family: var(--font-body-family); 
+}
+.full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+.gift-submit {
+  border: none;
+  border-radius: 50px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-body-family);
+}
+.gift-submit:hover {
+  opacity: 0.9;
+}
+.gift-secondary {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  font-family: var(--font-body-family);
+}
+.gift-secondary:hover {
+  background: {{ section.settings.button_border }};
+  color: #fff !important;
+}
+.form-status {
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-family: var(--font-body-family);
+}
+.success {
+  background: #e7f8ec;
+  color: #256d2e;
+}
+.error {
+  background: #fdecec;
+  color: #b32424;
+}
+@media (max-width: 768px) {
+ .gift-container {
+   gap: 10px;
+  } 
+  .gift-right, .gift-left {
+    flex: 1 1 100%;
+  }
+}
+</style>

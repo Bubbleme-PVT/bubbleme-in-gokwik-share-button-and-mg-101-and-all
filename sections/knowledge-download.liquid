@@ -1,0 +1,113 @@
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section.id }}: #215174;
+    --heading-dark-{{ section.id }}: #215174;
+    --secondary-text-{{ section.id }}: #4B5563;
+    --border-light-{{ section.id }}: #E2E8F0;
+  }
+
+  .download-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    font-family: "Inter", "Montserrat", sans-serif;
+  }
+  
+  .download-box-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    background-color: {{ section.settings.box_bg }};
+    border-radius: {{ section.settings.roundness }}px;
+    padding: 80px 40px;
+    text-align: center;
+    border: 1px solid var(--border-light-{{ section.id }});
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); /* Matched to global shadow */
+  }
+  
+  /* Main Heading - Matched to Extra Bold Standard */
+  .download-box-{{ section.id }} h2 { 
+    font-size: clamp(28px, 5vw, {{ section.settings.title_size }}px); 
+    font-weight: 800;
+    color: var(--heading-dark-{{ section.id }}); 
+    margin: 0 0 20px 0; 
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  
+  /* Subheading - Matched to 18px Standard */
+  .download-box-{{ section.id }} p { 
+    max-width: 650px; 
+    margin: 0 auto 40px; 
+    color: var(--secondary-text-{{ section.id }}); 
+    font-size: 18px; 
+    line-height: 1.6; 
+  }
+  
+  /* Download Button - Matched to btn-std */
+  .btn-download-{{ section.id }} {
+    background: var(--primary-blue-{{ section.id }}); 
+    color: #fff; 
+    padding: 16px 36px; 
+    border-radius: 100px; 
+    font-size: 15px;
+    font-weight: 800; 
+    letter-spacing: 0.1em;
+    text-decoration: none; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 4px 15px rgba(33, 81, 116, 0.15);
+  }
+  
+  .btn-download-{{ section.id }}:hover {
+    transform: translateY(-2px);
+    background: var(--heading-dark-{{ section.id }});
+    box-shadow: 0 8px 25px rgba(33, 81, 116, 0.25);
+  }
+
+  @media (max-width: 767px) {
+    .download-box-{{ section.id }} { padding: 50px 20px; border-radius: 32px; }
+    .download-box-{{ section.id }} h2 { font-size: 28px; }
+    .download-box-{{ section.id }} p { font-size: 16px; margin-bottom: 35px; }
+    .btn-download-{{ section.id }} { width: 100%; justify-content: center; }
+  }
+{%- endstyle -%}
+
+<section class="download-{{ section.id }}">
+  <div class="download-box-{{ section.id }}">
+    {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p>{{ section.settings.subheading }}</p>
+    {% endif %}
+    <a href="{{ section.settings.download_link | default: '#' }}" class="btn-download-{{ section.id }}">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+      {{ section.settings.btn_label }}
+    </a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Knowledge Download",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Deepen your knowledge" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Download our comprehensive clinical guide on how magnesium supports the nervous system." },
+    { "type": "text", "id": "btn_label", "label": "Button Label", "default": "Download Guide (PDF)" },
+    { "type": "url", "id": "download_link", "label": "Download Link" },
+    { "type": "header", "content": "Style & Layout" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1400, "step": 10, "default": 1100 },
+    { "type": "range", "id": "title_size", "label": "Title Size", "min": 24, "max": 60, "step": 2, "default": 38 },
+    { "type": "range", "id": "roundness", "label": "Box Rounding", "min": 0, "max": 60, "step": 4, "default": 40 },
+    { "type": "color", "id": "bg_color", "label": "Outer Background", "default": "#ffffff" },
+    { "type": "color", "id": "box_bg", "label": "Inner Box Color", "default": "#F8FAFC" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 60 }
+  ],
+  "presets": [{ "name": "Knowledge Download" }]
+}
+{% endschema %}

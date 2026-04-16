@@ -1,0 +1,166 @@
+{%- liquid
+  assign first_block = section.blocks.first
+  assign show_section = false
+
+  if first_block and first_block.settings.image != blank
+    assign show_section = true
+  endif
+-%}
+{% if request.design_mode or show_section %}
+{% if section.blocks.size > 0 %}
+<style>
+#shopify-section-{{ section.id }} .our_partners_sec {
+    padding-top: 30px;
+    padding-bottom: 100px;
+    overflow: hidden
+}
+
+#shopify-section-{{ section.id }} .our_partners_sec .owl-carousel .owl-stage-outer {
+    overflow: hidden
+}
+
+#shopify-section-{{ section.id }} .our_partners_sec .slider_wrapper {
+    position: relative
+}
+
+#shopify-section-{{ section.id }} .our_partners_sec .slide_item img {
+    width: auto !important;
+    margin: auto;
+    display: block;
+    height: 100%;
+    max-height: 100vh;
+    max-width: 100%;
+    border-radius: 16px
+}
+
+@media(max-width:575px) {
+    #shopify-section-{{ section.id }} .our_partners_sec {
+        padding-top: 20px;
+        padding-bottom: 80px
+    }
+}
+.our_partners_sec .owl-carousel {
+    z-index: 0 !important;
+}
+.our_partners_sec .owl-stage {
+    margin: auto;
+}
+</style>
+<div class="our_partners_sec page-width">
+    <div class="main_wrapper">
+        <div class="multicolumn-list__title title-wrapper page-width title-wrapper--no-top-margin text-center md:text-center">
+            <div class="inline-block max-w-m">
+                <h2 class="section-title title inline-richtext italics-light h2 scroll-trigger animate--fade-in mb-0">{{ section.settings.title }}</h2>
+            </div>
+        </div>        
+        <div class="slider_wrapper">
+            <div class="owl-carousel owl-theme">
+                {% for block in section.blocks %}
+                    <div class="item">
+                        <div class="slide_item
+                            {% if block.settings.image == blank %}
+                                empty
+                            {% endif %}">
+                            <a href="{% if block.settings.link != nil %}{{ block.settings.link }}{% else %}javascript:;{% endif %}">
+                                {{ block.settings.image | image_url: width: block.settings.image.width, height: block.settings.image.height | image_tag: loading: 'lazy' | replace: ' src="' , ' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' }}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" d-href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script type="load" d-src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="load" d-src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script type="load">
+jQuery('.our_partners_sec .owl-carousel').owlCarousel({
+        loop: false,
+        {% if section.settings.autoplay == true %}
+        autoplay:true,
+        autoplayTimeout:3000,
+        autoplayHoverPause:true,
+        {% endif %}
+        margin: 20,
+        nav: false,
+        dots: false,
+        autoHeight : true,
+        responsive:{
+            0:{
+                items:1.2,
+                loop: true,
+                center: true
+            },
+            600:{
+                items:3
+            },
+            1000:{
+                items:5
+            }
+        }
+    });  
+</script>
+{% endif %}
+{% endif %}
+
+
+{% schema %}
+    {
+        "name": "Image Slider",
+        "settings": [
+                {
+                    "type": "checkbox",
+                    "id": "autoplay",
+                    "label": "Autoplay",
+                    "default": false
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title",
+                    "default": "Our Partners and Certifications"
+                },
+                {
+                    "type": "range",
+                    "id": "desktop_slides",
+                    "min": 1,
+                    "max": 10,
+                    "default": 3,
+                    "label": "Desktop Slides"
+                },
+                {
+                    "type": "range",
+                    "id": "mobile_slides",
+                    "min": 1,
+                    "max": 10,
+                    "default": 3,
+                    "label": "Mobile Slides"
+                }
+
+        ],
+        "blocks": [
+            {
+                "type": "image_picker",
+                "name": "Image",
+                "settings": [
+                        {
+                            "type": "image_picker",
+                            "id": "image",
+                            "label": "Image"
+                        },
+                        {
+                            "type": "url",
+                            "id": "link",
+                            "label": "Link"
+                        }
+                ]
+            }
+        ],
+        "presets": [
+            {
+            "name": "Image Slider"
+            }
+        ]
+    }
+{% endschema %}

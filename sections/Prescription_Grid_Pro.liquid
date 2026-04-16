@@ -1,0 +1,332 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+  }
+
+  #prescription-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    overflow: hidden;
+  }
+
+  .presc-header-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+    text-align: center; 
+  }
+
+  .presc-header-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, {{ section.settings.heading_size }}px);
+    line-height: 1.1;
+    font-weight: 800;
+    color: var(--heading-dark-{{ section_id }});
+    letter-spacing: -0.02em;
+    margin: 0 0 15px 0;
+  }
+
+  .presc-header-{{ section_id }} p {
+    font-size: 16px;
+    color: var(--secondary-text-{{ section_id }});
+    max-width: 700px;
+    margin: 0 auto; 
+    line-height: 1.5;
+  }
+
+  .presc-grid-{{ section_id }} {
+    display: flex;
+    justify-content: flex-start;
+    gap: {{ section.settings.grid_gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 10px 20px 60px; /* Increased bottom padding to clear sticky bars */
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 20px;
+  }
+
+  .presc-grid-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  /* --- COMMON BUTTON STYLING (Pill Shaped) --- */
+  .presc-btn-{{ section_id }} {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 100px;
+    text-align: center;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    transition: 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  /* --- CARD TYPE A --- */
+  .card-type-a-{{ section_id }} {
+    flex: 0 0 {{ section.settings.card_width }}px;
+    aspect-ratio: 1 / 1.2;
+    border-radius: {{ section.settings.card_roundness }}px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    color: white;
+    border: 1px solid {{ section.settings.card_border_color }};
+  }
+
+  .bg-img-{{ section_id }} {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .card-type-a-{{ section_id }}::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 70%;
+    background: linear-gradient(to top, rgba(33, 81, 116, 0.9) 0%, transparent 100%);
+    z-index: 2;
+  }
+
+  .card-a-content-{{ section_id }} { position: relative; z-index: 3; text-align: left; }
+  .btn-white-{{ section_id }} { background: white; color: var(--primary-blue-{{ section_id }}); }
+
+  /* --- CARD TYPE B (Product) --- */
+  .card-type-b-{{ section_id }} {
+    flex: 0 0 {{ section.settings.card_width }}px;
+    aspect-ratio: 1 / 1.25; /* Taller ratio to avoid button cutoff */
+    background-color: #ffffff; 
+    border-radius: {{ section.settings.card_roundness }}px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px; 
+    border: 1px solid {{ section.settings.card_border_color }};
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  }
+
+  .card-b-top-{{ section_id }} {
+    width: 100%;
+    height: 50%;
+    border-radius: {{ section.settings.card_roundness | minus: 10 | at_least: 12 }}px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-b-image-wrap-{{ section_id }} { width: 100%; height: 100%; }
+  .card-b-image-wrap-{{ section_id }} img { width: 100%; height: 100%; object-fit: cover; }
+
+  .targeted-badge-{{ section_id }} {
+    position: absolute; top: 12px; left: 12px;
+    background: {{ section.settings.badge_bg }};
+    padding: 6px 12px; border-radius: 50px;
+    font-size: 10px; font-weight: 800; color: {{ section.settings.badge_text_color }};
+    z-index: 2; text-transform: uppercase;
+  }
+
+  .card-b-bottom-{{ section_id }} {
+    height: 50%;
+    padding: 15px 5px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .btn-outline-{{ section_id }} {
+    background: transparent;
+    color: var(--primary-blue-{{ section_id }});
+    border: 1.5px solid var(--border-light-{{ section_id }});
+  }
+
+  /* --- MOBILE SPECIFIC FIXES --- */
+  @media (max-width: 767px) {
+    #prescription-{{ section_id }} { padding-bottom: 20px; }
+
+    .presc-grid-{{ section_id }} {
+      padding-bottom: 30px; /* Force room for sticky cart bars */
+      gap: 15px;
+    }
+
+    .presc-grid-{{ section_id }}::after {
+      content: "";
+      flex: 0 0 20px;
+      visibility: hidden;
+    }
+
+    .card-type-a-{{ section_id }}, 
+    .card-type-b-{{ section_id }} { 
+      flex: 0 0 82%; 
+      width: 82%;
+      aspect-ratio: 1 / 1.35; /* Even taller on mobile for button space */
+      scroll-snap-align: center;
+    }
+
+    .card-b-bottom-{{ section_id }} h3 { font-size: 18px; }
+    .card-b-desc-{{ section_id }} { font-size: 13px; -webkit-line-clamp: 3; }
+    
+    .presc-btn-{{ section_id }} {
+      padding: 12px 10px; /* Taller touch area for mobile View Detail */
+    }
+  }
+{%- endstyle -%}
+
+<section id="prescription-{{ section_id }}">
+  <div class="presc-header-{{ section_id }}">
+    <h2>{{ section.settings.heading }}</h2>
+    {% if section.settings.subheading != blank %}<p>{{ section.settings.subheading }}</p>{% endif %}
+  </div>
+
+  <div class="presc-grid-{{ section_id }}">
+    {% for block in section.blocks %}
+      {% if block.type == 'card_a' %}
+        <div class="card-type-a-{{ section_id }}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <img class="bg-img-{{ section_id }}" src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.title }}" loading="lazy">
+          {% endif %}
+          <div class="card-a-content-{{ section_id }}">
+            <h3 style="color:white; font-weight:800; margin:0 0 5px 0;">{{ block.settings.title }}</h3>
+            <p style="color:white; margin:0 0 20px 0;">{{ block.settings.text }}</p>
+            <a href="{{ block.settings.link | default: '#' }}" class="presc-btn-{{ section_id }} btn-white-{{ section_id }}">
+              {{ block.settings.btn_label }}
+            </a>
+          </div>
+        </div>
+      {% else %}
+        <div class="card-type-b-{{ section_id }}" {{ block.shopify_attributes }}>
+          <div class="card-b-top-{{ section_id }}" style="background-color: {{ block.settings.img_bg }};">
+            {% if block.settings.badge_text != blank %}<div class="targeted-badge-{{ section_id }}">{{ block.settings.badge_text }}</div>{% endif %}
+            <div class="card-b-image-wrap-{{ section_id }}">
+               <img src="{{ block.settings.image | image_url: width: 600, height: 600, crop: 'center' }}" alt="{{ block.settings.title }}" loading="lazy">
+            </div>
+          </div>
+          <div class="card-b-bottom-{{ section_id }}">
+            <div>
+              <h3 style="font-weight: 800; margin: 0 0 8px 0; line-height: 1.2;">{{ block.settings.title }}</h3>
+              <p class="card-b-desc-{{ section_id }}" style="margin:0 0 1px 0;">{{ block.settings.description }}</p>
+            </div>
+            <a href="{{ block.settings.link | default: '#' }}" class="presc-btn-{{ section_id }} btn-outline-{{ section_id }}">
+              {{ block.settings.btn_label }}
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Prescription Grid Pro",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Prescription ingredients" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading" },
+    { 
+      "type": "range", 
+      "id": "heading_size", 
+      "label": "Heading Font Size", 
+      "min": 24, 
+      "max": 60, 
+      "step": 1, 
+      "default": 42 
+    },
+    { 
+      "type": "range", 
+      "id": "max_width", 
+      "label": "Max Container Width", 
+      "min": 800, 
+      "max": 1400, 
+      "step": 10, 
+      "default": 1200 
+    },
+    { 
+      "type": "range", 
+      "id": "card_width", 
+      "label": "Card Width (Desktop)", 
+      "min": 250, 
+      "max": 500, 
+      "step": 5, 
+      "default": 360 
+    },
+    { 
+      "type": "range", 
+      "id": "grid_gap", 
+      "label": "Gap", 
+      "min": 10, 
+      "max": 50, 
+      "step": 1, 
+      "default": 20 
+    },
+    { 
+      "type": "range", 
+      "id": "card_roundness", 
+      "label": "Corner Radius", 
+      "min": 0, 
+      "max": 60, 
+      "step": 1, 
+      "default": 32 
+    },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#ffffff" },
+    { "type": "color", "id": "card_border_color", "label": "Card Border", "default": "#E2E8F0" },
+    { "type": "color", "id": "badge_bg", "label": "Badge Background", "default": "#ffffff" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge Text", "default": "#215174" },
+    { 
+      "type": "range", 
+      "id": "padding_top", 
+      "label": "Top Padding", 
+      "min": 0, 
+      "max": 120, 
+      "step": 2, 
+      "default": 80 
+    },
+    { 
+      "type": "range", 
+      "id": "padding_bottom", 
+      "label": "Bottom Padding", 
+      "min": 0, 
+      "max": 120, 
+      "step": 2, 
+      "default": 80 
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card_a",
+      "name": "Lifestyle Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Pro Dysfunction" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Description text goes here" },
+        { "type": "text", "id": "btn_label", "label": "Button Label", "default": "See If You Are Eligible" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    },
+    {
+      "type": "card_b",
+      "name": "Product Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Product Image" },
+        { "type": "color", "id": "img_bg", "label": "Image Background Color", "default": "#E1F5FE" },
+        { "type": "text", "id": "badge_text", "label": "Badge Text", "default": "TARGETED" },
+        { "type": "text", "id": "title", "label": "Product Name", "default": "Minute Mend" },
+        { "type": "textarea", "id": "description", "label": "Description" },
+        { "type": "text", "id": "btn_label", "label": "Button Label", "default": "View Detail" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Prescription Grid Pro" }]
+}
+{% endschema %}

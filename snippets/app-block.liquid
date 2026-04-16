@@ -1,0 +1,31 @@
+{% comment %} <link rel="dns-prefetch" href="https://cdnwidget.judge.me">
+<link rel="dns-prefetch" href="https://cdn.judge.me">
+<link rel="dns-prefetch" href="https://cdn1.judge.me">
+<link rel="dns-prefetch" href="https://api.judge.me">
+
+{{ shop.metafields.judgeme.settings | replace: '<script data-cfasync="false" type="text/javascript" async src="', '<script data-cfasync="false" type="load" d-src="' | replace: 'type="text/css" media="nope!" onload="this.media=', '' | replace: "'all'", "" | replace: '" href="', 'd-href="' }}
+{% for count in (0..5) %}
+  {% assign metafield_key = 'html_miracle_' | append: count %}
+  {% assign current_metafield = shop.metafields.judgeme[metafield_key] %}
+  {% unless current_metafield %} {% break %} {% endunless %}
+  {{ current_metafield }}
+{% endfor %}
+<script data-cfasync='false' class='jdgm-script' type="load">
+!function(e){window.jdgm=window.jdgm||{},jdgm.CDN_HOST="https://cdnwidget.judge.me/",jdgm.API_HOST="https://api.judge.me/",
+jdgm.docReady=function(d){(e.attachEvent?"complete"===e.readyState:"loading"!==e.readyState)?
+setTimeout(d,0):e.addEventListener("DOMContentLoaded",d)},jdgm.loadCSS=function(d,t,o,a){
+!o&&jdgm.loadCSS.requestedUrls.indexOf(d)>=0||(jdgm.loadCSS.requestedUrls.push(d),
+(a=e.createElement("link")).rel="stylesheet",a.class="jdgm-stylesheet",a.media="nope!",
+a.href=d,a.onload=function(){this.media="all",t&&setTimeout(t)},e.body.appendChild(a))},
+jdgm.loadCSS.requestedUrls=[],jdgm.loadJS=function(e,d){var t=new XMLHttpRequest;
+t.onreadystatechange=function(){4===t.readyState&&(Function(t.response)(),d&&d(t.response))},
+t.open("GET",e),t.send()},jdgm.docReady((function(){(window.jdgmLoadCSS||e.querySelectorAll(
+".jdgm-widget, .jdgm-all-reviews-page").length>0)&&(jdgmSettings.widget_load_with_code_splitting?
+parseFloat(jdgmSettings.widget_version)>=3?jdgm.loadCSS(jdgm.CDN_HOST+"widget_v3/base.css"):
+jdgm.loadCSS(jdgm.CDN_HOST+"widget/base.css"):jdgm.loadCSS(jdgm.CDN_HOST+"shopify_v2.css"),
+jdgm.loadJS(jdgm.CDN_HOST+"loader.js"))}))}(document);
+</script>
+
+<noscript><link rel="stylesheet" type="text/css" media="all" href="https://cdnwidget.judge.me/shopify_v2.css"></noscript>
+<!-- End of Judge.me Core -->
+<!-- END app app block --> {% endcomment %}

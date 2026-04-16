@@ -1,0 +1,245 @@
+{%- comment -%}
+  bundle-card-product.liquid
+  Copy of card-product.liquid with quick-add replaced by MNM bundle controls.
+  Used inside mnm-bundle.liquid  →  {% render 'bundle-card-product', card_product: product ... %}
+{%- endcomment -%}
+
+<link rel="stylesheet" href="{{ 'component-volume-pricing.css' | asset_url }}" media="print" onload="this.media='all'">
+
+{%- liquid
+  assign card_style = settings.card_style
+
+  unless media_aspect_ratio
+    assign media_aspect_ratio = settings.card_image_ratio
+  endunless
+
+  assign ratio = 1
+  if media_aspect_ratio == 'portrait'
+    assign ratio = 0.8
+  elsif media_aspect_ratio == 'portrait_tall'
+    assign ratio = 0.66
+  elsif media_aspect_ratio == 'landscape_wide'
+    assign ratio = 1.77
+  elsif media_aspect_ratio == 'landscape'
+    assign ratio = 1.33
+  elsif media_aspect_ratio == 'square'
+    assign ratio = 1
+  elsif card_product and card_product.featured_media and media_aspect_ratio == 'adapt'
+    assign ratio = card_product.featured_media.aspect_ratio
+  endif
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
+
+  unless image_position
+    assign image_position = settings.card_image_position
+  endunless
+
+  unless image_cover
+    assign image_cover = settings.card_image_cover
+  endunless
+
+  unless show_secondary_image != nil
+    assign show_secondary_image = settings.card_image_secondary_image
+  endunless
+
+  unless show_vendor != nil
+    assign show_vendor = settings.card_show_vendor
+  endunless
+
+  unless show_rating != nil
+    assign show_rating = settings.card_image_show_rating
+  endunless
+
+  if card_product and card_product != empty and settings.card_include_collection_url and collection and card_product.collections contains collection
+    assign product_url = card_product.url | within: collection
+  else
+    assign product_url = card_product.url
+  endif
+
+  if columns_desktop
+    assign columns_desktop = columns_desktop | plus: 0
+  else
+    assign columns_desktop = 4
+  endif
+
+  if columns_mobile
+    assign columns_mobile = columns_mobile | plus: 0
+  else
+    assign columns_mobile = 2
+  endif
+
+  assign default_image_width = 533
+  if columns_mobile > 1
+    assign default_image_width = 220
+  endif
+-%}
+
+{%- if show_rating -%}
+  <link rel="stylesheet" href="{{ 'component-rating.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+
+{%- if card_product and card_product != empty -%}
+  <product-card class="block card-wrapper product-card-wrapper">
+    <div
+      class="
+        product-card card card--{{ card_style }}
+        card--shape-{{ media_aspect_ratio }}
+        card--text-{{ settings.card_text_alignment }}
+        {% if card_product.featured_media %} card--media{% else %} card--text{% endif %}
+        {% if card_style == 'card' %} color-{{ color_scheme | default: settings.card_color_scheme }} gradient{% endif %}
+        {% if extend_height %} card--extend-height{% endif %}
+        {% if card_product.featured_media == nil and card_style == 'card' and media_aspect_ratio != 'adapt' %} ratio{% endif %}
+        {% if card_style == 'card' and settings.card_shadow %} card--shadow{% endif %}
+      "
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      data-product-handle="{{ card_product.handle }}"
+    >
+
+      {%- comment -%} ── IMAGE ── {%- endcomment -%}
+      <div
+        class="card__inner
+          {% if card_style == 'standard' %}color-{{ color_scheme | default: settings.card_color_scheme }} gradient{% endif %}
+          {% if media_aspect_ratio != 'adapt' and card_product.featured_media or card_style == 'standard' %} ratio{% endif %}"
+        style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      >
+        {%- if card_product.featured_media -%}
+          <div class="card__media">
+            <div class="media media--transparent{% if image_cover %} media--hover-zoom{% endif %}">
+              <img
+                srcset="
+                  {%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+                  {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+                  {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                  {%- if card_product.featured_media.width >= 720 -%}{{ card_product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+                  {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w
+                "
+                src="{{ card_product.featured_media | image_url: width: default_image_width }}"
+                sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: columns_desktop }}px, (min-width: 990px) calc((100vw - 130px) / {{ columns_desktop }}), (min-width: 750px) calc((100vw - 120px) / 3), calc((50vw - 35px) / {{ columns_mobile }})"
+                alt="{{ card_product.featured_media.alt | escape }}"
+                class="card__image motion-reduce object-{{ image_position }}{% if image_cover == false %} object-contain{% endif %}"
+                loading="lazy"
+                fetchpriority="low"
+                width="{{ card_product.featured_media.width }}"
+                height="{{ card_product.featured_media.height }}"
+              >
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} ── CARD CONTENT: title + rating + price ── {%- endcomment -%}
+      <div class="card__content">
+        <div class="card__information">
+
+          {%- if show_vendor -%}
+            <div class="product-vendor mb-1 caption-with-letter-spacing light {{ settings.card_vendor_text_size }}">{{ card_product.vendor }}</div>
+          {%- endif -%}
+
+          <h3
+            class="card__heading text-body {{ settings.card_title_size }} font-{{ settings.card_title_weight }}"
+            id="title-{{ section_id }}-{{ card_product.id }}"
+          >
+            {%- comment -%} Title — NOT a link (bundle context, no navigation) {%- endcomment -%}
+            <span class="full-unstyled-link">{{ card_product.title | escape }}</span>
+          </h3>
+
+          <div class="card-information">
+            {%- if show_rating and card_product.metafields.reviews.rating.value != blank -%}
+              {%- liquid
+                assign rating_decimal = 0
+                assign decimal = card_product.metafields.reviews.rating.value.rating | modulo: 1
+                if decimal >= 0.3 and decimal <= 0.7
+                  assign rating_decimal = 0.5
+                elsif decimal > 0.7
+                  assign rating_decimal = 1
+                endif
+              -%}
+              <div class="flex items-center mt-05 gap-05 justify-{{ settings.card_text_alignment }}">
+                <div
+                  class="rating"
+                  role="img"
+                  aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: card_product.metafields.reviews.rating.value, rating_max: card_product.metafields.reviews.rating.value.scale_max }}"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="rating-star"
+                    style="--rating: {{ card_product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ card_product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }}; --font-size: {{ settings.card_star_size }}"
+                  ></span>
+                </div>
+                <p class="rating-text caption">
+                  <span aria-hidden="true">
+                    {{- card_product.metafields.reviews.rating.value }} /
+                    {{ card_product.metafields.reviews.rating.value.scale_max -}}
+                  </span>
+                </p>
+                <p class="rating-count caption">
+                  <span aria-hidden="true">({{ card_product.metafields.reviews.rating_count }})</span>
+                </p>
+              </div>
+            {%- endif -%}
+
+            {%- comment -%} Price — JS will override with variant-specific price {%- endcomment -%}
+            {%- assign price_class = settings.card_price_size -%}
+            {%- render 'price', product: card_product, price_class: price_class, show_compare_at_price: true -%}
+          </div>
+        </div>
+
+      </div><!-- /.card__content -->
+
+      {%- comment -%}
+        MNM BUNDLE CONTROLS — OUTSIDE card__content (which is position:absolute)
+        Placed as sibling AFTER card__content, inside product-card div
+      {%- endcomment -%}
+      <div class="mnm-card-controls">
+
+        <button type="button" class="mnm-add-btn">
+          <span class="mnm-plus-icon" aria-hidden="true">+</span>
+          Add
+        </button>
+
+        <div class="mnm-card__actions" hidden>
+          {% comment %} <div class="mnm-card__qty-wrap">
+            <div class="quantity-selector mnm-card__qty">
+              <button type="button" class="quantity-selector__button" data-action="decrease">−</button>
+              <span class="quantity-selector__input">1</span>
+              <button type="button" class="quantity-selector__button" data-action="increase">+</button>
+            </div> 
+          </div> {% endcomment %}
+          <button type="button" class="mnm-remove-btn">Remove</button>
+        </div>
+
+      </div><!-- /.mnm-card-controls -->
+
+    </div><!-- /.product-card -->
+  </product-card>
+
+{%- else -%}
+  <div class="card-wrapper product-card-wrapper">
+    <div class="card card--{{ card_style }} card--media" style="--ratio-percent: 100%;">
+      <div class="card__inner ratio" style="--ratio-percent: 100%;">
+        <div class="card__media">
+          <div class="media media--transparent placeholder">
+            {{ 'product-2' | placeholder_svg_tag: 'placeholder-svg h-full' }}
+          </div>
+        </div>
+      </div>
+      <div class="card__content">
+        <div class="card__information">
+          <h3 class="card__heading text-body">
+            <span class="full-unstyled-link">{{ 'onboarding.product_title' | t }}</span>
+          </h3>
+          <div class="card-information">
+            {%- render 'price', show_compare_at_price: true -%}
+          </div>
+        </div>
+        <div class="mnm-card-controls">
+          <button type="button" class="mnm-add-btn">
+            <span class="mnm-plus-icon" aria-hidden="true">+</span>
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

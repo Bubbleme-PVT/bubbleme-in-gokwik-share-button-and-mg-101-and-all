@@ -1,0 +1,227 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+    --bg-open-{{ section_id }}: #FFFFFF;
+  }
+
+  #citations-{{ section_id }} {
+    background-color: {{ section.settings.section_bg | default: '#FFFFFF' }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+  }
+
+  .citation-container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 60px;
+    background-color: var(--bg-soft-{{ section_id }});
+    border-radius: 32px;
+    border: 1px solid var(--border-light-{{ section_id }});
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  }
+
+  .citation-header-{{ section_id }} {
+    margin-bottom: 40px;
+  }
+
+  /* Main Title - Matched to Rituals H2 */
+  .citation-header-{{ section_id }} h2 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    margin: 0;
+    color: var(--heading-dark-{{ section_id }});
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .citation-row-{{ section_id }} {
+    border-bottom: 1px solid var(--border-light-{{ section_id }});
+    transition: background-color 0.3s ease;
+  }
+  
+  .citation-row-{{ section_id }}.active {
+    background-color: var(--bg-open-{{ section_id }});
+  }
+
+  .citation-trigger-{{ section_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 15px;
+  }
+
+  /* Category Title - Matched to Card Standards */
+  .category-title-{{ section_id }} {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--heading-dark-{{ section_id }});
+    flex: 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* Label - Matched to Pill/Stat Label style */
+  .reference-count-{{ section_id }} {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--primary-blue-{{ section_id }});
+    white-space: nowrap;
+    opacity: 0.9;
+  }
+
+  .chevron-{{ section_id }} {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--primary-blue-{{ section_id }});
+    flex-shrink: 0;
+  }
+
+  .citation-row-{{ section_id }}.active .chevron-{{ section_id }} {
+    transform: rotate(180deg);
+  }
+
+  .citation-content-{{ section_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+  }
+
+  .citation-row-{{ section_id }}.active .citation-content-{{ section_id }} {
+    max-height: 3000px;
+    opacity: 1;
+    padding-bottom: 30px;
+  }
+
+  .citation-list-{{ section_id }} {
+    list-style: none;
+    padding: 0 10px; margin: 0;
+  }
+
+  /* List Items - Matched to Step Text */
+  .citation-list-{{ section_id }} li {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    padding-left: 28px;
+    position: relative;
+    color: var(--secondary-text-{{ section_id }});
+    word-break: break-word;
+  }
+
+  .citation-list-{{ section_id }} li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    font-weight: 800;
+    color: var(--primary-blue-{{ section_id }});
+  }
+
+  .cit-link-{{ section_id }} {
+    color: inherit;
+    text-decoration: none;
+    display: inline;
+    transition: all 0.2s;
+    border-bottom: 1px solid transparent;
+  }
+
+  .cit-link-{{ section_id }}:hover {
+    color: var(--primary-blue-{{ section_id }});
+    border-bottom: 1px solid var(--primary-blue-{{ section_id }});
+  }
+
+  @media (max-width: 767px) {
+    .citation-container-{{ section_id }} { padding: 40px 20px; border-radius: 24px; }
+    .citation-trigger-{{ section_id }} { flex-direction: column; align-items: flex-start; padding: 20px 0; gap: 8px; }
+    .category-title-{{ section_id }} { font-size: 16px; width: 100%; }
+    .chevron-{{ section_id }} { position: absolute; right: 0; top: 22px; }
+    .citation-row-{{ section_id }} { position: relative; }
+    .citation-list-{{ section_id }} li { font-size: 14px; }
+  }
+{%- endstyle -%}
+
+<section id="citations-{{ section_id }}">
+  <div class="citation-container-{{ section_id }}">
+    <div class="citation-header-{{ section_id }}">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+    <div class="citation-accordion-{{ section_id }}">
+      {% for block in section.blocks %}
+        <div class="citation-row-{{ section_id }}" {{ block.shopify_attributes }}>
+          <button class="citation-trigger-{{ section_id }}" onclick="this.parentElement.classList.toggle('active')">
+              <span class="category-title-{{ section_id }}">{{ block.settings.title }}</span>
+              <span class="reference-count-{{ section_id }}">{{ block.settings.ref_text }}</span>
+            <div class="chevron-{{ section_id }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </button>
+          <div class="citation-content-{{ section_id }}">
+            <ul class="citation-list-{{ section_id }}">
+              {% assign refs = block.settings.references | split: "---" %}
+              {% for ref in refs %}
+                {% if ref != blank %}
+                  {% assign parts = ref | split: "|" %}
+                  <li>
+                    {% if parts.size > 1 %}
+                      <a href="{{ parts[1] | strip }}" class="cit-link-{{ section_id }}" target="_blank" rel="noopener">
+                        {{ parts[0] | strip }} 
+                        <span style="font-size: 10px; opacity: 0.6; vertical-align: super;">[↗]</span>
+                      </a>
+                    {% else %}
+                      {{ ref | strip }}
+                    {% endif %}
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Citations Pro",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Medical Citations & Sources" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1400, "step": 20, "default": 1100 },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Background", "default": "#FFFFFF" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "citation",
+      "name": "Citation Category",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Category Name", "default": "Foundational Magnesium Research" },
+        { "type": "text", "id": "ref_text", "label": "Reference Count Label", "default": "View 12 References" },
+        { "type": "textarea", "id": "references", "label": "References (Split by ---)", "info": "Format: Title | URL --- Title 2 | URL 2" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Citations Pro" }]
+}
+{% endschema %}

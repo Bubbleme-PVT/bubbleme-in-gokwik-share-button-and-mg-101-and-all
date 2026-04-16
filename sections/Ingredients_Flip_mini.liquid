@@ -1,0 +1,352 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section_id }}: {{ section.settings.btn_bg | default: '#215174' }};
+    --btn-text-{{ section_id }}: {{ section.settings.btn_text_color | default: '#ffffff' }};
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+    --bg-soft-{{ section_id }}: #F8FAFC;
+    
+    --tag-bg-{{ section_id }}: {{ section.settings.tag_bg_color | default: '#f1f1e6' }};
+    --tag-text-{{ section_id }}: {{ section.settings.tag_text_color | default: '#4B5563' }};
+    --link-color-{{ section_id }}: {{ section.settings.link_text_color | default: '#215174' }};
+  }
+
+  .ing-section-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: "Inter", "Montserrat", sans-serif;
+  }
+
+  .ing-header-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+    text-align: {{ section.settings.heading_align }};
+  }
+
+  /* Main Title - Matched to Rituals H2 */
+  .ing-title-{{ section_id }} {
+    color: var(--heading-dark-{{ section_id }});
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .ing-scroll-wrapper-{{ section_id }} {
+    display: flex;
+    gap: 20px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 4% 20px; 
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; 
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+  }
+
+  .ing-scroll-wrapper-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .ing-card-wrapper-{{ section_id }} {
+    flex: 0 0 {{ section.settings.pill_width }}px; 
+    width: {{ section.settings.pill_width }}px;
+    aspect-ratio: 1 / 1; 
+    scroll-snap-align: start;
+    position: relative;
+  }
+
+  .ing-card-inner-{{ section_id }} {
+    position: relative;
+    width: 100%; height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .ing-card-inner-{{ section_id }}.is-flipped { transform: rotateY(180deg); }
+
+  .ing-card-front, .ing-card-back {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: {{ section.settings.roundness }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    cursor: pointer;
+    border: 1px solid var(--border-light-{{ section_id }});
+  }
+
+  .ing-card-front { z-index: 2; background: #fff; display: flex; flex-direction: column; justify-content: flex-end; }
+  .ing-card-back { z-index: 1; transform: rotateY(180deg); padding: 30px; background: var(--bg-soft-{{ section_id }}); display: flex; flex-direction: column; }
+
+  .ing-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+  .ing-bg-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ing-content-overlay {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    padding: 25px;
+    min-height: {{ section.settings.overlay_height }}%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .ing-content-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    {% if section.settings.enable_glass %}
+      backdrop-filter: blur({{ section.settings.glass_blur }}px);
+      -webkit-backdrop-filter: blur({{ section.settings.glass_blur }}px);
+    {% endif %}
+    
+    {%- assign glass_alpha = section.settings.opacity | divided_by: 100.0 -%}
+    {%- assign glass_color = section.settings.card_bg | color_modify: 'alpha', glass_alpha -%}
+
+    {% if section.settings.enable_gradient %}
+      background: linear-gradient({{ section.settings.glass_direction }}, 
+        {{ glass_color }} 0%, 
+        {{ glass_color | color_modify: 'alpha', 0.4 }} 70%,
+        transparent 100%
+      );
+    {% else %}
+      background: {{ glass_color }};
+    {% endif %}
+  }
+
+  .ing-tags-wrap { display: flex; gap: 8px; margin-bottom: 15px; }
+  
+  /* Tag - Matched to Pill Label style */
+  .ing-tag {
+    background: var(--tag-bg-{{ section_id }});
+    color: var(--tag-text-{{ section_id }});
+    font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 50px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+
+  /* Card Title - Matched to Ritual Card Titles */
+  .ing-card-title { 
+    color: var(--heading-dark-{{ section_id }}); 
+    font-size: 22px; 
+    font-weight: 800; 
+    margin: 0 0 8px; 
+    line-height: 1.1; 
+    letter-spacing: -0.01em;
+  }
+  
+  /* Card Text - Matched to Step Text */
+  .ing-card-text { 
+    font-size: 15px; 
+    line-height: 1.5; 
+    color: var(--secondary-text-{{ section_id }}); 
+    margin-bottom: 12px; 
+  }
+
+  /* Label - Matched to Pill Label style */
+  .ritual-label { 
+    text-transform: uppercase; 
+    font-size: 10px; 
+    font-weight: 800; 
+    color: #94A3B8; 
+    margin-bottom: 4px; 
+    display: block; 
+    border-top: 1px solid rgba(0,0,0,0.05); 
+    padding-top: 12px; 
+    letter-spacing: 0.12em;
+  }
+  
+  .ritual-name-link { text-decoration: none; display: inline-block; position: relative; z-index: 15; }
+  
+  .ritual-name { 
+    font-size: {{ section.settings.link_font_size }}px; 
+    font-weight: 800; 
+    color: var(--link-color-{{ section_id }}); 
+    text-decoration: underline; text-underline-offset: 4px; 
+  }
+
+  .ing-plus-btn {
+    position: absolute; bottom: 20px; right: 15px; width: 36px; height: 36px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+    background: #fff; z-index: 10; font-size: 18px; color: var(--link-color-{{ section_id }});
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+
+  .ing-footer-wrap { 
+    display: flex; 
+    justify-content: center; 
+    margin-top: 30px; 
+    width: 100%; 
+  }
+
+/* Main Button - Updated to match "View Detail" style */
+  .ing-main-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.btn_v_pad }}px {{ section.settings.btn_h_pad }}px;
+    
+    /* Force colors to match the screenshot */
+    background-color: #ffffff; 
+    color: #215174;
+    border: 1px solid #215174;
+    
+    border-radius: 100px; 
+    font-size: 14px; /* Slightly smaller to match UI */
+    font-weight: 700; /* Bold, but not overly heavy */
+    text-decoration: none; 
+    text-transform: capitalize; /* Matches "Explore All Ingredients" casing */
+    letter-spacing: 0.02em; 
+    transition: 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .ing-main-btn:hover { 
+    background-color: #215174; /* Inverts on hover for a nice effect */
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(33, 81, 116, 0.1);
+  }
+
+  @media (max-width: 767px) {
+    .ing-title-{{ section_id }} { font-size: 28px; }
+    .ing-card-wrapper-{{ section_id }} { flex: 0 0 280px; width: 280px; }
+    .ing-card-title { font-size: 20px; }
+    .ing-card-text { font-size: 14px; }
+  }
+{%- endstyle -%}
+
+<section class="ing-section-{{ section_id }}">
+  <div class="ing-header-{{ section_id }}">
+    {% if section.settings.heading != blank %}
+      <h2 class="ing-title-{{ section_id }}">{{ section.settings.heading }}</h2>
+    {% endif %}
+  </div>
+  
+  <div class="ing-scroll-wrapper-{{ section_id }}">
+    {% for block in section.blocks limit: section.settings.limit %}
+      <div class="ing-card-wrapper-{{ section_id }}" {{ block.shopify_attributes }}>
+        <div class="ing-card-{{ section_id }}" style="height:100%;">
+          <div class="ing-card-inner-{{ section_id }}" id="Inner-{{ block.id }}">
+            
+            <div class="ing-card-front">
+              <div class="ing-bg-img" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">
+                {% if block.settings.image != blank %}
+                  <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title }}" loading="lazy">
+                {% endif %}
+              </div>
+              <div class="ing-content-overlay">
+                <div onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')" style="cursor:pointer;">
+                  <h3 class="ing-card-title">{{ block.settings.title }}</h3>
+                  <p class="ing-card-text">{{ block.settings.short_desc }}</p>
+                  <div class="ing-tags-wrap">
+                    {% if block.settings.tag_1 != blank %}<span class="ing-tag">{{ block.settings.tag_1 }}</span>{% endif %}
+                    {% if block.settings.tag_2 != blank %}<span class="ing-tag">{{ block.settings.tag_2 }}</span>{% endif %}
+                  </div>
+                  <div class="ritual-label">{{ block.settings.ritual_label }}</div>
+                </div>
+
+                {% if block.settings.product_link != blank %}
+                  <a href="{{ block.settings.product_link }}" class="ritual-name-link">
+                    <div class="ritual-name">{{ block.settings.ritual_name }}</div>
+                  </a>
+                {% else %}
+                   <div class="ritual-name">{{ block.settings.ritual_name }}</div>
+                {% endif %}
+                <div class="ing-plus-btn" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">+</div>
+              </div>
+            </div>
+
+            <div class="ing-card-back" onclick="document.getElementById('Inner-{{ block.id }}').classList.toggle('is-flipped')">
+              <h3 class="ing-card-title" style="margin-bottom: 10px;">{{ block.settings.title }}</h3>
+              <div class="ing-card-text" style="overflow-y: auto; flex-grow: 1;">{{ block.settings.full_desc }}</div>
+              <div class="ing-plus-btn" style="background: #fff;">×</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if section.settings.show_btn %}
+    <div class="ing-footer-wrap">
+      <a href="{{ section.settings.redirect_url | default: '#' }}" class="ing-main-btn">
+        {{ section.settings.link_text }}
+      </a>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Ing Pro mini Flip",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What's Inside Matters" },
+    { "type": "range", "id": "limit", "label": "Cards to Show", "min": 1, "max": 12, "step": 1, "default": 6 },
+    { "type": "range", "id": "pill_width", "label": "Card Width (px)", "min": 200, "max": 500, "step": 10, "default": 280 },
+    { "type": "select", "id": "heading_align", "label": "Heading Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" },
+    { "type": "header", "content": "GLASS MASTER SETTINGS" },
+    { "type": "checkbox", "id": "enable_glass", "label": "Enable Frost Blur", "default": true },
+    { "type": "range", "id": "glass_blur", "label": "Blur Intensity", "min": 0, "max": 50, "step": 1, "default": 13 },
+    { "type": "color", "id": "card_bg", "label": "Glass Overlay Color", "default": "#ffffff" },
+    { "type": "range", "id": "opacity", "label": "Glass Opacity (%)", "min": 0, "max": 100, "step": 1, "default": 70 },
+    { "type": "range", "id": "overlay_height", "label": "Glass Height (%)", "min": 10, "max": 100, "step": 5, "default": 60 },
+    { "type": "header", "content": "Gradient Logic" },
+    { "type": "checkbox", "id": "enable_gradient", "label": "Enable Gradient Fade", "default": true },
+    { "type": "select", "id": "glass_direction", "label": "Gradient Direction", "options": [
+        {"value": "to top", "label": "Bottom to Top"},
+        {"value": "to bottom", "label": "Top to Bottom"}
+      ], "default": "to top" },
+    { "type": "header", "content": "Footer Button" },
+    { "type": "checkbox", "id": "show_btn", "label": "Show Button", "default": true },
+    { "type": "text", "id": "link_text", "label": "Button Text", "default": "Explore All Ingredients" },
+    { "type": "url", "id": "redirect_url", "label": "Link" },
+    { "type": "color", "id": "btn_bg", "label": "Button Background", "default": "#ffffff" },
+    { "type": "color", "id": "btn_text_color", "label": "Button Text Color", "default": "#215174" },
+    { "type": "color", "id": "btn_border_color", "label": "Button Border Color", "default": "#E2E8F0" },
+    { "type": "range", "id": "btn_border_width", "label": "Button Border Width", "min": 0, "max": 5, "step": 1, "default": 1 },
+    { "type": "range", "id": "btn_v_pad", "label": "V-Padding", "min": 10, "max": 30, "step": 1, "default": 16 },
+    { "type": "range", "id": "btn_h_pad", "label": "H-Padding", "min": 20, "max": 80, "step": 1, "default": 44 },
+    { "type": "header", "content": "Tag & Link Styling" },
+    { "type": "color", "id": "tag_bg_color", "label": "Tag BG Color", "default": "#f1f1e6" },
+    { "type": "color", "id": "tag_text_color", "label": "Tag Text Color", "default": "#4B5563" },
+    { "type": "color", "id": "link_text_color", "label": "Product Name Color", "default": "#215174" },
+    { "type": "range", "id": "link_font_size", "label": "Product Name Size", "min": 10, "max": 24, "step": 1, "default": 14 },
+    { "type": "header", "content": "Global Styles" },
+    { "type": "color", "id": "bg_color", "label": "Section BG", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 50, "default": 1200 },
+    { "type": "range", "id": "roundness", "label": "Card Roundness", "min": 0, "max": 60, "step": 4, "default": 32 },
+    { "type": "range", "id": "padding_top", "label": "Top Pad", "min": 0, "max": 100, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Pad", "min": 0, "max": 100, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Name", "default": "Magnesium" },
+        { "type": "textarea", "id": "short_desc", "label": "Short Desc", "default": "Supports synapse density." },
+        { "type": "text", "id": "tag_1", "label": "Tag 1", "default": "Brain Health" },
+        { "type": "text", "id": "tag_2", "label": "Tag 2", "default": "Focus" },
+        { "type": "text", "id": "ritual_label", "label": "Footer Label", "default": "BUBBLE ME RITUAL" },
+        { "type": "text", "id": "ritual_name", "label": "Product Name", "default": "Mind Clarity Drops" },
+        { "type": "url", "id": "product_link", "label": "Product Link" },
+        { "type": "richtext", "id": "full_desc", "label": "Back Description", "default": "<p>Detailed info here.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Ing Pro mini Flip" }]
+}
+{% endschema %}

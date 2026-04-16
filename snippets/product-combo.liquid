@@ -1,0 +1,220 @@
+<style>
+    .product-combos {
+        display: flex;
+        gap: 20px;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        padding: 3px;
+        padding-bottom: 20px;
+    }
+    .product-combos .product-card {
+        min-width: 35%;
+    }
+    .product-combos .card__information {
+        padding: 0 !important;
+    }
+    .product-combos .price__container ,
+    .product-combos h3.card__heading {
+        font-size: 14px !important;
+    }     
+    .custom-accordion__panel:has(.product-combos) .accordion__content--spacer {
+        display: none !important;
+    }    
+    button.add-combo-to-cart.button.button--primary {
+        display: flex;
+        margin: auto;
+    }  
+    .product-combos h3.card__heading a {
+        pointer-events: none;
+    }      
+    .product-card.active-combo {
+        box-shadow: 0 0 1px 1px #215175, 0 2px 7px 0 #215175, 0 1px 3px 0 #215175;
+        border-radius: 16px;
+    }    
+    .product-card.active-combo img{
+        margin-top: 0
+    }
+    @media (max-width: 767px){
+      @media (max-width: 767px) {
+  .product-combos {
+    grid-auto-columns: %;
+  }
+}
+.product-combos {
+  display: grid;
+  grid-auto-flow: column;          /* horizontal flow */
+  grid-auto-columns: 50%;          /* card width */
+  gap: 20px;
+
+  overflow-x: auto;
+  overflow-y: visible;
+
+  padding: 3px;
+  padding-bottom: 20px;
+
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.product-combos::-webkit-scrollbar {
+  display: none;
+}
+        .product-combos .product-card {
+            min-width: 50%;
+        }    
+    }
+    .product-combos a.button.button--primary {
+        color: #fff;
+    }    
+</style>
+<div class="product-combos product-card-wrapper">
+{% for variant in product.metafields.custom.explore_combos.value %}
+{% if forloop.first %}
+    {% assign firstvar = variant %}
+{% endif %}
+{% assign card_product = variant.product %}
+{% if card_product.has_only_default_variant %}
+    {% assign use_variant = false %}
+{% else %}
+    {% assign use_variant = true %}
+{% endif %}
+<div class="product-card card card--card card--shape-portrait card--text-center card--media color-scheme-1 gradient card--shadow {% if forloop.first %}active-combo{% endif %}" style="--ratio-percent: 125.0%;" data-variant-id="{{ variant.id }}" data-price="{{ variant.price | money }}">
+  <div class="card__inner ratio" style="--ratio-percent: 125.0%;">
+    <div class="card__media">
+      <div class="media media--transparent media--hover-effect media--hover-zoom">
+        <img
+        dt="
+            {%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 720 -%}{{ card_product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 940 -%}{{ card_product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 1066 -%}{{ card_product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+            {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w
+        "
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="{{ card_product.featured_media | image_url: width: default_image_width }}"
+        sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: columns_desktop }}px, (min-width: 990px) calc((100vw - 130px) / {{ columns_desktop }}), (min-width: 750px) calc((100vw - 120px) / 3), calc((50vw - 35px) / {{ columns_mobile }})"
+        alt="{{ card_product.featured_media.alt | escape }}"
+        class="card__image motion-reduce object-{{ image_position }}
+            {% if image_cover == false %} object-contain{% endif %}"
+        {% unless lazy_load == false %}
+            loading="lazy"
+            fetchpriority="low"
+        {% endunless %}
+        width="{{ card_product.featured_media.width }}"
+        height="{{ card_product.featured_media.height }}"
+        >
+      </div>
+    </div>
+    <div class="card__content card__content--badge">
+        {%- render 'product-badge', badge_product: card_product -%}
+    </div>    
+  </div>
+  <div class="card__content">
+    <div class="card__information">
+    <h3
+    class="card__heading text-body {{ settings.card_title_size }} font-{{ settings.card_title_weight }}"
+    {% if card_product.featured_media or card_style == 'card' %}
+        id="title-{{ section_id }}-{{ card_product.id }}"
+    {% endif %}
+    >
+    <a
+        href="{{ product_url }}"
+        id="CardLink-{{ section_id }}-{{ card_product.id }}"
+        class="full-unstyled-link{% if horizontal_quick_add and horizontal_mini %} t3{% endif %} {{ settings.card_title_transform }}"
+        {% unless horizontal_class %}data-product-card-title-id="{{ card_product.id }}"{% endunless %}
+        >
+    {{ card_product.title | escape }}
+    </a>
+    </h3>
+      <div class="card-information">
+        {% assign price_class = settings.card_price_size | append: ' ' | append: settings.card_title_transform %}
+        {% render 'price', product: card_product, price_class: price_class, show_compare_at_price: true, use_variant: use_variant, custom_variant: variant %}
+      </div>
+      <a
+        href="{{ card_product.url }}" target="_blank"
+        class="button button--secondary button--small"
+        >
+         View More
+      </a>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+<button class="add-combo-to-cart button button--primary">
+    <span class="x-atc-text-com dev_hide_if_novar_combo">ADD COMBO TO CART</span>
+    <span class="added-price" style="margin-left: 10px; font-weight: bold;">- {{ firstvar.price | money }}</span>
+</button>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+  let isDragging = false;
+  let startX, scrollLeft;
+
+  const cslider = document.querySelector('.product-combos');
+
+  if (!cslider) return;
+
+  cslider.style.cursor = 'grab';
+
+  cslider.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    startX = e.pageX - cslider.getBoundingClientRect().left + cslider.scrollLeft;
+    scrollLeft = cslider.scrollLeft;
+    cslider.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mouseup', function () {
+    isDragging = false;
+    cslider.style.cursor = 'grab';
+  });
+
+  cslider.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    const x = e.pageX - cslider.getBoundingClientRect().left;
+    const walk = (x - startX) * 1; // Adjust scroll speed
+    cslider.scrollLeft = scrollLeft - walk;
+  });
+});
+</script>
+<script>
+
+  const cards = document.querySelectorAll(".product-combos .product-card");
+  const addBtn = document.querySelector(".add-combo-to-cart");
+  const addedPrice = document.querySelector(".added-price");
+
+  // 1️⃣ Toggle active card
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelector(".product-card.active-combo")?.classList.remove("active-combo");
+      card.classList.add("active-combo");
+      addedPrice.innerHTML = `- ${card.getAttribute("data-price")}`;
+    });
+  });
+
+  // 2️⃣ Add active card variant to cart
+  addBtn.addEventListener("click", async () => {
+    const active = document.querySelector(".product-card.active-combo");
+    if (!active) return;
+
+    const variantId = active.getAttribute("data-variant-id");
+
+    fetch("/cart/add.js", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        items: [{ id: Number(variantId), quantity: 1 }]
+    })
+    })
+    .then(res => {
+    if (!res.ok) throw new Error("Add to cart failed");
+    return res.json();
+    })
+    .then(() => {
+    handleFloCartBtn(); // call after success
+    })
+    .catch(err => console.error(err));
+  });
+
+</script>

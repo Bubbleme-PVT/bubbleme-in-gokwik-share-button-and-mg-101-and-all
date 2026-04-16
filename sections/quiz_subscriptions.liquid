@@ -1,0 +1,309 @@
+{%- comment -%}
+quiz & subscriptions
+{%- endcomment -%}
+  
+{%- liquid
+  assign std_uid = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --quiz-accent: {{ section.settings.accent_color }};
+    --quiz-bg-light: #f9fafb;
+    --quiz-radius: 16px;
+    --quiz-transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .quiz-std-{{ std_uid }} {
+    --bg: {{ section.settings.section_bg }};
+    --text: {{ section.settings.text_color }};
+    --border: {{ section.settings.border_color }};
+    --maxw: {{ section.settings.max_width }}px;
+    background: var(--bg);
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .std-wrap { max-width: var(--maxw); margin: 0 auto; }
+
+  /* Progress Bar */
+  .quiz-progress-wrap {
+    width: 100%; max-width: 400px; margin: 0 auto 50px;
+    height: 6px; background: #eee; border-radius: 10px; overflow: hidden;
+  }
+  .quiz-progress-bar {
+    height: 100%; background: var(--quiz-accent); width: 0%;
+    transition: width 0.5s ease;
+  }
+  
+  /* Quiz Steps */
+  .quiz-step-{{ std_uid }} { display: none; text-align: center; max-width: 700px; margin: 0 auto; }
+  .quiz-step-{{ std_uid }}.is-active { display: block; animation: slideUp 0.6s ease; }
+  
+  .quiz-header h2 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 40px; }
+  
+  .quiz-options-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px; 
+  }
+  
+  .quiz-opt-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 40px 20px;
+    border-radius: var(--quiz-radius);
+    cursor: pointer;
+    transition: var(--quiz-transition);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .quiz-opt-card:hover { 
+    border-color: var(--quiz-accent); 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    transform: translateY(-5px);
+  }
+  .quiz-opt-card h3 { margin: 0; font-size: 18px; font-weight: 600; }
+
+  /* Results Split Layout */
+  .results-wrapper { display: none; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start; }
+  .results-wrapper.is-visible { display: grid; animation: fadeIn 1s ease; }
+
+  .analysis-column { position: sticky; top: 20px; }
+  .analysis-header h2 { font-size: 36px; margin-bottom: 10px; }
+  .analysis-item { 
+    background: rgba(255,255,255,0.5); 
+    padding: 25px; border-radius: 12px; margin-bottom: 15px; 
+    border-left: 4px solid var(--quiz-accent);
+  }
+  
+  .product-column { display: flex; flex-direction: column; gap: 20px; }
+  .prod-card-mini {
+    display: flex; align-items: center; gap: 20px; padding: 20px;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--quiz-radius);
+    position: relative; transition: var(--quiz-transition);
+  }
+  .prod-card-mini:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+  .prod-card-mini img { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; }
+  
+  .btn-remove { 
+    position: absolute; top: 15px; right: 15px; cursor: pointer; 
+    color: #ccc; border: none; background: none; font-size: 20px; 
+    transition: color 0.2s;
+  }
+  .btn-remove:hover { color: #ff4d4d; }
+
+  .checkout-footer { 
+    margin-top: 40px; padding: 30px; background: #fff; 
+    border-radius: var(--quiz-radius); box-shadow: 0 -10px 30px rgba(0,0,0,0.03);
+  }
+  .button-full { 
+    width: 100%; padding: 20px; font-weight: 700; cursor: pointer; 
+    border-radius: 10px; border: none; text-transform: uppercase; 
+    letter-spacing: 1.5px; font-size: 14px; transition: var(--quiz-transition);
+  }
+  .btn-cart { background: var(--text); color: var(--bg); margin-bottom: 12px; }
+  .btn-cart:hover { opacity: 0.9; transform: scale(1.02); }
+  .btn-sub { background: transparent; color: var(--text); border: 2px solid var(--text); }
+  .btn-sub:hover { background: var(--text); color: var(--bg); }
+
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (max-width: 990px) { 
+    .results-wrapper.is-visible { grid-template-columns: 1fr; gap: 50px; } 
+    .quiz-options-grid { grid-template-columns: 1fr; }
+  }
+{%- endstyle -%}
+
+<section class="quiz-std-{{ std_uid }}">
+  <div class="std-wrap">
+    
+    <div id="QuizUI-{{ std_uid }}">
+      <div class="quiz-progress-wrap">
+        <div id="Progress-{{ std_uid }}" class="quiz-progress-bar"></div>
+      </div>
+
+      {% for block in section.blocks %}
+        <div class="quiz-step-{{ std_uid }} {% if forloop.first %}is-active{% endif %}" data-idx="{{ forloop.index }}" {{ block.shopify_attributes }}>
+          <div class="quiz-header">
+            <h2>{{ block.settings.question }}</h2>
+          </div>
+          <div class="quiz-options-grid">
+            {% for i in (1..4) %}
+              {% capture opt_t %}option_{{ i }}_text{% endcapture %}
+              {% capture opt_p %}option_{{ i }}_prod{% endcapture %}
+              {% capture opt_r %}option_{{ i }}_reason{% endcapture %}
+              
+              {% if block.settings[opt_t] != blank %}
+                <div class="quiz-opt-card" 
+                     onclick="handleChoice({{ forloop.parentloop.index }}, '{{ block.settings[opt_p].selected_or_first_available_variant.id }}', {{ block.settings[opt_r] | json | escape }}, '{{ block.settings[opt_p].id }}')">
+                  <h3>{{ block.settings[opt_t] }}</h3>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="Results-{{ std_uid }}" class="results-wrapper">
+      <div class="analysis-column">
+        <div class="analysis-header">
+          <p class="uppercase" style="color: var(--quiz-accent); font-weight: 700; font-size: 13px; margin-bottom: 10px;">The Analysis</p>
+          <h2>Why these work for you</h2>
+          <p style="opacity: 0.7; margin-bottom: 40px;">Based on your unique profile, our experts recommend this personalized routine.</p>
+        </div>
+        <div id="AnalysisList-{{ std_uid }}"></div>
+      </div>
+
+      <div class="product-column">
+        <div id="ProductList-{{ std_uid }}"></div>
+        
+        <div class="checkout-footer">
+          <div style="margin-bottom: 20px; font-size: 18px; font-weight: 700;">Bundle Summary</div>
+          <button class="button-full btn-cart" onclick="addAllToCart()">Add Kit to Cart</button>
+          <button class="button-full btn-sub" onclick="addAllToCart()">Subscribe & Save 15%</button>
+          <p style="text-align: center; font-size: 12px; margin-top: 15px; opacity: 0.5;">Free shipping on all quiz kits.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const resultsData = [];
+  const totalSteps = {{ section.blocks.size }};
+  const productMeta = {
+    {% for block in section.blocks %}
+      {% for i in (1..4) %}
+        {% capture opt_p %}option_{{ i }}_prod{% endcapture %}
+        {% assign p = block.settings[opt_p] %}
+        {% if p != blank %}
+          "{{ p.id }}": {
+            title: {{ p.title | json }},
+            price: "{{ p.price | money }}",
+            img: "{{ p.featured_image | img_url: '400x' }}"
+          },
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  };
+
+  function handleChoice(step, variantId, reasonText, productId) {
+    if(variantId && variantId !== "null") {
+      resultsData.push({ variantId: variantId, id: productId, reason: reasonText });
+    }
+
+    const progress = (step / totalSteps) * 100;
+    document.getElementById('Progress-{{ std_uid }}').style.width = progress + '%';
+
+    const current = document.querySelector(`.quiz-step-{{ std_uid }}[data-idx="${step}"]`);
+    const next = document.querySelector(`.quiz-step-{{ std_uid }}[data-idx="${step + 1}"]`);
+    
+    if(next) {
+      current.style.opacity = '0';
+      setTimeout(() => {
+        current.classList.remove('is-active');
+        next.classList.add('is-active');
+      }, 300);
+    } else {
+      renderResults();
+    }
+  }
+
+  function renderResults() {
+    document.getElementById('QuizUI-{{ std_uid }}').style.display = 'none';
+    const resultsEl = document.getElementById('Results-{{ std_uid }}');
+    resultsEl.classList.add('is-visible');
+
+    const analysisBox = document.getElementById('AnalysisList-{{ std_uid }}');
+    const productBox = document.getElementById('ProductList-{{ std_uid }}');
+
+    const uniqueResults = resultsData.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
+
+    uniqueResults.forEach((item) => {
+      const p = productMeta[item.id];
+      if(!p) return;
+
+      analysisBox.innerHTML += `
+        <div class="analysis-item" id="reason-${item.id}">
+          <p style="font-weight:700; margin:0 0 8px 0; font-size:18px;">${p.title}</p>
+          <p style="font-size:15px; opacity:0.8; line-height:1.6;">${item.reason}</p>
+        </div>`;
+
+      productBox.innerHTML += `
+        <div class="prod-card-mini" id="card-${item.id}" data-variant="${item.variantId}">
+          <img src="${p.img}">
+          <div style="flex-grow:1;">
+            <p style="margin:0; font-weight:700; font-size:16px;">${p.title}</p>
+            <p style="margin:5px 0 0 0; font-weight:500; color:var(--quiz-accent);">${p.price}</p>
+          </div>
+          <button class="btn-remove" onclick="removeKitItem('${item.id}')">✕</button>
+        </div>`;
+    });
+  }
+
+  function removeKitItem(id) {
+    const elR = document.getElementById(`reason-${id}`);
+    const elC = document.getElementById(`card-${id}`);
+    elR.style.opacity = '0';
+    elC.style.opacity = '0';
+    setTimeout(() => { elR.remove(); elC.remove(); }, 300);
+  }
+
+  async function addAllToCart() {
+    const items = [];
+    document.querySelectorAll('.prod-card-mini').forEach(el => {
+      items.push({ id: el.getAttribute('data-variant'), quantity: 1 });
+    });
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items })
+    });
+    if (response.ok) { window.location.href = '/checkout'; }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Quiz & Subscriptions",
+  "settings": [
+    { "type": "color", "id": "section_bg", "label": "Background", "default": "#f9fafb" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#111827" },
+    { "type": "color", "id": "accent_color", "label": "Accent Color (Progress/Price)", "default": "#6366f1" },
+    { "type": "color", "id": "border_color", "label": "Borders", "default": "#e5e7eb" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 10, "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 0, "max": 100, "step": 5, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 0, "max": 100, "step": 5, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "What is your main skin goal?" },
+        { "type": "header", "content": "Option 1" },
+        { "type": "text", "id": "option_1_text", "label": "Label" },
+        { "type": "product", "id": "option_1_prod", "label": "Product Match" },
+        { "type": "textarea", "id": "option_1_reason", "label": "Reason" },
+        { "type": "header", "content": "Option 2" },
+        { "type": "text", "id": "option_2_text", "label": "Label" },
+        { "type": "product", "id": "option_2_prod", "label": "Product Match" },
+        { "type": "textarea", "id": "option_2_reason", "label": "Reason" },
+        { "type": "header", "content": "Option 3" },
+        { "type": "text", "id": "option_3_text", "label": "Label" },
+        { "type": "product", "id": "option_3_prod", "label": "Product Match" },
+        { "type": "textarea", "id": "option_3_reason", "label": "Reason" },
+        { "type": "header", "content": "Option 4" },
+        { "type": "text", "id": "option_4_text", "label": "Label" },
+        { "type": "product", "id": "option_4_prod", "label": "Product Match" },
+        { "type": "textarea", "id": "option_4_reason", "label": "Reason" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Premium Quiz Kit" }]
+}
+{% endschema %}

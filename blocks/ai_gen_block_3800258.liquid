@@ -1,0 +1,105 @@
+{% doc %}
+  @prompt
+    custom code
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-custom-code-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-custom-code-container-{{ ai_gen_id }} {
+    width: 100%;
+  }
+{% endstyle %}
+
+<custom-code-{{ ai_gen_id }}
+  class="ai-custom-code-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-custom-code-container-{{ ai_gen_id }}">
+    {% if block.settings.custom_html != blank %}
+      {{ block.settings.custom_html }}
+    {% endif %}
+
+    {% if block.settings.custom_liquid != blank %}
+      {{ block.settings.custom_liquid }}
+    {% endif %}
+  </div>
+</custom-code-{{ ai_gen_id }}>
+
+{% if block.settings.custom_css != blank %}
+  <style>
+    {{ block.settings.custom_css }}
+  </style>
+{% endif %}
+
+{% if block.settings.custom_javascript != blank %}
+  <script>
+    (function() {
+      {{ block.settings.custom_javascript }}
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom code",
+  "settings": [
+    {
+      "type": "header",
+      "content": "HTML and Liquid"
+    },
+    {
+      "type": "html",
+      "id": "custom_html",
+      "label": "Custom HTML"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "Custom Liquid"
+    },
+    {
+      "type": "header",
+      "content": "CSS"
+    },
+    {
+      "type": "html",
+      "id": "custom_css",
+      "label": "Custom CSS"
+    },
+    {
+      "type": "header",
+      "content": "JavaScript"
+    },
+    {
+      "type": "html",
+      "id": "custom_javascript",
+      "label": "Custom JavaScript"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom code"
+    }
+  ]
+}
+{% endschema %}

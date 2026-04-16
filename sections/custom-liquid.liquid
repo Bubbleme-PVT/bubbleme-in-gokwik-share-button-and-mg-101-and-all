@@ -1,0 +1,207 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Main Container */
+  .formWrapper { 
+    background: #fff; 
+    max-width: 550px; 
+    margin: 0 auto; 
+    padding: 40px; 
+    border-radius: 24px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* Header and Radio Buttons */
+  .topContentWrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .topContentWrapper h3 { 
+    margin: 0; 
+    font-size: 18px; 
+    color: #00155e;
+    font-weight: 700;
+  }
+  
+  .tracking-options {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .radio-option input {
+    margin-right: 8px;
+    accent-color: #7352f2; /* The purple from the image */
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Input Styling */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; animation: fadeIn 0.3s ease-in; }
+
+  input[type="text"], input[type="tel"] { 
+    width: 100%; 
+    padding: 16px; 
+    margin-bottom: 20px; 
+    border: 1px solid transparent; 
+    border-radius: 8px; 
+    background-color: #f8f9fa; /* Light grey background */
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  input[type="text"]:focus, input[type="tel"]:focus {
+    outline: none;
+    border-color: #7352f2;
+    background-color: #fff;
+  }
+
+  /* Button Styling */
+  .btn-track { 
+    background-color: #7352f2; 
+    color: white; 
+    border: none; 
+    padding: 16px; 
+    cursor: pointer; 
+    border-radius: 12px; 
+    width: 100%; 
+    font-weight: 600; 
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-track:hover { background-color: #5e3de0; }
+
+  /* Bottom Content */
+  .bottomContentWrapper { 
+    margin-top: 40px; 
+    padding-top: 30px; 
+    border-top: 1px solid #eee; 
+  }
+  .bottomContentWrapper h3 { 
+    font-size: 18px; 
+    margin-bottom: 12px; 
+    color: #00155e;
+    font-weight: 700;
+  }
+  .bottomContentWrapper p { 
+    font-size: 15px; 
+    color: #666; 
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+{%- endstyle -%}
+
+<div class="page-width section-{{ section.id }}-padding">
+  <div class="formWrapper">
+    <div class="topContentWrapper">
+      <h3>Track By:</h3>
+      <div class="tracking-options">
+        <label class="radio-option">
+          <input type="radio" name="track_type" value="menu1" checked> AWB
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="track_type" value="home"> Order Id
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="track_type" value="mobile"> Mobile Number
+        </label>
+      </div>
+    </div>
+
+    <div id="menu1" class="tab-pane active">
+      <form action="https://www.shiprocket.in/shipment-tracking" method="GET" target="_blank">
+        <input type="text" name="awb" placeholder="Enter your Airway Bill Number(AWB)" required>
+        <button class="btn-track" type="submit">Track Now</button>
+      </form>
+    </div>
+
+    <div id="home" class="tab-pane">
+      <form action="https://www.shiprocket.in/shipment-tracking" method="GET" target="_blank">
+        <input type="text" name="order_id" placeholder="Order Id" required>
+        <input type="tel" name="phone" placeholder="Phone No." required>
+        <button class="btn-track" type="submit">Track Now</button>
+      </form>
+    </div>
+
+    <div id="mobile" class="tab-pane">
+      <p style="font-size: 14px; margin-bottom: 15px; color: #666;">You will be redirected to myShiprocket to track all your orders.</p>
+      <a class="btn-track" style="display: block; text-align: center; text-decoration: none;" href="https://my.shiprocket.in/t.html" target="_blank">Track Now</a>
+    </div>
+
+    <div class="bottomContentWrapper">
+      <h3>Can’t Find Your Order Details?</h3>
+      <p>We sent your AWB tracking number to you via Email & SMS upon order confirmation.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('input[name="track_type"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      // Hide all panes
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      
+      // Show selected pane
+      const selectedId = this.value;
+      document.getElementById(selectedId).classList.add('active');
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Shiprocket Tracker",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

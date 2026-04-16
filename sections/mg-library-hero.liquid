@@ -1,0 +1,248 @@
+{%- style -%}
+  :root {
+    /* Matched to Global Design Language */
+    --primary-blue-{{ section.id }}: #215174;
+    --heading-dark-{{ section.id }}: #215174;
+    --border-light-{{ section.id }}: #E2E8F0;
+  }
+
+  .hero-{{ section.id }} {
+    position: relative;
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    font-family: "Inter", "Montserrat", sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+
+  .hero-bg-image-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  
+  .hero-container-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    max-width: {{ section.settings.max_width }}px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 100px 40px;
+    border-radius: {{ section.settings.roundness }}px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    /* --- GLASS MASTER SETTINGS --- */
+    height: {{ section.settings.glass_height_desktop }}vh;
+    
+    {%- assign glass_color = section.settings.glass_overlay_color -%}
+    {%- assign opacity = section.settings.glass_opacity | divided_by: 100.0 -%}
+    
+    {% if section.settings.enable_gradient %}
+      background: linear-gradient(
+        {% if section.settings.gradient_direction == 'top_to_bottom' %}to bottom{% else %}to top{% endif %}, 
+        {{ glass_color | color_modify: 'alpha', opacity }}, 
+        transparent
+      );
+    {% else %}
+      background-color: {{ glass_color | color_modify: 'alpha', opacity }};
+    {% endif %}
+
+    {% if section.settings.enable_frost %}
+      backdrop-filter: blur({{ section.settings.blur_intensity }}px);
+      -webkit-backdrop-filter: blur({{ section.settings.blur_intensity }}px);
+    {% endif %}
+    /* ---------------------------- */
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); /* Matched to global shadow */
+  }
+  
+  /* Eyebrow - Matched to Pill Label style */
+  .hero-container-{{ section.id }} .subheading-{{ section.id }} {
+    font-size: 10px;
+    font-weight: 800; 
+    text-transform: uppercase; 
+    color: var(--primary-blue-{{ section.id }}); 
+    letter-spacing: 0.12em;
+    display: block;
+    margin-bottom: 20px;
+  }
+  
+  /* Main Heading - Matched to Extra Bold Standard */
+  .hero-container-{{ section.id }} h1 {
+    font-size: clamp(36px, 8vw, {{ section.settings.heading_size }}px); 
+    font-weight: 800;
+    color: var(--heading-dark-{{ section.id }}); 
+    margin: 0 0 25px 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Subheading Text - Matched to 18px Standard */
+  .hero-container-{{ section.id }} p {
+    max-width: 650px; 
+    margin: 0 auto 40px; 
+    font-size: 18px;
+    color: {{ section.settings.body_text_color }}; 
+    line-height: 1.6;
+  }
+  
+  .hero-btns-{{ section.id }} { 
+    display: flex; 
+    gap: 15px; 
+    justify-content: center; 
+    align-items: center;
+  }
+  
+  /* Primary Button - Matched to btn-std */
+  .btn-primary-{{ section.id }} {
+    background: var(--primary-blue-{{ section.id }}); 
+    color: #ffffff; 
+    padding: 16px 36px; 
+    border-radius: 100px; 
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 4px 15px rgba(33, 81, 116, 0.15);
+  }
+  
+  .btn-primary-{{ section.id }}:hover {
+    background: var(--heading-dark-{{ section.id }});
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(33, 81, 116, 0.25);
+  }
+  
+  /* Secondary Button - Matched to btn-std */
+  .btn-secondary-{{ section.id }} {
+    background: #ffffff; 
+    color: var(--primary-blue-{{ section.id }}); 
+    padding: 16px 36px; 
+    border-radius: 100px; 
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none; 
+    border: 1.5px solid var(--border-light-{{ section.id }});
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .btn-secondary-{{ section.id }}:hover {
+    border-color: var(--primary-blue-{{ section.id }});
+    background: #F8FAFC;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 767px) {
+    .hero-{{ section.id }} { padding: {{ section.settings.padding_top | divided_by: 2 }}px 15px {{ section.settings.padding_bottom | divided_by: 2 }}px; }
+    .hero-container-{{ section.id }} { 
+      padding: 60px 25px; 
+      border-radius: 24px; 
+      height: {{ section.settings.glass_height_mobile }}vh;
+    }
+    .hero-container-{{ section.id }} p { margin-bottom: 30px; }
+    .hero-btns-{{ section.id }} { flex-direction: column; gap: 12px; }
+    .btn-primary-{{ section.id }}, .btn-secondary-{{ section.id }} { width: 100%; text-align: center; }
+  }
+{%- endstyle -%}
+
+<section class="hero-{{ section.id }}">
+  {% if section.settings.bg_image != blank %}
+    <img src="{{ section.settings.bg_image | image_url: width: 2000 }}" 
+         class="hero-bg-image-{{ section.id }}" 
+         alt="{{ section.settings.bg_image.alt | escape }}"
+         loading="lazy">
+  {% endif %}
+
+  <div class="hero-container-{{ section.id }}">
+    {% if section.settings.subheading != blank %}
+      <span class="subheading-{{ section.id }}">{{ section.settings.subheading }}</span>
+    {% endif %}
+    
+    {% if section.settings.heading != blank %}
+      <h1>{{ section.settings.heading }}</h1>
+    {% endif %}
+    
+    {% if section.settings.text != blank %}
+      <p>{{ section.settings.text }}</p>
+    {% endif %}
+    
+    <div class="hero-btns-{{ section.id }}">
+      {% if section.settings.label1 != blank %}
+        <a href="{{ section.settings.url1 | default: '#' }}" class="btn-primary-{{ section.id }}">{{ section.settings.label1 }}</a>
+      {% endif %}
+      
+      {% if section.settings.label2 != blank %}
+        <a href="{{ section.settings.url2 | default: '#' }}" class="btn-secondary-{{ section.id }}">{{ section.settings.label2 }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Library Hero Frost",
+  "settings": [
+    { "type": "header", "content": "Background Image" },
+    { "type": "image_picker", "id": "bg_image", "label": "Background Image" },
+    
+    { "type": "header", "content": "GLASS MASTER SETTINGS" },
+    { "type": "checkbox", "id": "enable_frost", "label": "Enable Frost Blur", "default": true },
+    { "type": "range", "id": "blur_intensity", "label": "Blur Intensity", "min": 0, "max": 50, "step": 1, "unit": "px", "default": 20 },
+    { "type": "color", "id": "glass_overlay_color", "label": "Glass Overlay Color", "default": "#FFFFFF" },
+    { "type": "range", "id": "glass_opacity", "label": "Glass Opacity (%)", "min": 0, "max": 100, "step": 5, "default": 40 },
+    { "type": "range", "id": "glass_height_desktop", "label": "Glass Height (Desktop %)", "min": 20, "max": 100, "step": 5, "default": 60 },
+    { "type": "range", "id": "glass_height_mobile", "label": "Glass Height (Mobile %)", "min": 20, "max": 100, "step": 5, "default": 80 },
+    
+    { "type": "header", "content": "Gradient Logic" },
+    { "type": "checkbox", "id": "enable_gradient", "label": "Enable Gradient Fade", "default": false },
+    { 
+      "type": "select", 
+      "id": "gradient_direction", 
+      "label": "Gradient Direction",
+      "options": [
+        { "value": "bottom_to_top", "label": "Bottom to Top" },
+        { "value": "top_to_bottom", "label": "Top to Bottom" }
+      ],
+      "default": "bottom_to_top"
+    },
+
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "EVIDENCE-BASED REPOSITORY" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The MG 101 Library" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "A curated collection of clinical whitepapers and research summaries." },
+    { "type": "text", "id": "label1", "label": "Primary Button Label", "default": "Explore Documents" },
+    { "type": "url", "id": "url1", "label": "Primary Button Link" },
+    { "type": "text", "id": "label2", "label": "Secondary Button Label", "default": "Methodology" },
+    { "type": "url", "id": "url2", "label": "Secondary Button Link" },
+    
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1400, "step": 10, "default": 1100 },
+    { "type": "range", "id": "roundness", "label": "Corner Roundness", "min": 0, "max": 80, "step": 4, "default": 40 },
+    { "type": "range", "id": "heading_size", "label": "Heading Max Size", "min": 32, "max": 80, "step": 2, "default": 64 },
+    
+    { "type": "header", "content": "Color Palette" },
+    { "type": "color", "id": "bg_color", "label": "Section Background (Fallback)", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Heading Color", "default": "#215174" },
+    { "type": "color", "id": "body_text_color", "label": "Body text color", "default": "#4B5563" },
+    
+    { "type": "header", "content": "Section Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 120, "step": 4, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 120, "step": 4, "default": 60 }
+  ],
+  "presets": [{ "name": "Library Hero Frost" }]
+}
+{% endschema %}

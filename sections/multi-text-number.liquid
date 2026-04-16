@@ -1,0 +1,129 @@
+<section class="stats-banner {{ section.id }}">
+  <div class="page-width">
+
+    <!-- TOP TEXT -->
+    <div class="stats-top">
+      <h2 class="h2 cusdmarb">{{ section.settings.heading }}</h2>
+      <p class="h6">{{ section.settings.subheading }}</p>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      {% for block in section.blocks %}
+        <div class="stat-item">
+          <div class="stat-number h4">
+            {{ block.settings.number }}<span>{{ block.settings.symbol }}</span>
+          </div>
+          <div class="stat-text h6">
+            {{ block.settings.text }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <style>
+    .stats-banner .page-width{
+      {% comment %} max-width: 1300px;
+      margin: auto; {% endcomment %}
+      padding: 30px 20px;
+      text-align:center;
+    }
+    {% comment %} .stats-top h2{
+      {% comment %} font-size:26px; {% endcomment %}
+      font-weight:600;
+      color:#555;
+      {% comment %} margin-bottom:5px; {% endcomment %}
+    } {% endcomment %}
+    .stats-top p{
+      {% comment %} font-size:16px; {% endcomment %}
+      color:#999;
+      margin-bottom:40px;
+    }
+
+    /* ROW */
+    .stats-row{
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+    .stat-item{
+      flex:1;
+      min-width:200px;
+    }
+
+    /* NUMBER */
+    .stat-number{
+      {% comment %} font-size:60px; {% endcomment %}
+      font-weight:700;
+      color:rgb(33 81 117);
+      line-height:1;
+    }
+    .stat-number span{
+      {% comment %} font-size:35px; {% endcomment %}
+      font-weight:600;
+      margin-left:3px;
+    }
+
+    .stat-text{
+      margin-top:10px;
+      {% comment %} font-size:16px; {% endcomment %}
+      color:rgba(48, 48, 48, 1);
+    }
+    .stats-top h2{
+      font-weight: 700;
+    }
+    @media (min-width:768px){
+    .cusdmarb{
+      margin-block-end: 45px;
+    }
+  }
+    @media(max-width:768px){
+        .cusdmarb{
+      margin-block-end: 30px;
+    }
+      .stats-row{
+        justify-content:center;
+        text-align:center;
+      }
+      .stat-item{
+        flex:0 0 45%;
+        margin-bottom:30px;
+      }
+      {% comment %} .stat-number{ font-size:45px; } {% endcomment %}
+      {% comment %} .stat-number span{ font-size:26px; } {% endcomment %}
+    }
+
+    @media(max-width:500px){
+      .stat-item{
+        flex:0 0 100%;
+      }
+    }
+  </style>
+
+</section>
+
+{% schema %}
+{
+  "name": "Stats Banner",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "WE BELIEVE IN BETTER" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "We are growing!" }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat Item",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "85" },
+        { "type": "text", "id": "symbol", "label": "Symbol", "default": "%" },
+        { "type": "text", "id": "text", "label": "Description", "default": "coverage across India" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [{ "name": "Stats Banner" }]
+}
+{% endschema %}

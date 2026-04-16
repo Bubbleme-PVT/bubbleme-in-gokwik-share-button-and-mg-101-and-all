@@ -1,0 +1,28 @@
+<script type="load">
+    document.addEventListener('DOMContentLoaded', function () {
+        var images = document.querySelectorAll('source[late-srcset]');
+        images.forEach(function (img) {
+            var dataSrcsetValue = img.getAttribute('late-srcset');
+            img.setAttribute('srcset', dataSrcsetValue);
+            img.removeAttribute('data-srcset');
+        });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const startinterval = setInterval(() => {
+        if (!document.documentElement.classList.contains("xh") && document.documentElement.classList.contains("mainopt")) {
+            const mouseMoveEvent = new MouseEvent('mousemove', {
+                bubbles: true,
+                cancelable: true,
+                clientX: 100,
+                clientY: 150
+            });
+            document.dispatchEvent(mouseMoveEvent);
+        } else {
+            clearInterval(startinterval);
+            console.log("stoped")
+        }
+    }, 100);
+});
+</script>

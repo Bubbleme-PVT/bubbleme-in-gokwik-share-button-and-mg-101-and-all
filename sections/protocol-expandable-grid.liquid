@@ -1,0 +1,296 @@
+{%- liquid
+  assign section_id = section.id | replace: '-', '' | replace: '_', '' | downcase
+-%}
+
+{%- style -%}
+  :root {
+    --primary-blue-{{ section_id }}: #215174;
+    --heading-dark-{{ section_id }}: #215174;
+    --secondary-text-{{ section_id }}: #4B5563;
+    --border-light-{{ section_id }}: #E2E8F0;
+  }
+
+  #protocol-{{ section_id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    overflow: hidden; 
+  }
+
+  .title-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+    color: var(--heading-dark-{{ section_id }});
+    font-size: clamp(28px, 5vw, {{ section.settings.title_size }}px);
+    font-weight: 800;
+    text-align: {{ section.settings.heading_align }};
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .grid-{{ section_id }} {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: stretch;
+    gap: {{ section.settings.gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px 40px; /* Reduced from 100px */
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .grid-{{ section_id }} { justify-content: safe center; }
+  }
+
+  .grid-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .card-{{ section_id }} {
+    background-color: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_roundness }}px;
+    padding: 35px 35px 80px 35px; /* Added extra bottom padding for button room */
+    flex: 0 0 {{ section.settings.card_width }}px;
+    min-width: {{ section.settings.card_width }}px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid var(--border-light-{{ section_id }});
+    border-top: 5px solid var(--primary-blue-{{ section_id }});
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .card-{{ section_id }}:hover { transform: translateY(-5px); }
+
+  .header-{{ section_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    gap: 15px;
+  }
+
+  .card-title-{{ section_id }} {
+    font-size: {{ section.settings.card_title_size }}px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    color: var(--heading-dark-{{ section_id }});
+  }
+
+  .badge-{{ section_id }} {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .item-{{ section_id }} {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 22px;
+    align-items: flex-start;
+  }
+
+  .icon-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    flex-shrink: 0;
+    color: var(--primary-blue-{{ section_id }});
+  }
+  
+  .icon-{{ section_id }} svg, .icon-{{ section_id }} img { width: 100%; height: 100%; object-fit: contain; }
+
+  .item-content-{{ section_id }} h4 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: var(--heading-dark-{{ section_id }}); }
+  .item-content-{{ section_id }} p { margin: 0; font-size: 14px; color: var(--secondary-text-{{ section_id }}); line-height: 1.5; }
+
+  /* SMOOTH ACCORDION */
+  .extra-wrapper-{{ section_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .all-open .extra-wrapper-{{ section_id }} { 
+    max-height: 1500px; 
+    opacity: 1;
+    margin-bottom: 20px;
+  }
+
+  /* BLUR & BUTTON CONTAINER */
+  .expand-footer-{{ section_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: {{ section.settings.card_bg }};
+  }
+
+  .blur-overlay-{{ section_id }} {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to top, {{ section.settings.card_bg }} 20%, transparent 100%);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .all-open .blur-overlay-{{ section_id }} { opacity: 0; }
+
+  .expand-btn-{{ section_id }} {
+    background: none; border: none; cursor: pointer; width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 15px 0 25px 0;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .arrow-{{ section_id }} {
+    width: 38px; height: 38px; background: #ffffff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.4s ease;
+    margin-bottom: 8px; border: 1px solid var(--border-light-{{ section_id }});
+    color: var(--primary-blue-{{ section_id }});
+  }
+
+  .all-open .arrow-{{ section_id }} { transform: rotate(180deg); }
+
+  @media (max-width: 767px) {
+    .card-{{ section_id }} { flex: 0 0 85vw; min-width: 280px; padding: 30px 25px 70px; }
+    .grid-{{ section_id }} { padding-bottom: 20px; }
+  }
+{%- endstyle -%}
+
+<section id="protocol-{{ section_id }}" class="protocol-root-{{ section_id }}">
+  <h2 class="title-{{ section_id }}">{{ section.settings.heading }}</h2>
+
+  <div class="grid-{{ section_id }}">
+    {% for block in section.blocks %}
+      <div class="card-{{ section_id }}" {{ block.shopify_attributes }} style="border-top-color: {{ block.settings.accent_color }};">
+        
+        <div class="header-{{ section_id }}">
+          <h3 class="card-title-{{ section_id }}" style="color: {{ block.settings.accent_color }};">
+            {{ block.settings.title }}
+          </h3>
+          {% if block.settings.badge_text != blank %}
+            <span class="badge-{{ section_id }}" 
+                  style="background-color: {{ block.settings.accent_color | color_modify: 'alpha', 0.1 }}; color: {{ block.settings.accent_color }};">
+              {{ block.settings.badge_text }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% comment %} Steps 1-2 {% endcomment %}
+        {% for i in (1..2) %}
+          {% capture p_t %}p{{ i }}_title{% endcapture %}{% capture p_x %}p{{ i }}_text{% endcapture %}{% capture p_s %}p{{ i }}_svg{% endcapture %}
+          {% if block.settings[p_t] != blank %}
+            <div class="item-{{ section_id }}">
+              <div class="icon-{{ section_id }}">{% if block.settings[p_s] != blank %}{{ block.settings[p_s] }}{% else %}{{ 'image' | placeholder_svg_tag }}{% endif %}</div>
+              <div class="item-content-{{ section_id }}">
+                <h4>{{ block.settings[p_t] }}</h4>
+                <p>{{ block.settings[p_x] }}</p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {% comment %} Hidden Content {% endcomment %}
+        <div class="extra-wrapper-{{ section_id }}">
+           {% for i in (3..10) %}
+              {% capture p_t %}p{{ i }}_title{% endcapture %}{% capture p_x %}p{{ i }}_text{% endcapture %}{% capture p_s %}p{{ i }}_svg{% endcapture %}
+              {% if block.settings[p_t] != blank %}
+                <div class="item-{{ section_id }}">
+                  <div class="icon-{{ section_id }}">{% if block.settings[p_s] != blank %}{{ block.settings[p_s] }}{% else %}{{ 'image' | placeholder_svg_tag }}{% endif %}</div>
+                  <div class="item-content-{{ section_id }}">
+                    <h4>{{ block.settings[p_t] }}</h4>
+                    <p>{{ block.settings[p_x] }}</p>
+                  </div>
+                </div>
+              {% endif %}
+           {% endfor %}
+        </div>
+
+        {% comment %} Expand Footer Area {% endcomment %}
+        <div class="expand-footer-{{ section_id }}">
+          <div class="blur-overlay-{{ section_id }}"></div>
+          <button class="expand-btn-{{ section_id }}" onclick="toggleProtocol('{{ section_id }}')">
+            <div class="arrow-{{ section_id }}">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5L7 9L11 5"/></svg>
+            </div>
+            <span style="font-size: 10px; font-weight: 800; color: {{ section.settings.btn_text_color }}; text-transform: uppercase; letter-spacing: 0.1em;">
+              {{ section.settings.btn_more }}
+            </span>
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+function toggleProtocol(sid) {
+  const root = document.getElementById('protocol-' + sid);
+  const span = root.querySelector('.expand-btn-{{ section_id }} span');
+  root.classList.toggle('all-open');
+  const isOpen = root.classList.contains('all-open');
+  span.innerText = isOpen ? "{{ section.settings.btn_less }}" : "{{ section.settings.btn_more }}";
+}
+</script>
+
+{% schema %}
+{
+  "name": "Master Protocol Grid",
+  "settings": [
+    { "type": "header", "content": "Title Settings" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your Restoration Roadmap" },
+    { "type": "range", "id": "title_size", "label": "Heading Size", "min": 20, "max": 60, "default": 32 },
+    { "type": "select", "id": "heading_align", "label": "Heading Align", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "center" },
+    { "type": "header", "content": "Card Layout" },
+    { "type": "color", "id": "bg_color", "label": "Section BG", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg", "label": "Card BG", "default": "#ffffff" },
+    { "type": "range", "id": "card_width", "label": "Card Width", "min": 300, "max": 600, "step": 10, "default": 420 },
+    { "type": "range", "id": "card_roundness", "label": "Roundness", "min": 0, "max": 60, "default": 24 },
+    { "type": "range", "id": "gap", "label": "Gap", "min": 10, "max": 60, "default": 25 },
+    { "type": "range", "id": "max_width", "label": "Max Width", "min": 800, "max": 1600, "step": 20, "default": 1200 },
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "card_title_size", "label": "Card Title Size", "min": 16, "max": 32, "default": 22 },
+    { "type": "range", "id": "icon_size", "label": "Icon Size", "min": 20, "max": 50, "default": 28 },
+    { "type": "header", "content": "Button Styling" },
+    { "type": "text", "id": "btn_more", "label": "Open Label", "default": "Expand Protocol" },
+    { "type": "text", "id": "btn_less", "label": "Close Label", "default": "Minimize" },
+    { "type": "color", "id": "btn_text_color", "label": "Button Color", "default": "#215174" },
+    { "type": "header", "content": "Padding" },
+    { "type": "range", "id": "padding_top", "label": "Top", "min": 0, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom", "min": 0, "max": 120, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Protocol",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Daily Routine" },
+        { "type": "color", "id": "accent_color", "label": "Theme Color", "default": "#215174" },
+        { "type": "text", "id": "badge_text", "label": "Badge", "default": "Recommended" },
+        { "type": "header", "content": "Always Visible Steps" },
+        { "type": "html", "id": "p1_svg", "label": "Step 1 SVG" }, { "type": "text", "id": "p1_title", "label": "Title 1" }, { "type": "textarea", "id": "p1_text", "label": "Text 1" },
+        { "type": "html", "id": "p2_svg", "label": "Step 2 SVG" }, { "type": "text", "id": "p2_title", "label": "Title 2" }, { "type": "textarea", "id": "p2_text", "label": "Text 2" },
+        { "type": "header", "content": "Hidden Steps" },
+        { "type": "html", "id": "p3_svg", "label": "Step 3 SVG" }, { "type": "text", "id": "p3_title", "label": "Title 3" }, { "type": "textarea", "id": "p3_text", "label": "Text 3" },
+        { "type": "html", "id": "p4_svg", "label": "Step 4 SVG" }, { "type": "text", "id": "p4_title", "label": "Title 4" }, { "type": "textarea", "id": "p4_text", "label": "Text 4" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Master Protocol Grid" }]
+}
+{% endschema %}
