@@ -116,7 +116,7 @@ html.no-js .no-js-hidden,
 }
 @font-face {
     font-family: 'Milliard-Black';
-    font-display: auto;
+    font-display: swap;
     src: url({{ 'Milliard-Black' | asset_url }}) format('otf');
 }
 

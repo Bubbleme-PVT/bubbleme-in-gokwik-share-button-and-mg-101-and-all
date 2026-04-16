@@ -79,8 +79,8 @@
 -%}
 
 {%- capture sizes -%}
-  (min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | times: media_width | divided_by: image_divisor | round }}px,
-  (min-width: 990px) calc({{ media_width | times: 100 | divided_by: image_divisor }}vw - 10rem),
+  (min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | times: media_width | round }}px,
+  (min-width: 990px) calc({{ media_width | times: 100 }}vw - 10rem),
   (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw / {{ mobile_columns }} - 4rem)
 {%- endcapture -%}
 
@@ -92,11 +92,11 @@
     {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
       <span class="product__media-icon motion-reduce">{% render 'icon-play' %}</span>
       <div class="product__media media ratio{% if section.settings.image_replace_background %} mix-blend-multiply{% endif %}">
-        {{ media.preview_image | image_url: width: 1946 | image_tag:
+        {{ media.preview_image | image_url: width: 1920 | image_tag:
           loading: lazy,
           fetchpriority: fetch_priority,
           sizes: sizes,
-          widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946'
+          widths: '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920'
         }}
       </div>
       <a href="{% if media.media_type == 'video' %}{{ media.sources[1].url }}{% else %}{{ media | external_video_url }}{% endif %}" class="product__media-toggle">
@@ -104,11 +104,11 @@
       </a>
     {%- else -%}
       <div class="product__media media ratio{% if section.settings.image_replace_background %} mix-blend-multiply{% endif %}">
-        {{ media.preview_image | image_url: width: 1946 | image_tag:
+        {{ media.preview_image | image_url: width: 1920 | image_tag:
           loading: lazy,
           fetchpriority: fetch_priority,
           sizes: sizes,
-          widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946',
+          widths: '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920',
           preload: preload
         }}
       </div>
@@ -132,21 +132,21 @@
     {%- render 'loading-spinner' -%}
     <div class="product__media media ratio media--transparent{% if section.settings.image_replace_background %} mix-blend-multiply{% endif %}">
       {% if lazy == 'eager' %}
-        {{ media.preview_image | image_url: width: 1946 | image_tag:
+        {{ media.preview_image | image_url: width: 1920 | image_tag:
           class: image_class,
           loading: lazy,
           fetchpriority: fetch_priority,
           sizes: sizes,
-          widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946',
+          widths: '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920',
           preload: preload
         }}
       {% else %}
-        {{ media.preview_image | image_url: width: 1946 | image_tag:
+        {{ media.preview_image | image_url: width: 1920 | image_tag:
           class: image_class,
           loading: lazy,
           fetchpriority: fetch_priority,
           sizes: sizes,
-          widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946',
+          widths: '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920',
           preload: preload | replace: ' src="' , ' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' 
         }}
       {% endif %}
@@ -174,12 +174,12 @@
           {%- render 'icon-play' -%}
         {%- endif -%}
       </span>
-      {{ media.preview_image | image_url: width: 1946 | image_tag:
+      {{ media.preview_image | image_url: width: 1920 | image_tag:
         class: image_class,
         loading: lazy,
         fetchpriority: fetch_priority,
         sizes: sizes,
-        widths: '246, 493, 600, 713, 823, 990, 1100, 1206, 1346, 1426, 1646, 1946',
+        widths: '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920',
         preload: preload
       }}
     </button>

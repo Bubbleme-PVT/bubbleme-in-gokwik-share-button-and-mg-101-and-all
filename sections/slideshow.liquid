@@ -121,8 +121,8 @@
                 {%- if block.settings.image -%}
                   {%- liquid
                     assign height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio | round
-                    assign sizes = '80vw'
-                    assign widths = '375, 500, 720, 1100, 1500, 1780, 2000, 3000, 3840'
+                    assign sizes = '(min-width: 1200px) 1200px, 100vw'
+                    assign widths = '320, 480, 640, 750, 960, 1200, 1440, 1680, 1920'
                     assign fetch_priority = 'low'
                     assign loading = 'lazy'
                     assign preload = false
@@ -139,18 +139,29 @@
                       {%- capture mobile_image -%}
                         {{
                           block.settings.mobile_image
-                          | image_url: width: 3840
-                          | image_tag: loading: loading, height: height, sizes: sizes, widths: widths, fetchpriority: fetch_priority, preload: preload
+                          | image_url: width: 1920
+                          | image_tag: loading: loading, height: height, sizes: '100vw', widths: widths, fetchpriority: fetch_priority, preload: preload
                         }}
                       {%- endcapture -%}
-                      {{- mobile_image | replace: ' src=', ' data-src=' | replace: '<img ', '<source media="(max-width: 749px)" ' | replace: ' alt=', ' data-alt=' | replace: ' fetchpriority=', ' data-fetchpriority=' | replace: ' loading=', ' data-loading=' | replace: ' srcset', ' late-srcset' -}}
+                      {%- if loading == 'eager' -%}
+                        {{- mobile_image | replace: '<img ', '<source media="(max-width: 749px)" ' -}}
+                      {%- else -%}
+                        {{- mobile_image | replace: ' src=', ' data-src=' | replace: '<img ', '<source media="(max-width: 749px)" ' | replace: ' alt=', ' data-alt=' | replace: ' fetchpriority=', ' data-fetchpriority=' | replace: ' loading=', ' data-loading=' | replace: ' srcset', ' late-srcset' -}}
+                      {%- endif -%}
                     {%- endif -%}
 
-                    {{
-                      block.settings.image
-                      | image_url: width: 3840
-                      | image_tag: loading: loading, height: height, sizes: sizes, widths: widths, fetchpriority: fetch_priority | replace: ' src="' , ' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' 
-                    }}
+                    {%- capture desktop_image -%}
+                      {{
+                        block.settings.image
+                        | image_url: width: 1920
+                        | image_tag: loading: loading, height: height, sizes: sizes, widths: widths, fetchpriority: fetch_priority, preload: preload
+                      }}
+                    {%- endcapture -%}
+                    {%- if loading == 'eager' -%}
+                      {{ desktop_image }}
+                    {%- else -%}
+                      {{ desktop_image | replace: ' src="' , ' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' }}
+                    {%- endif -%}
                   </picture>
                 {%- else -%}
                   {%- assign placeholder_slide = forloop.index | modulo: 2 -%}

@@ -119,6 +119,35 @@
       assign article_header_font_bold_italic = article_header_font_bold | font_modify: 'style', 'italic'
     -%}
 
+    {%- liquid
+      assign page_lcp_image = blank
+      if request.page_type == 'index' and settings.slideshow_image != blank
+        assign page_lcp_image = settings.slideshow_image
+      elsif request.page_type == 'product' and product.featured_media.preview_image != blank
+        assign page_lcp_image = product.featured_media.preview_image
+      endif
+    -%}
+
+    {%- if page_lcp_image != blank -%}
+      <link
+        rel="preload"
+        as="image"
+        href="{{ page_lcp_image | image_url: width: 1200 }}"
+        imagesrcset="
+          {{ page_lcp_image | image_url: width: 320 }} 320w,
+          {{ page_lcp_image | image_url: width: 480 }} 480w,
+          {{ page_lcp_image | image_url: width: 640 }} 640w,
+          {{ page_lcp_image | image_url: width: 750 }} 750w,
+          {{ page_lcp_image | image_url: width: 960 }} 960w,
+          {{ page_lcp_image | image_url: width: 1200 }} 1200w,
+          {{ page_lcp_image | image_url: width: 1440 }} 1440w,
+          {{ page_lcp_image | image_url: width: 1680 }} 1680w,
+          {{ page_lcp_image | image_url: width: 1920 }} 1920w"
+        imagesizes="100vw"
+        fetchpriority="high"
+      >
+    {%- endif -%}
+
     {%- unless settings.type_body_font.system? -%}
       <link rel="preload" href="{{ settings.type_body_font | font_url }}" as="font" crossorigin fetchpriority="high" type="font/woff2">
     {%- endunless -%}
@@ -216,26 +245,26 @@
 
     {% style %}
       {% unless settings.type_body_font.system? -%}
-        {{ settings.type_body_font | font_face: font_display: 'fallback' }}
-        {{ body_font_bold | font_face: font_display: 'fallback' }}
-        {{ body_font_italic | font_face: font_display: 'fallback' }}
-        {{ body_font_bold_italic | font_face: font_display: 'fallback' }}
-        {{ body_font_medium | font_face: font_display: 'fallback' }}
+        {{ settings.type_body_font | font_face: font_display: 'swap' }}
+        {{ body_font_bold | font_face: font_display: 'swap' }}
+        {{ body_font_italic | font_face: font_display: 'swap' }}
+        {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+        {{ body_font_medium | font_face: font_display: 'swap' }}
       {%- endunless -%}
 
       {%- unless settings.type_header_font == settings.type_body_font or settings.type_header_font.system? -%}
-        {{ settings.type_header_font | font_face: font_display: 'fallback' }}
-        {{ header_font_bold | font_face: font_display: 'fallback' }}
-        {{ header_font_italic | font_face: font_display: 'fallback' }}
-        {{ header_font_bold_italic | font_face: font_display: 'fallback' }}
-        {{ header_font_medium | font_face: font_display: 'fallback' }}
+        {{ settings.type_header_font | font_face: font_display: 'swap' }}
+        {{ header_font_bold | font_face: font_display: 'swap' }}
+        {{ header_font_italic | font_face: font_display: 'swap' }}
+        {{ header_font_bold_italic | font_face: font_display: 'swap' }}
+        {{ header_font_medium | font_face: font_display: 'swap' }}
       {%- endunless -%}
 
       {%- unless request.page_type != 'article' or settings.type_article_header_font.system? or settings.type_article_header_font == settings.type_body_font or settings.type_article_header_font == settings.type_header_font -%}
-        {{ settings.type_article_header_font | font_face: font_display: 'fallback' }}
-        {{ article_header_font_bold | font_face: font_display: 'fallback' }}
-        {{ article_header_font_italic | font_face: font_display: 'fallback' }}
-        {{ article_header_font_bold_italic | font_face: font_display: 'fallback' }}
+        {{ settings.type_article_header_font | font_face: font_display: 'swap' }}
+        {{ article_header_font_bold | font_face: font_display: 'swap' }}
+        {{ article_header_font_italic | font_face: font_display: 'swap' }}
+        {{ article_header_font_bold_italic | font_face: font_display: 'swap' }}
       {%- endunless -%}
 
       {%- assign color_schemes_with_heading_gradient = "" -%}
