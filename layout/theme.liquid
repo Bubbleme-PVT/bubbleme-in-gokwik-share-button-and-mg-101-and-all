@@ -2,18 +2,59 @@
 <!doctype html>
 <html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
-<link rel="dns-prefetch" href="https://static-cdn.trackier.com">
-<link rel="preconnect" href="https://static-cdn.trackier.com" crossorigin>
-<script src="https://static-cdn.trackier.com/rtg/69c63262ad28df4db2314355.js" defer="defer"></script>
+<script>
+  (function () {
+    var trackierUrl = 'https://static-cdn.trackier.com/rtg/69c63262ad28df4db2314355.js';
+    var hasLoadedTrackier = false;
+    var interactionEvents = ['click', 'touchstart', 'keydown', 'scroll'];
+
+    function loadTrackier() {
+      if (hasLoadedTrackier) return;
+      hasLoadedTrackier = true;
+
+      var preconnect = document.createElement('link');
+      preconnect.rel = 'preconnect';
+      preconnect.href = 'https://static-cdn.trackier.com';
+      preconnect.crossOrigin = 'anonymous';
+      document.head.appendChild(preconnect);
+
+      var script = document.createElement('script');
+      script.src = trackierUrl;
+      script.async = true;
+      document.head.appendChild(script);
+
+      interactionEvents.forEach(function (eventName) {
+        window.removeEventListener(eventName, onFirstInteraction, passiveOnce);
+      });
+    }
+
+    function onFirstInteraction() {
+      loadTrackier();
+    }
+
+    var passiveOnce = { passive: true, once: true };
+
+    if (window.location.pathname.indexOf('/cart') > -1) {
+      loadTrackier();
+      return;
+    }
+
+    interactionEvents.forEach(function (eventName) {
+      window.addEventListener(eventName, onFirstInteraction, passiveOnce);
+    });
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadTrackier, { timeout: 5000 });
+    } else {
+      window.setTimeout(loadTrackier, 5000);
+    }
+  })();
+</script>
 
 
 <!-- Gokwik theme code start -->
 
 
-<link rel="dns-prefetch" href="https://pdp.gokwik.co/">
-<link rel="preconnect" href="https://pdp.gokwik.co" crossorigin>
-<link rel="dns-prefetch" href="https://api.gokwik.co">
-<link rel="preconnect" href="https://api.gokwik.co" crossorigin>
 {% render 'gokwik' %}
 <!-- Gokwik theme code End -->
 

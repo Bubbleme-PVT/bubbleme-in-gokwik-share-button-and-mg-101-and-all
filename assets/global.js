@@ -2695,12 +2695,21 @@ if (window.visualViewport) {
 (function() {
   const header = document.querySelector('.section-header');
   if (header) {
-    document.documentElement.style.setProperty('--header-start-live', `${header.getBoundingClientRect().top < 0 ? 0 : header.getBoundingClientRect().top}px`);
+    const root = document.documentElement;
+    let isFrameQueued = false;
+
+    const updateHeaderStart = () => {
+      const { top } = header.getBoundingClientRect();
+      root.style.setProperty('--header-start-live', `${top < 0 ? 0 : top}px`);
+      isFrameQueued = false;
+    };
+
+    updateHeaderStart();
 
     window.addEventListener('scroll', () => {
-      requestAnimationFrame(() => {
-        document.documentElement.style.setProperty('--header-start-live', `${header.getBoundingClientRect().top < 0 ? 0 : header.getBoundingClientRect().top}px`);
-      });
+      if (isFrameQueued) return;
+      isFrameQueued = true;
+      requestAnimationFrame(updateHeaderStart);
     } , { passive: true });
   }
 })();
