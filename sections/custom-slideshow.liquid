@@ -18,8 +18,11 @@
       content: none;
     }
     #shopify-section-{{ section.id }} .splide__slide img {
-      max-width: 100%;
+      display: block;
+      width: 100%;
       height: auto;
+      aspect-ratio: var(--custom-slide-aspect-ratio, 16 / 9);
+      object-fit: cover;
     }
     #shopify-section-{{ section.id }} .splide:not(.is-active) {
       visibility: visible;
@@ -46,10 +49,17 @@
     }
   html:not(.xh) .cs-container img[d-src] {
       opacity: 0;
-  }    
+  }
   </style>
 
-<div class="cs-container {{ section.index }}">
+{%- liquid
+  assign first_slide = section.blocks.first
+  assign desktop_ratio = 1.777
+  if first_slide and first_slide.settings.desktop_image != blank and first_slide.settings.desktop_image.aspect_ratio
+    assign desktop_ratio = first_slide.settings.desktop_image.aspect_ratio
+  endif
+-%}
+<div class="cs-container {{ section.index }}" style="--custom-slide-aspect-ratio: {{ desktop_ratio }};">
     <div class="splide is-overflow">
       <div class="splide__track">
         <div class="splide__list">
@@ -92,11 +102,11 @@
                     {{ block.settings.mobile_image | image_url: width: 3840 | image_tag:
                       loading: 'lazy',
                       sizes: "100vw",
-                      widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',            
+                      widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
                       class: 'desktop-hide' | replace: ' src="' , ' src="smallimg" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' | replace: 'smallimg', smallimg
                     }}
                   {% endif %}
-                {% endif %}  
+                {% endif %}
               {% if block.settings.link != blank %}</a>{% endif %}
             </div>
           {% endfor %}
@@ -104,30 +114,53 @@
       </div>
     </div>
   </div>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css"></noscript>
   <script type="load" d-src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.6/dist/js/splide.min.js"></script>
   <script type="load">
-    var splide{{ section.id | replace:'-','_' }} = new Splide('#shopify-section-{{ section.id }} .splide', {
-      {% if section.blocks.size > 1 %}type: 'loop',{% endif %}  
-      {% if section.settings.autoplay %}
-        autoplay: true,
-        interval: {{ section.settings.autoplay_seconds | times:1000 }},
-        pauseOnHover: true,
-        pauseOnFocus: true,
-      {% endif %}
-      autoHeight: true,
-      perPage: 1,
-      perMove: 1,
-      {% if section.blocks.size > 1 %}
-        pagination: true,
-      {% else %}
-        pagination: false,
-      {% endif %}  
-      arrows: false
-    });
-    splide{{ section.id | replace:'-','_' }}.mount();
+    (function () {
+      var sectionEl = document.getElementById('shopify-section-{{ section.id }}');
+      if (!sectionEl) return;
+      var sliderEl = sectionEl.querySelector('.splide');
+      if (!sliderEl) return;
+
+      function mountSplide() {
+        if (sliderEl.dataset.splideMounted === 'true' || typeof Splide === 'undefined') return;
+        sliderEl.dataset.splideMounted = 'true';
+        var splide{{ section.id | replace:'-','_' }} = new Splide('#shopify-section-{{ section.id }} .splide', {
+          {% if section.blocks.size > 1 %}type: 'loop',{% endif %}
+          {% if section.settings.autoplay %}
+            autoplay: true,
+            interval: {{ section.settings.autoplay_seconds | times:1000 }},
+            pauseOnHover: true,
+            pauseOnFocus: true,
+          {% endif %}
+          autoHeight: false,
+          perPage: 1,
+          perMove: 1,
+          {% if section.blocks.size > 1 %}
+            pagination: true,
+          {% else %}
+            pagination: false,
+          {% endif %}
+          arrows: false
+        });
+        splide{{ section.id | replace:'-','_' }}.mount();
+      }
+
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          mountSplide();
+          io.disconnect();
+        }, { rootMargin: '200px 0px' });
+        io.observe(sectionEl);
+      } else {
+        mountSplide();
+      }
+    })();
   </script>
-{% endif %}  
+{% endif %}
 
 {% schema %}
   {
