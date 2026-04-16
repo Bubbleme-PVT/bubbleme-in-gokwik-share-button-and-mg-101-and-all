@@ -57,17 +57,28 @@ document.addEventListener("DOMContentLoaded", getCountryData);
  </script>
  <script>
    window.addEventListener('gokwikLoaded', e => {
-   var buyNowButton = document.getElementById('gokwik-buy-now');
-if (buyNowButton) {
-   buyNowButton.disabled = false;
-   buyNowButton.classList.remove('disabled');
-}
-     var gokwikCheckoutButtons = document.querySelectorAll('.gokwik-checkout button');
-gokwikCheckoutButtons.forEach(function(button) {
-   button.disabled = false;
-   button.classList.remove('disabled');
-});
-   const targetElement = document.querySelector("body");
+   const targetElement = document.body;
+   let isFrameQueued = false;
+
+   function getGokwikCheckoutButtons() {
+     return document.querySelectorAll('.gokwik-checkout button');
+   }
+
+   function enableGokwikButtons() {
+     const buyNowButton = document.getElementById('gokwik-buy-now');
+     if (buyNowButton) {
+       buyNowButton.disabled = false;
+       buyNowButton.classList.remove('disabled');
+     }
+
+     getGokwikCheckoutButtons().forEach(function(button) {
+       button.disabled = false;
+       button.classList.remove('disabled');
+     });
+   }
+
+   enableGokwikButtons();
+
      function debounce(func, delay) {
        let timeoutId;
        return function () {
@@ -80,23 +91,25 @@ gokwikCheckoutButtons.forEach(function(button) {
        };
      }
      const observer = new MutationObserver(() => {
-      const addToCartButton = document.querySelector("button[name='add']");
-const gokwikBuyNowButton = document.getElementById('gokwik-buy-now');
-if (addToCartButton && addToCartButton.disabled) {
-   gokwikBuyNowButton?.setAttribute('disabled', 'disabled');
-} else {
-   gokwikBuyNowButton?.removeAttribute('disabled');
-}
+       if (!isFrameQueued) {
+         isFrameQueued = true;
+         requestAnimationFrame(() => {
+           const addToCartButton = document.querySelector("button[name='add']");
+           const gokwikBuyNowButton = document.getElementById('gokwik-buy-now');
+
+           if (gokwikBuyNowButton) {
+             gokwikBuyNowButton.disabled = Boolean(addToCartButton && addToCartButton.disabled);
+           }
+
+           isFrameQueued = false;
+         });
+       }
        debouncedMyTimer();
      });
      const debouncedMyTimer = debounce(() => {
        observer.disconnect();
        //Do Not Touch this function
-       var gokwikCheckoutButtons = document.querySelectorAll('.gokwik-checkout button');
-gokwikCheckoutButtons.forEach(function(button) {
-   button.disabled = false;
-   button.classList.remove('disabled');
-});
+       enableGokwikButtons();
        observer.observe(targetElement, { childList: true, subtree: true });
      }, 700);
      const config = { childList: true, subtree: true };
@@ -336,5 +349,4 @@ background:#fff;
    }
  }
 </style>
-
 
