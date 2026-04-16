@@ -42,18 +42,80 @@
 document.addEventListener("DOMContentLoaded", getCountryData);
 </script>
 {% endif %}
- <script src="https://{{ env }}.gokwik.co/merchant-integration/build/merchant.integration.js?v4" defer></script>
-<script>
-   if (gaTag.ga4 && gaTag.ga4 !== 'undefined' &&  gaTag.ga4  !== '') {
-       const script = document.createElement('script');
-       script.src = "https://www.googletagmanager.com/gtag/js?id="+ window.gaTag.ga4;
-       script.defer = true;
-       document.head.appendChild(script);
+ <script>
+   (function () {
+     var merchantSrc = 'https://{{ env }}.gokwik.co/merchant-integration/build/merchant.integration.js?v4';
+     var hasLoadedGoKwik = false;
+     var interactionEvents = ['click', 'touchstart', 'keydown'];
+     var passiveOnce = { passive: true, once: true };
+
+     function preconnect(origin) {
+       var link = document.createElement('link');
+       link.rel = 'preconnect';
+       link.href = origin;
+       link.crossOrigin = 'anonymous';
+       document.head.appendChild(link);
+     }
+
+     function loadGa4IfConfigured() {
+       if (!gaTag.ga4 || gaTag.ga4 === 'undefined') return;
+       if (document.querySelector('script[data-gokwik-ga4]')) return;
+
+       var gaScript = document.createElement('script');
+       gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + window.gaTag.ga4;
+       gaScript.async = true;
+       gaScript.setAttribute('data-gokwik-ga4', 'true');
+       document.head.appendChild(gaScript);
+
        window.dataLayer = window.dataLayer || [];
-       function gtag(){dataLayer.push(arguments);}
-       gtag('js', new Date());
-       gtag('config', window.gaTag.ga4 ,{ 'groups': 'GA4' });
-   }
+       window.gtag = window.gtag || function () {
+         window.dataLayer.push(arguments);
+       };
+       window.gtag('js', new Date());
+       window.gtag('config', window.gaTag.ga4, { groups: 'GA4' });
+     }
+
+     function loadGoKwik() {
+       if (hasLoadedGoKwik) return;
+       hasLoadedGoKwik = true;
+
+       preconnect('https://{{ env }}.gokwik.co');
+       preconnect('https://api.gokwik.co');
+
+       var merchantScript = document.createElement('script');
+       merchantScript.src = merchantSrc;
+       merchantScript.defer = true;
+       merchantScript.setAttribute('data-gokwik-loader', 'true');
+       document.head.appendChild(merchantScript);
+
+       loadGa4IfConfigured();
+       interactionEvents.forEach(function (eventName) {
+         window.removeEventListener(eventName, onFirstIntent, passiveOnce);
+       });
+     }
+
+     function onFirstIntent() {
+       loadGoKwik();
+     }
+
+     var shouldLoadImmediately = window.location.pathname.indexOf('/cart') > -1 || window.location.pathname.indexOf('/checkout') > -1;
+     if (shouldLoadImmediately) {
+       loadGoKwik();
+       return;
+     }
+
+     interactionEvents.forEach(function (eventName) {
+       window.addEventListener(eventName, onFirstIntent, passiveOnce);
+     });
+
+     document.addEventListener('gokwik:load', loadGoKwik, { once: true });
+
+     if ('requestIdleCallback' in window) {
+       window.requestIdleCallback(loadGoKwik, { timeout: 6500 });
+     } else {
+       window.setTimeout(loadGoKwik, 6500);
+     }
+   })();
  </script>
  <script>
    window.addEventListener('gokwikLoaded', e => {
@@ -349,4 +411,3 @@ background:#fff;
    }
  }
 </style>
-
