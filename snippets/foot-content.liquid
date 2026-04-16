@@ -21,10 +21,19 @@
 		}
 	}
 	
+	var isLazyTickScheduled = false;
+
 	function xsil() {
-		var top = this.scrollY;
-		lli(top);
-		llis(top);
+		var top = window.scrollY || 0;
+		if (isLazyTickScheduled) {
+			return;
+		}
+		isLazyTickScheduled = true;
+		requestAnimationFrame(function() {
+			lli(top);
+			llis(top);
+			isLazyTickScheduled = false;
+		});
 	}
 	
 	function xeosj() {
@@ -32,7 +41,7 @@
 		ctvt(lvs);
 		xsil();
 	}
-	window.addEventListener("scroll", function(event) {
+	window.addEventListener("scroll", function() {
 		xsil();
 	}, {
 		passive: true
@@ -42,13 +51,19 @@
 	var brm = {};
 	brm.top = 1;
 	setInterval(function() {
-		llis(top);
+		if (document.visibilityState !== "visible") {
+			return;
+		}
+		llis(window.scrollY || 0);
 	}, 8000);
 	setInterval(function() {
-		lli(0);
+		if (document.visibilityState !== "visible") {
+			return;
+		}
+		lli(window.scrollY || 0);
 	}, 500);
 	document.addEventListener("click", function() {
-		lli(0);
+		lli(window.scrollY || 0);
 	});
 	
 	function gdu(img1, width, height) {
